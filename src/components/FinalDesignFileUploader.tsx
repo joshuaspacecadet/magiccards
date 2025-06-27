@@ -20,7 +20,10 @@ import { uploadToCloudinary } from "../utils/cloudinaryUpload";
 
 interface FinalDesignFileUploaderProps {
   project: Project;
-  onSave: (projectId: string, files: { url: string }[]) => Promise<boolean>;
+  onSave: (
+    projectId: string,
+    files: { url: string; filename: string }[]
+  ) => Promise<boolean>;
   isReadOnly?: boolean;
 }
 
@@ -132,9 +135,9 @@ const FinalDesignFileUploader: React.FC<FinalDesignFileUploaderProps> = ({
 
   const processFileForAirtable = async (
     file: File
-  ): Promise<{ url: string }> => {
+  ): Promise<{ url: string; filename: string }> => {
     const url = await uploadToCloudinary(file);
-    return { url };
+    return { url, filename: file.name };
   };
 
   const handleFileUpload = async (files: File[]) => {
@@ -155,7 +158,7 @@ const FinalDesignFileUploader: React.FC<FinalDesignFileUploaderProps> = ({
       }
 
       // Process files one by one to avoid memory issues
-      const processedFiles: { url: string }[] = [];
+      const processedFiles: { url: string; filename: string }[] = [];
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const fileName = file.name;

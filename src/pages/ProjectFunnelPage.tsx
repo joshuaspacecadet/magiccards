@@ -215,8 +215,10 @@ const ProjectFunnelPage: React.FC = () => {
     setIsContactModalOpen(true);
   };
 
-  const handleSaveContact = async (contactData: Partial<Contact>) => {
-    if (!project) return;
+  const handleSaveContact = async (
+    contactData: Partial<Contact>
+  ): Promise<Contact | null> => {
+    if (!project) return null;
 
     setIsSavingContact(true);
     try {
@@ -263,8 +265,11 @@ const ProjectFunnelPage: React.FC = () => {
       if (savedContact) {
         setIsContactModalOpen(false);
       }
+
+      return savedContact;
     } catch (error) {
       console.error("Error saving contact:", error);
+      return null;
     } finally {
       setIsSavingContact(false);
     }
@@ -375,11 +380,17 @@ const ProjectFunnelPage: React.FC = () => {
 
   const handleSaveFinalDesignFiles = async (
     projectId: string,
-    files: { url: string }[]
+    files: { url: string; filename: string }[]
   ): Promise<boolean> => {
     try {
+      // Convert the file format to match AirtableAttachment (url + filename only)
+      const airtableFiles = files.map((file) => ({
+        url: file.url,
+        filename: file.filename,
+      }));
+
       const updatedProject = await AirtableService.updateProject(projectId, {
-        illustratorFiles: files,
+        illustratorFiles: airtableFiles as any,
       });
       if (updatedProject) {
         setProject(updatedProject);
