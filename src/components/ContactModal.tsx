@@ -366,6 +366,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
     }
 
     // Save/update contact with all data including files
+    console.log("Submitting contactData:", contactData);
     await onSave(contactData as Partial<Contact>);
 
     // Don't close modal here - let the parent handle it
@@ -880,33 +881,22 @@ const ContactModal: React.FC<ContactModalProps> = ({
             </div>
           </div>
 
-          <div className="flex justify-end space-x-3 pt-4 border-t border-slate-200">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors"
-            >
-              Cancel
-            </button>
+          {/* Submit Button */}
+          <div className="flex justify-end pt-4">
             <button
               type="submit"
-              disabled={
-                isLoading ||
-                isUploadingHeadshots ||
-                isUploadingLogos ||
-                !!linkedinUrlError
-              }
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isLoading || isUploadingHeadshots || isUploadingLogos}
             >
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              {isLoading || isUploadingHeadshots || isUploadingLogos ? (
+                <span className="flex items-center">
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   Saving...
-                </>
+                </span>
               ) : contact ? (
-                "Update Contact"
+                "Save Changes"
               ) : (
-                "Add Contact"
+                "Create Contact"
               )}
             </button>
           </div>
