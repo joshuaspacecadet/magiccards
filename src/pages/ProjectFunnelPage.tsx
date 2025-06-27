@@ -3,24 +3,16 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   Users,
   Plus,
-  Edit,
-  Trash2,
   CheckCircle,
-  Clock,
   AlertCircle,
   FileText,
   Palette,
-  Upload,
-  Package,
-  Truck,
   Filter,
-  User,
   Hash,
 } from "lucide-react";
 import { Project, ProjectStage, Contact } from "../types";
 import { AirtableService } from "../services/airtable";
 import { PREDEFINED_CONTACT_CREATORS } from "../config/airtable";
-import StatusBadge from "../components/StatusBadge";
 import FunnelStage from "../components/FunnelStage";
 import ContactCard from "../components/ContactCard";
 import ContactModal from "../components/ContactModal";
@@ -74,9 +66,8 @@ const ProjectFunnelPage: React.FC = () => {
     setError(null);
 
     try {
-      const [projectData, allContacts] = await Promise.all([
+      const [projectData] = await Promise.all([
         AirtableService.getProject(projectId),
-        AirtableService.getContacts(),
       ]);
 
       if (!projectData) {
@@ -238,9 +229,14 @@ const ProjectFunnelPage: React.FC = () => {
         );
         if (savedContact) {
           console.log("Contact updated successfully:", savedContact);
-          setContacts((prev) =>
-            prev.map((c) => (c.id === editingContact.id ? savedContact! : c))
-          );
+          setContacts((prev) => {
+            const updated = prev.map((c) =>
+              c.id === editingContact.id ? savedContact! : c
+            );
+            console.log("[DEBUG] Updated contacts after edit:", updated);
+            return updated;
+          });
+          setEditingContact(savedContact);
         }
       } else {
         // Create new contact
@@ -253,7 +249,11 @@ const ProjectFunnelPage: React.FC = () => {
             savedContact.id
           );
           if (linkSuccess) {
-            setContacts((prev) => [...prev, savedContact!]);
+            setContacts((prev) => {
+              const updated = [...prev, savedContact!];
+              console.log("[DEBUG] Updated contacts after create:", updated);
+              return updated;
+            });
             // Update project's linkedContacts in local state
             setProject((prev) =>
               prev
@@ -266,6 +266,7 @@ const ProjectFunnelPage: React.FC = () => {
                   }
                 : null
             );
+            setEditingContact(savedContact);
           }
         }
       }
@@ -394,11 +395,14 @@ const ProjectFunnelPage: React.FC = () => {
   ): Promise<boolean> => {
     try {
       // Convert the file format to match AirtableAttachment (url + filename only)
-      const airtableFiles = files.map((file) => ({
-        url: file.url,
-        filename: file.filename,
-      }));
+      const airtableFiles: { url: string; filename: string }[] = files.map(
+        (file) => ({
+          url: file.url,
+          filename: file.filename,
+        })
+      );
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updatedProject = await AirtableService.updateProject(projectId, {
         illustratorFiles: airtableFiles as any,
       });
@@ -884,8 +888,8 @@ const ProjectFunnelPage: React.FC = () => {
         <FunnelStage
           ref={readyForPrintStageRef}
           stage="Ready for Print"
-          title="Stage 7 — Track Production & Fulfillment"
-          description="Monitor the production and shipping progress of your custom cards."
+          title="Stage 7 — Ready for Print"
+          description="Review and finalize all files and details before sending to print."
           isActive={isStageActive("Ready for Print")}
           isCompleted={isStageCompleted("Ready for Print")}
           onAdvance={
@@ -902,7 +906,7 @@ const ProjectFunnelPage: React.FC = () => {
                 }
                 type="date"
                 placeholder="Select submission date"
-                icon={<Package className="h-4 w-4" />}
+                icon={<Hash className="h-4 w-4" />}
                 disabled={isStageCompleted("Ready for Print")}
               />
 
@@ -914,7 +918,7 @@ const ProjectFunnelPage: React.FC = () => {
                 }
                 type="date"
                 placeholder="Select shipping date"
-                icon={<Truck className="h-4 w-4" />}
+                icon={<Hash className="h-4 w-4" />}
                 disabled={isStageCompleted("Ready for Print")}
               />
 
