@@ -220,23 +220,31 @@ const ProjectFunnelPage: React.FC = () => {
   ): Promise<Contact | null> => {
     if (!project) return null;
 
+    console.log("handleSaveContact called with:", {
+      contactData,
+      editingContact,
+    });
+
     setIsSavingContact(true);
     try {
       let savedContact: Contact | null = null;
 
       if (editingContact) {
         // Update existing contact
+        console.log("Updating existing contact:", editingContact.id);
         savedContact = await AirtableService.updateContact(
           editingContact.id,
           contactData
         );
         if (savedContact) {
+          console.log("Contact updated successfully:", savedContact);
           setContacts((prev) =>
             prev.map((c) => (c.id === editingContact.id ? savedContact! : c))
           );
         }
       } else {
         // Create new contact
+        console.log("Creating new contact");
         savedContact = await AirtableService.createContact(contactData);
         if (savedContact) {
           // Link the new contact to the project
@@ -263,7 +271,9 @@ const ProjectFunnelPage: React.FC = () => {
       }
 
       if (savedContact) {
+        console.log("Contact saved successfully, closing modal");
         setIsContactModalOpen(false);
+        setEditingContact(undefined); // Clear the editing contact
       }
 
       return savedContact;

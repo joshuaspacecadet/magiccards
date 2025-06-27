@@ -3,7 +3,15 @@ import { X, Loader2, Upload, Trash2, AlertCircle } from "lucide-react";
 import { Contact } from "../types";
 import { normalizeUrl, isValidUrl } from "../utils/urlHelpers";
 import { uploadToCloudinary } from "../utils/cloudinaryUpload";
-import { AirtableService } from "../services/airtable";
+
+// Type for Airtable contact data (different from our Contact type)
+type AirtableContactData = Omit<
+  Partial<Contact>,
+  "headshot" | "companyLogo"
+> & {
+  headshot?: { url: string; filename: string }[];
+  companyLogo?: { url: string; filename: string }[];
+};
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -56,7 +64,10 @@ const ContactModal: React.FC<ContactModalProps> = ({
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
   useEffect(() => {
+    console.log("ContactModal useEffect triggered with contact:", contact);
+
     if (contact) {
+      console.log("Setting form data for existing contact:", contact);
       setFormData({
         name: contact.name || "",
         company: contact.company || "",
@@ -73,9 +84,31 @@ const ContactModal: React.FC<ContactModalProps> = ({
         additionalContactContext: contact.additionalContactContext || "",
         contactAddedBy: contact.contactAddedBy || "",
       });
-      setHeadshots(contact.headshot || []);
-      setCompanyLogos(contact.companyLogo || []);
+
+      // Convert AirtableAttachment format to internal format
+      const convertedHeadshots = (contact.headshot || []).map((attachment) => ({
+        url: attachment.url,
+        filename: attachment.filename,
+        type: attachment.type,
+        size: attachment.size,
+      }));
+
+      const convertedCompanyLogos = (contact.companyLogo || []).map(
+        (attachment) => ({
+          url: attachment.url,
+          filename: attachment.filename,
+          type: attachment.type,
+          size: attachment.size,
+        })
+      );
+
+      console.log("Converted headshots:", convertedHeadshots);
+      console.log("Converted company logos:", convertedCompanyLogos);
+
+      setHeadshots(convertedHeadshots);
+      setCompanyLogos(convertedCompanyLogos);
     } else {
+      console.log("Clearing form data for new contact");
       setFormData({
         name: "",
         company: "",
@@ -308,39 +341,35 @@ const ContactModal: React.FC<ContactModalProps> = ({
       ? normalizeUrl(formData.linkedinUrl.trim())
       : "";
 
-    // Create contact data without file attachments first
-    const contactDataWithoutFiles = {
+    // Prepare contact data
+    const contactData: AirtableContactData = {
       ...formData,
       linkedinUrl: normalizedLinkedInUrl,
     };
 
-    // Save contact first, then handle file uploads separately
-    const savedContact = await onSave(contactDataWithoutFiles);
+    // If we have files to upload, handle them first
+    if (headshots.length > 0 || companyLogos.length > 0) {
+      // Convert our simplified file format to Airtable attachment format (url + filename only)
+      const airtableHeadshots = headshots.map((file) => ({
+        url: file.url,
+        filename: file.filename,
+      }));
 
-    // If contact was saved successfully and we have files, update it with the files
-    if (savedContact && (headshots.length > 0 || companyLogos.length > 0)) {
-      try {
-        // Convert our simplified file format to AirtableAttachment format (url + filename only)
-        const airtableHeadshots = headshots.map((file) => ({
-          url: file.url,
-          filename: file.filename,
-        }));
+      const airtableCompanyLogos = companyLogos.map((file) => ({
+        url: file.url,
+        filename: file.filename,
+      }));
 
-        const airtableCompanyLogos = companyLogos.map((file) => ({
-          url: file.url,
-          filename: file.filename,
-        }));
-
-        // Update the contact with file attachments
-        await AirtableService.updateContact(savedContact.id, {
-          headshot: airtableHeadshots,
-          companyLogo: airtableCompanyLogos,
-        });
-      } catch (error) {
-        console.error("Error updating contact with files:", error);
-        // Don't throw here - the contact was created successfully, just the files failed
-      }
+      // Add files to contact data
+      contactData.headshot = airtableHeadshots;
+      contactData.companyLogo = airtableCompanyLogos;
     }
+
+    // Save/update contact with all data including files
+    await onSave(contactData as Partial<Contact>);
+
+    // Don't close modal here - let the parent handle it
+    // The parent will close the modal when savedContact is returned
   };
 
   if (!isOpen) return null;

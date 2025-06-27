@@ -295,8 +295,8 @@ export class AirtableService {
       if (contactData.additionalContactContext)
         createFields["Additional Contact Context"] =
           contactData.additionalContactContext;
-      if (contactData.contactAddedBy)
-        createFields["Contact Added By"] = contactData.contactAddedBy; // ADD THIS LINE
+      if (contactData.contactAddedBy && contactData.contactAddedBy !== "")
+        createFields["Contact Added By"] = contactData.contactAddedBy;
       if (contactData.copyTitle1)
         createFields["Copy Title 1"] = contactData.copyTitle1;
       if (contactData.copyTitle2)
@@ -362,8 +362,8 @@ export class AirtableService {
       if (updates.additionalContactContext !== undefined)
         updateFields["Additional Contact Context"] =
           updates.additionalContactContext;
-      if (updates.contactAddedBy !== undefined)
-        updateFields["Contact Added By"] = updates.contactAddedBy; // ADD THIS LINE
+      if (updates.contactAddedBy !== undefined && updates.contactAddedBy !== "")
+        updateFields["Contact Added By"] = updates.contactAddedBy;
       if (updates.copyTitle1 !== undefined)
         updateFields["Copy Title 1"] = updates.copyTitle1;
       if (updates.copyTitle2 !== undefined)
