@@ -272,7 +272,13 @@ const ProjectFunnelPage: React.FC = () => {
       }
 
       if (savedContact) {
-        console.log("Contact saved successfully, closing modal");
+        // Reload contacts from backend to ensure up-to-date view
+        if (project?.linkedContacts && project.linkedContacts.length > 0) {
+          const linkedContacts = await AirtableService.getContactsByIds(
+            project.linkedContacts
+          );
+          setContacts(linkedContacts);
+        }
         setIsContactModalOpen(false);
         setEditingContact(undefined); // Clear the editing contact
       }
@@ -402,9 +408,9 @@ const ProjectFunnelPage: React.FC = () => {
         })
       );
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const updatedProject = await AirtableService.updateProject(projectId, {
-        illustratorFiles: airtableFiles as any,
+        illustratorFiles:
+          airtableFiles as unknown as import("../types").AirtableAttachment[],
       });
       if (updatedProject) {
         setProject(updatedProject);
@@ -476,12 +482,10 @@ const ProjectFunnelPage: React.FC = () => {
       {shouldRenderStage("Contacts") && (
         <FunnelStage
           ref={contactsStageRef}
-          stage="Contacts"
           title="Stage 1 — Add & Review Contacts"
           description="Add and manage the contacts who will receive custom cards for this project."
           isActive={isStageActive("Contacts")}
           isCompleted={isStageCompleted("Contacts")}
-          onAdvance={isStageActive("Contacts") ? handleAdvanceStage : undefined}
         >
           <div className="space-y-6">
             {/* Contact Management Controls */}
@@ -517,7 +521,8 @@ const ProjectFunnelPage: React.FC = () => {
 
               <button
                 onClick={handleCreateContact}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isStageCompleted("Contacts")}
               >
                 <Plus className="h-4 w-4" />
                 <span>Create Recipient</span>
@@ -581,12 +586,10 @@ const ProjectFunnelPage: React.FC = () => {
       {shouldRenderStage("Copy") && (
         <FunnelStage
           ref={copyStageRef}
-          stage="Copy"
           title="Stage 2 — Add & Review Copy"
           description="Create and review the copy content for each contact's custom card."
           isActive={isStageActive("Copy")}
           isCompleted={isStageCompleted("Copy")}
-          onAdvance={isStageActive("Copy") ? handleAdvanceStage : undefined}
         >
           <div className="space-y-6">
             {contacts.length === 0 ? (
@@ -632,14 +635,10 @@ const ProjectFunnelPage: React.FC = () => {
       {shouldRenderStage("Design Brief") && (
         <FunnelStage
           ref={designBriefStageRef}
-          stage="Design Brief"
           title="Stage 3 — Project Design Brief"
           description="Review the comprehensive design brief that will guide the creation of custom cards."
           isActive={isStageActive("Design Brief")}
           isCompleted={isStageCompleted("Design Brief")}
-          onAdvance={
-            isStageActive("Design Brief") ? handleAdvanceStage : undefined
-          }
         >
           <div className="space-y-6">
             {contacts.length === 0 ? (
@@ -677,14 +676,10 @@ const ProjectFunnelPage: React.FC = () => {
       {shouldRenderStage("Design Round 1") && (
         <FunnelStage
           ref={designRound1StageRef}
-          stage="Design Round 1"
           title="Stage 4 — Review & Approve Designs (Round I)"
           description="Upload and review the first round of design concepts for each contact."
           isActive={isStageActive("Design Round 1")}
           isCompleted={isStageCompleted("Design Round 1")}
-          onAdvance={
-            isStageActive("Design Round 1") ? handleAdvanceStage : undefined
-          }
         >
           <div className="space-y-6">
             {/* Design Creator Filter */}
@@ -765,14 +760,10 @@ const ProjectFunnelPage: React.FC = () => {
       {shouldRenderStage("Design Round 2") && (
         <FunnelStage
           ref={designRound2StageRef}
-          stage="Design Round 2"
           title="Stage 5 — Review & Approve Designs (Round II)"
           description="Upload and review the second round of design revisions for each contact."
           isActive={isStageActive("Design Round 2")}
           isCompleted={isStageCompleted("Design Round 2")}
-          onAdvance={
-            isStageActive("Design Round 2") ? handleAdvanceStage : undefined
-          }
         >
           <div className="space-y-6">
             {/* Design Creator Filter */}
@@ -853,12 +844,10 @@ const ProjectFunnelPage: React.FC = () => {
       {shouldRenderStage("Handoff") && (
         <FunnelStage
           ref={handoffStageRef}
-          stage="Handoff"
           title="Stage 6 — Upload Final Design File(s)"
           description="Upload the final design files that are ready for production."
           isActive={isStageActive("Handoff")}
           isCompleted={isStageCompleted("Handoff")}
-          onAdvance={isStageActive("Handoff") ? handleAdvanceStage : undefined}
         >
           <div className="space-y-6">
             <FinalDesignFileUploader
@@ -887,14 +876,10 @@ const ProjectFunnelPage: React.FC = () => {
       {shouldRenderStage("Ready for Print") && (
         <FunnelStage
           ref={readyForPrintStageRef}
-          stage="Ready for Print"
           title="Stage 7 — Ready for Print"
           description="Review and finalize all files and details before sending to print."
           isActive={isStageActive("Ready for Print")}
           isCompleted={isStageCompleted("Ready for Print")}
-          onAdvance={
-            isStageActive("Ready for Print") ? handleAdvanceStage : undefined
-          }
         >
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -955,7 +940,6 @@ const ProjectFunnelPage: React.FC = () => {
       {shouldRenderStage("Project Complete") && (
         <FunnelStage
           ref={projectCompleteStageRef}
-          stage="Project Complete"
           title="Stage 8 — Completed"
           description="This project has been successfully completed and delivered."
           isActive={isStageActive("Project Complete")}
