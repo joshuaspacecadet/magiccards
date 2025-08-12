@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit, Trash2, Mail, Phone, Building2, MapPin, ExternalLink, ChevronDown, ChevronUp, User } from 'lucide-react';
+import { Edit, Trash2, Mail, Phone, Building2, MapPin, ExternalLink, ChevronDown, ChevronUp, User, Copy, Check } from 'lucide-react';
 import { Contact } from '../types';
 import { normalizeUrl, openUrlSafely } from '../utils/urlHelpers';
 
@@ -17,6 +17,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
   isStageLocked = false 
 }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [copiedConfirmUrl, setCopiedConfirmUrl] = useState(false);
 
   console.log("Debug: ContactCard received contact:", contact);
 
@@ -28,6 +29,17 @@ const ContactCard: React.FC<ContactCardProps> = ({
     e.preventDefault();
     if (contact.linkedinUrl) {
       openUrlSafely(contact.linkedinUrl);
+    }
+  };
+
+  const handleCopyConfirmUrl = async () => {
+    if (!contact.confirmAddressUrl) return;
+    try {
+      await navigator.clipboard.writeText(contact.confirmAddressUrl);
+      setCopiedConfirmUrl(true);
+      setTimeout(() => setCopiedConfirmUrl(false), 1500);
+    } catch (error) {
+      console.error('Failed to copy URL:', error);
     }
   };
 
@@ -173,6 +185,30 @@ const ContactCard: React.FC<ContactCardProps> = ({
                     className="hover:text-blue-600 transition-colors text-xs truncate text-left"
                   >
                     LinkedIn Profile
+                  </button>
+                </div>
+              )}
+
+              {contact.confirmAddressUrl && (
+                <div className="flex items-center text-slate-600">
+                  <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
+                  <button
+                    onClick={() => openUrlSafely(contact.confirmAddressUrl!)}
+                    className="hover:text-blue-600 transition-colors text-xs truncate text-left mr-2"
+                    title={contact.confirmAddressUrl}
+                  >
+                    Confirm Address URL
+                  </button>
+                  <button
+                    onClick={handleCopyConfirmUrl}
+                    className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded transition-colors"
+                    title={copiedConfirmUrl ? 'Copied!' : 'Copy URL'}
+                  >
+                    {copiedConfirmUrl ? (
+                      <Check className="h-3 w-3 text-green-600" />
+                    ) : (
+                      <Copy className="h-3 w-3" />
+                    )}
                   </button>
                 </div>
               )}

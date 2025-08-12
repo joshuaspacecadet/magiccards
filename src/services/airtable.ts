@@ -53,6 +53,7 @@ const transformAirtableContact = (record: any): Contact => {
     companyLogo: fields["Company Logo"] || [],
     headshot: fields["Headshot"] || [],
     linkedinUrl: fields["LinkedIn URL"] || "",
+    confirmAddressUrl: fields["Confirm Address URL"] || "",
     additionalContactContext: fields["Additional Contact Context"] || "",
     contactAddedBy: fields["Contact Added By"] || "", // ADD THIS LINE
     copyTitle1: fields["Copy Title 1"] || "",

@@ -28,6 +28,7 @@ export interface Contact {
   companyLogo?: AirtableAttachment[];
   headshot?: AirtableAttachment[];
   linkedinUrl?: string;
+  confirmAddressUrl?: string;
   additionalContactContext?: string;
   contactAddedBy?: string; // New field for who added the contact
   copyTitle1?: string;
