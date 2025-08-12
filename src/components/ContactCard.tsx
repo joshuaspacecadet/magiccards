@@ -132,6 +132,26 @@ const ContactCard: React.FC<ContactCardProps> = ({
         </div>
       </div>
 
+      {/* Missing Address Callout (visible in main view) */}
+      {!contact.streetLine1 && (
+        <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded flex items-center justify-between">
+          <span className="text-xs font-medium text-red-700">Missing Address</span>
+          {contact.confirmAddressUrl && (
+            <button
+              onClick={handleCopyConfirmUrl}
+              className="p-1 text-red-600 hover:text-red-700 hover:bg-red-100 rounded transition-colors flex items-center"
+              title={copiedConfirmUrl ? 'Copied!' : 'Copy Confirm Address URL'}
+            >
+              {copiedConfirmUrl ? (
+                <Check className="h-3 w-3" />
+              ) : (
+                <Copy className="h-3 w-3" />
+              )}
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Toggle button for contact details */}
       {hasContactDetails && (
         <div className="border-t border-slate-200 pt-3">
