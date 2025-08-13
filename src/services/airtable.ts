@@ -26,7 +26,7 @@ const transformAirtableProject = (record: any): Project => {
     finalDesignFileLink: fields["Final Design File Link"] || "", // New field mapping
     linkedContacts: fields["Contacts"] || [], // Array of Contact record IDs
     printerSubmissionDate: fields["Printer Submission Date"] || "",
-    shippedToPacksmithDate: fields["Shipped to Packsmith Date"] || "",
+    shippedToPacksmithDate: fields["Orders Fulfillment Date"] || "",
     createdAt: fields["Created At"] || record._rawJson.createdTime,
     updatedAt: fields["Last Modified"] || record._rawJson.createdTime, // Use Last Modified field
   };
@@ -138,7 +138,7 @@ export class AirtableService {
         createFields["Printer Submission Date"] =
           projectData.printerSubmissionDate;
       if (projectData.shippedToPacksmithDate)
-        createFields["Shipped to Packsmith Date"] =
+        createFields["Orders Fulfillment Date"] =
           projectData.shippedToPacksmithDate;
 
       const record = await base(airtableConfig.tables.projects).create(
@@ -175,7 +175,7 @@ export class AirtableService {
       if (updates.printerSubmissionDate !== undefined)
         updateFields["Printer Submission Date"] = updates.printerSubmissionDate;
       if (updates.shippedToPacksmithDate !== undefined)
-        updateFields["Shipped to Packsmith Date"] =
+        updateFields["Orders Fulfillment Date"] =
           updates.shippedToPacksmithDate;
 
       const record = await base(airtableConfig.tables.projects).update(

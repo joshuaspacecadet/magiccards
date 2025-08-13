@@ -1012,25 +1012,22 @@ const ProjectFunnelPage: React.FC = () => {
                 icon={<Hash className="h-4 w-4" />}
                 disabled={isStageCompleted("Ready for Print")}
               />
-
-              <ProjectFieldEditor
-                label="Orders Fulfillment Date"
-                value={project.shippedToPacksmithDate || ""}
-                onSave={(value) =>
-                  handleSaveProjectField("shippedToPacksmithDate", value)
-                }
-                type="date"
-                placeholder="Select shipping date"
-                icon={<Hash className="h-4 w-4" />}
-                disabled={isStageCompleted("Ready for Print")}
-              />
             </div>
 
             {/* Final Designs Links */}
             <div className="bg-white p-6 rounded-lg border border-slate-200 space-y-4">
-              <div className="flex items-center space-x-2">
-                <ExternalLink className="h-5 w-5 text-blue-600" />
-                <h4 className="text-lg font-semibold text-slate-900">Final Designs</h4>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <ExternalLink className="h-5 w-5 text-blue-600" />
+                  <h4 className="text-lg font-semibold text-slate-900">Final Designs</h4>
+                </div>
+                <a
+                  href={contactsCsvDataUri}
+                  download={`contacts_${project.name?.replace(/[^a-zA-Z0-9]/g, '_') || 'project'}.csv`}
+                  className="px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  Contacts CSV
+                </a>
               </div>
 
               <div className="space-y-2">
@@ -1084,6 +1081,20 @@ const ProjectFunnelPage: React.FC = () => {
                   </a>
                 </div>
               </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <ProjectFieldEditor
+                label="Orders Fulfillment Date"
+                value={project.shippedToPacksmithDate || ""}
+                onSave={(value) =>
+                  handleSaveProjectField("shippedToPacksmithDate", value)
+                }
+                type="date"
+                placeholder="Select fulfillment date"
+                icon={<Hash className="h-4 w-4" />}
+                disabled={isStageCompleted("Ready for Print")}
+              />
             </div>
 
             {/* Stage Completion */}
