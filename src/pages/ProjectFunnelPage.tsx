@@ -530,7 +530,7 @@ const ProjectFunnelPage: React.FC = () => {
         <FunnelStage
           ref={contactsStageRef}
           title="Stage 1 — Add & Review Contacts"
-          description="Add and manage the contacts who will receive a custom Magic Cards."
+          description="Add and manage the contacts who will receive a custom Magic Card."
           isActive={isStageActive("Contacts")}
           isCompleted={isStageCompleted("Contacts")}
           topActions={getRevertTopActions("Contacts")}
@@ -646,7 +646,7 @@ const ProjectFunnelPage: React.FC = () => {
         <FunnelStage
           ref={copyStageRef}
           title="Stage 2 — Add & Review Copy"
-          description="Create and review the copy content."
+          description="Create and review the copy content for each contact's Magic Card."
           isActive={isStageActive("Copy")}
           isCompleted={isStageCompleted("Copy")}
           topActions={getRevertTopActions("Copy")}
