@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit, Trash2, Mail, Phone, MapPin, ExternalLink, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
+import { Edit, Trash2, Mail, Phone, MapPin, ExternalLink, Copy, Check } from 'lucide-react';
 import { Contact } from '../types';
 import { normalizeUrl, openUrlSafely } from '../utils/urlHelpers';
 
@@ -16,7 +16,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
   onDelete, 
   isStageLocked = false 
 }) => {
-  const [showDetails, setShowDetails] = useState(false);
+  const [showDetails] = useState(true);
   const [copiedConfirmUrl, setCopiedConfirmUrl] = useState(false);
 
   console.log("Debug: ContactCard received contact:", contact);
@@ -64,7 +64,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
     return addressParts.join('\n');
   };
 
-  const hasContactDetails = contact.email || contact.phone || formatAddress(contact);
+  // Details are always shown; no toggle
 
   return (
     <div className="bg-white rounded-lg border border-slate-200 p-4 hover:shadow-md transition-shadow flex flex-col h-full">
@@ -153,99 +153,82 @@ const ContactCard: React.FC<ContactCardProps> = ({
           </div>
         )}
 
-        {/* Toggleable contact details content */}
-        {showDetails && (
-          <div className="mt-1 space-y-2 text-sm">
-            {contact.email && (
-              <div className="flex items-center text-slate-600">
-                <Mail className="h-3 w-3 mr-2 flex-shrink-0" />
-                <a href={`mailto:${contact.email}`} className="hover:text-blue-600 transition-colors truncate">
-                  {contact.email}
-                </a>
-              </div>
-            )}
-            
-            {contact.phone && (
-              <div className="flex items-center text-slate-600">
-                <Phone className="h-3 w-3 mr-2 flex-shrink-0" />
-                <a href={`tel:${contact.phone}`} className="hover:text-blue-600 transition-colors">
-                  {contact.phone}
-                </a>
-              </div>
-            )}
+        {/* Always-visible contact details */}
+        <div className="mt-1 space-y-2 text-sm">
+          {contact.email && (
+            <div className="flex items-center text-slate-600">
+              <Mail className="h-3 w-3 mr-2 flex-shrink-0" />
+              <a href={`mailto:${contact.email}`} className="hover:text-blue-600 transition-colors truncate text-xs">
+                {contact.email}
+              </a>
+            </div>
+          )}
+          
+          {contact.phone && (
+            <div className="flex items-center text-slate-600">
+              <Phone className="h-3 w-3 mr-2 flex-shrink-0" />
+              <a href={`tel:${contact.phone}`} className="hover:text-blue-600 transition-colors">
+                {contact.phone}
+              </a>
+            </div>
+          )}
 
-            {formatAddress(contact) && (
-              <div className="flex items-start text-slate-600">
-                <MapPin className="h-3 w-3 mr-2 mt-0.5 flex-shrink-0" />
-                <div className="text-xs whitespace-pre-line">
-                  {formatAddress(contact)}
-                </div>
+          {formatAddress(contact) && (
+            <div className="flex items-start text-slate-600">
+              <MapPin className="h-3 w-3 mr-2 mt-0.5 flex-shrink-0" />
+              <div className="text-xs whitespace-pre-line">
+                {formatAddress(contact)}
               </div>
-            )}
+            </div>
+          )}
 
-            {contact.linkedinUrl && (
-              <div className="flex items-center text-slate-600">
-                <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
-                <button 
-                  onClick={handleLinkedInClick}
-                  className="hover:text-blue-600 transition-colors text-xs truncate text-left"
-                >
-                  LinkedIn Profile
-                </button>
-              </div>
-            )}
+          {contact.linkedinUrl && (
+            <div className="flex items-center text-slate-600">
+              <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
+              <button 
+                onClick={handleLinkedInClick}
+                className="hover:text-blue-600 transition-colors text-xs truncate text-left"
+              >
+                LinkedIn Profile
+              </button>
+            </div>
+          )}
 
-            {contact.confirmAddressUrl && (
-              <div className="flex items-center text-slate-600">
-                <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
-                <button
-                  onClick={() => openUrlSafely(contact.confirmAddressUrl!)}
-                  className="hover:text-blue-600 transition-colors text-xs truncate text-left mr-2"
-                  title={contact.confirmAddressUrl}
-                >
-                  Confirm Address URL
-                </button>
-                <button
-                  onClick={handleCopyConfirmUrl}
-                  className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded transition-colors"
-                  title={copiedConfirmUrl ? 'Copied!' : 'Copy URL'}
-                >
-                  {copiedConfirmUrl ? (
-                    <Check className="h-3 w-3 text-green-600" />
-                  ) : (
-                    <Copy className="h-3 w-3" />
-                  )}
-                </button>
-              </div>
-            )}
+          {contact.confirmAddressUrl && contact.streetLine1 && (
+            <div className="flex items-center text-slate-600">
+              <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
+              <button
+                onClick={() => openUrlSafely(contact.confirmAddressUrl!)}
+                className="hover:text-blue-600 transition-colors text-xs truncate text-left mr-2"
+                title={contact.confirmAddressUrl}
+              >
+                Confirm Address URL
+              </button>
+              <button
+                onClick={handleCopyConfirmUrl}
+                className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded transition-colors"
+                title={copiedConfirmUrl ? 'Copied!' : 'Copy URL'}
+              >
+                {copiedConfirmUrl ? (
+                  <Check className="h-3 w-3 text-green-600" />
+                ) : (
+                  <Copy className="h-3 w-3" />
+                )}
+              </button>
+            </div>
+          )}
 
-            {contact.additionalContactContext && (
-              <div className="pt-2 border-t border-slate-200">
-                <p className="text-xs text-slate-600 italic">
-                  {contact.additionalContactContext}
-                </p>
-              </div>
-            )}
-          </div>
-        )}
+          {contact.additionalContactContext && (
+            <div className="pt-2 border-t border-slate-200">
+              <p className="text-xs text-slate-600 italic">
+                {contact.additionalContactContext}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Bottom toggle bar to keep cards uniform */}
-      {hasContactDetails && (
-        <div className="border-t border-slate-200 pt-3 mt-3">
-          <button
-            onClick={() => setShowDetails(!showDetails)}
-            className="flex items-center justify-between w-full text-sm text-slate-600 hover:text-slate-900 transition-colors"
-          >
-            <span>{showDetails ? 'Hide Details' : 'Show Details'}</span>
-            {showDetails ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
-          </button>
-        </div>
-      )}
+      {/* No toggle; details are always shown */}
     </div>
   );
 };
