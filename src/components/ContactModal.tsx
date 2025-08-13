@@ -59,6 +59,8 @@ const ContactModal: React.FC<ContactModalProps> = ({
   >([]);
   const [isUploadingHeadshots, setIsUploadingHeadshots] = useState(false);
   const [isUploadingLogos, setIsUploadingLogos] = useState(false);
+  const [isDragOverHeadshots, setIsDragOverHeadshots] = useState(false);
+  const [isDragOverLogos, setIsDragOverLogos] = useState(false);
   const [linkedinUrlError, setLinkedinUrlError] = useState<string>("");
   const [uploadProgress, setUploadProgress] = useState<{
     [key: string]: number;
@@ -323,6 +325,39 @@ const ContactModal: React.FC<ContactModalProps> = ({
     },
     [handleFileUpload]
   );
+
+  const handleDragOver = (
+    e: React.DragEvent,
+    type: "headshot" | "logo"
+  ) => {
+    e.preventDefault();
+    if (type === "headshot") {
+      if (!isUploadingHeadshots) setIsDragOverHeadshots(true);
+    } else {
+      if (!isUploadingLogos) setIsDragOverLogos(true);
+    }
+  };
+
+  const handleDragLeave = (
+    e: React.DragEvent,
+    type: "headshot" | "logo"
+  ) => {
+    e.preventDefault();
+    if (type === "headshot") setIsDragOverHeadshots(false);
+    else setIsDragOverLogos(false);
+  };
+
+  const handleDrop = async (
+    e: React.DragEvent,
+    type: "headshot" | "logo"
+  ) => {
+    e.preventDefault();
+    if (type === "headshot") setIsDragOverHeadshots(false);
+    else setIsDragOverLogos(false);
+    const files = Array.from(e.dataTransfer.files || []);
+    if (files.length === 0) return;
+    await handleFileUpload(files, type);
+  };
 
   const handleRemoveFile = (index: number, type: "headshot" | "logo") => {
     if (type === "headshot") {
@@ -589,7 +624,16 @@ const ContactModal: React.FC<ContactModalProps> = ({
                   Headshot
                 </label>
 
-                <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-slate-400 transition-colors">
+                <div
+                  className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${
+                    isDragOverHeadshots
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-slate-300 hover:border-slate-400"
+                  } ${isUploadingHeadshots ? "opacity-50 pointer-events-none" : ""}`}
+                  onDragOver={(e) => handleDragOver(e, "headshot")}
+                  onDragLeave={(e) => handleDragLeave(e, "headshot")}
+                  onDrop={(e) => handleDrop(e, "headshot")}
+                >
                   <input
                     type="file"
                     multiple
@@ -669,7 +713,16 @@ const ContactModal: React.FC<ContactModalProps> = ({
                   Company Logo
                 </label>
 
-                <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-slate-400 transition-colors">
+                <div
+                  className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${
+                    isDragOverLogos
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-slate-300 hover:border-slate-400"
+                  } ${isUploadingLogos ? "opacity-50 pointer-events-none" : ""}`}
+                  onDragOver={(e) => handleDragOver(e, "logo")}
+                  onDragLeave={(e) => handleDragLeave(e, "logo")}
+                  onDrop={(e) => handleDrop(e, "logo")}
+                >
                   <input
                     type="file"
                     multiple
@@ -822,7 +875,6 @@ const ContactModal: React.FC<ContactModalProps> = ({
                   }
                   className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="12345"
-                  maxLength={5}
                 />
               </div>
 
