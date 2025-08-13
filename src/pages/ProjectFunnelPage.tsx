@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Users,
@@ -490,6 +490,37 @@ const ProjectFunnelPage: React.FC = () => {
       (contact) => contact.contactAddedBy === filterCreator
     );
   };
+
+  // CSV generation for Stage 7
+  const contactsCsvDataUri = useMemo(() => {
+    const headers = [
+      "Full Name",
+      "Street Line 1",
+      "Street Line 2 (Apt, Suite, Floor, etc.)",
+      "City",
+      "State / Province",
+      "Postal Code",
+      "Country",
+    ];
+    const escapeCsv = (value: string | undefined) => {
+      const str = (value ?? "").toString();
+      if (str.includes('"') || str.includes(',') || str.includes('\n') || str.includes('\r')) {
+        return '"' + str.replace(/"/g, '""') + '"';
+      }
+      return str;
+    };
+    const rows = contacts.map((c) => [
+      escapeCsv(c.name),
+      escapeCsv(c.streetLine1),
+      escapeCsv(c.streetLine2),
+      escapeCsv(c.city),
+      escapeCsv(c.state),
+      escapeCsv(c.postCode),
+      escapeCsv(c.countryCode),
+    ].join(","));
+    const csv = [headers.join(","), ...rows].join("\r\n");
+    return `data:text/csv;charset=utf-8,${encodeURIComponent(csv)}`;
+  }, [contacts]);
 
   if (isLoading) {
     return (
@@ -1037,6 +1068,18 @@ const ProjectFunnelPage: React.FC = () => {
                 {!((project.illustratorFiles && project.illustratorFiles.length > 0) || project.finalDesignFileLink) && (
                   <p className="text-sm text-slate-500">No final designs linked yet. Add them in Stage 6.</p>
                 )}
+
+                {/* Contacts CSV */}
+                <div className="pt-2 border-t border-slate-200">
+                  <p className="text-sm text-slate-600 mb-1">Contacts CSV</p>
+                  <a
+                    href={contactsCsvDataUri}
+                    download={`contacts_${project.name?.replace(/[^a-zA-Z0-9]/g, '_') || 'project'}.csv`}
+                    className="inline-flex items-center text-blue-600 hover:text-blue-700 underline"
+                  >
+                    Download contacts.csv
+                  </a>
+                </div>
               </div>
             </div>
 
