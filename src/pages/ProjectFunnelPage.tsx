@@ -915,23 +915,25 @@ const ProjectFunnelPage: React.FC = () => {
               </div>
             )}
 
-            {getFilteredDesignContacts().length === 0 ? (
+              {getFilteredDesignContacts().filter((c) => c.rejectRound1).length === 0 ? (
               <div className="text-center py-12 bg-slate-50 rounded-lg border-2 border-dashed border-slate-300">
                 <Palette className="h-12 w-12 text-slate-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-slate-900 mb-2">
                   {selectedDesignCreatorFilter
-                    ? "No contacts found for this creator"
-                    : "No contacts available"}
+                    ? "No rejected designs found for this creator"
+                    : "No designs to review in Round II"}
                 </h3>
                 <p className="text-slate-600">
                   {selectedDesignCreatorFilter
-                    ? "Try selecting a different creator or clear the filter to see all contacts."
-                    : "Complete previous stages to proceed with design reviews."}
+                    ? "Try selecting a different creator or clear the filter. Only designs rejected in Round I appear here."
+                    : "Only designs rejected in Round I are shown here."}
                 </p>
               </div>
             ) : (
               <div className="space-y-6">
-                {getFilteredDesignContacts().map((contact) => (
+                {getFilteredDesignContacts()
+                  .filter((c) => c.rejectRound1)
+                  .map((contact) => (
                   <ContactDesignRoundEditor
                     key={contact.id}
                     contact={contact}
@@ -939,7 +941,7 @@ const ProjectFunnelPage: React.FC = () => {
                     isReadOnly={isStageCompleted("Design Round 2")}
                     roundNumber={2}
                   />
-                ))}
+                  ))}
               </div>
             )}
 
