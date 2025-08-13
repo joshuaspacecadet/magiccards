@@ -414,7 +414,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Recipient Name *
+                  Full Name *
                 </label>
                 <input
                   type="text"
@@ -424,7 +424,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
                     setFormData({ ...formData, name: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter recipient name"
+                  placeholder="Enter full name"
                 />
               </div>
 
@@ -486,7 +486,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
                   className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   disabled={isLoading}
                 >
-                  <option value="">Select Creator</option>
+                  <option value="">Please Select</option>
                   {availableCreators.map((creator) => (
                     <option key={creator} value={creator}>
                       {creator}
@@ -540,18 +540,6 @@ const ContactModal: React.FC<ContactModalProps> = ({
                 <label className="block text-sm font-medium text-slate-700">
                   Headshot
                 </label>
-
-                {/* Debug button */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    console.log("Debug: Clicking headshot file input");
-                    document.getElementById("headshot-upload")?.click();
-                  }}
-                  className="text-xs text-blue-600 hover:text-blue-700 mb-2"
-                >
-                  Debug: Click to test file input
-                </button>
 
                 <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-slate-400 transition-colors">
                   <input
@@ -632,18 +620,6 @@ const ContactModal: React.FC<ContactModalProps> = ({
                 <label className="block text-sm font-medium text-slate-700">
                   Company Logo
                 </label>
-
-                {/* Debug button */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    console.log("Debug: Clicking logo file input");
-                    document.getElementById("logo-upload")?.click();
-                  }}
-                  className="text-xs text-blue-600 hover:text-blue-700 mb-2"
-                >
-                  Debug: Click to test file input
-                </button>
 
                 <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-slate-400 transition-colors">
                   <input
@@ -743,22 +719,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Street Number (Leave Blank)
-                </label>
-                <input
-                  type="text"
-                  value={formData.streetNumber}
-                  onChange={(e) =>
-                    setFormData({ ...formData, streetNumber: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Street number"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Street Line 2 (Unit Number)
+                  Street Line 2 (Apt, Suite, Floor, etc.)
                 </label>
                 <input
                   type="text"
@@ -767,7 +728,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
                     setFormData({ ...formData, streetLine2: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Apt, Suite, Unit"
+                  placeholder="Apt, Suite, Floor, etc."
                 />
               </div>
 
@@ -788,7 +749,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  State
+                  State / Province
                 </label>
                 <input
                   type="text"
@@ -803,7 +764,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Post Code (5 digits)
+                  Postal Code
                 </label>
                 <input
                   type="text"
@@ -819,7 +780,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Country Code
+                  Country
                 </label>
                 <input
                   type="text"
@@ -876,7 +837,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
                 }
                 rows={3}
                 className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Any additional notes or context about this contact..."
+                placeholder="loves to surf, lives bi-coastal, training for a marathon"
               />
             </div>
           </div>
@@ -896,7 +857,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
               ) : contact ? (
                 "Save Changes"
               ) : (
-                "Create Contact"
+                "Save Recipient"
               )}
             </button>
           </div>
