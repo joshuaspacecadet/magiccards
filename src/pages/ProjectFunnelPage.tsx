@@ -181,6 +181,51 @@ const ProjectFunnelPage: React.FC = () => {
     return currentIndex > 0;
   };
 
+  const handleRevertToStage = async (targetStage: ProjectStage) => {
+    if (!project) return;
+    try {
+      const updatedProject = await AirtableService.updateProject(project.id, {
+        stage: targetStage,
+      });
+      if (updatedProject) {
+        setProject(updatedProject);
+        setTimeout(() => {
+          scrollToStage(targetStage);
+        }, 300);
+      }
+    } catch (error) {
+      console.error("Error reverting stage:", error);
+    }
+  };
+
+  const getRevertTopActions = (stage: ProjectStage): React.ReactNode => {
+    if (!project) return null;
+    const stageOrder: ProjectStage[] = [
+      "Contacts",
+      "Copy",
+      "Design Brief",
+      "Design Round 1",
+      "Design Round 2",
+      "Handoff",
+      "Ready for Print",
+      "Project Complete",
+    ];
+    const currentIndex = stageOrder.indexOf(project.stage);
+    if (currentIndex <= 0) return null;
+    const previousStage = stageOrder[currentIndex - 1];
+    if (previousStage !== stage) return null;
+    const stageNumber = stageOrder.indexOf(stage) + 1;
+    const label = `Revert to Stage ${stageNumber}`;
+    return (
+      <button
+        onClick={() => handleRevertToStage(stage)}
+        className="px-2 py-1 text-xs rounded border bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+      >
+        {label}
+      </button>
+    );
+  };
+
   const scrollToStage = (stage: ProjectStage) => {
     const stageRefs = {
       Contacts: contactsStageRef,
@@ -537,7 +582,7 @@ const ProjectFunnelPage: React.FC = () => {
           description="Add and manage the contacts who will receive custom cards for this project."
           isActive={isStageActive("Contacts")}
           isCompleted={isStageCompleted("Contacts")}
-          topActions={null}
+          topActions={getRevertTopActions("Contacts")}
         >
           <div className="space-y-6">
             {/* Contact Management Controls */}
@@ -653,19 +698,7 @@ const ProjectFunnelPage: React.FC = () => {
           description="Create and review the copy content for each contact's custom card."
           isActive={isStageActive("Copy")}
           isCompleted={isStageCompleted("Copy")}
-          topActions={
-            <button
-              onClick={handleUndoStage}
-              disabled={!canUndoStage()}
-              className={`px-2 py-1 text-xs rounded border ${
-                canUndoStage()
-                  ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
-                  : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
-              }`}
-            >
-              Revert to Stage 1
-            </button>
-          }
+          topActions={getRevertTopActions("Copy")}
         >
           <div className="space-y-6">
             {contacts.length === 0 ? (
@@ -715,19 +748,7 @@ const ProjectFunnelPage: React.FC = () => {
           description="Review the comprehensive design brief that will guide the creation of custom cards."
           isActive={isStageActive("Design Brief")}
           isCompleted={isStageCompleted("Design Brief")}
-          topActions={
-            <button
-              onClick={handleUndoStage}
-              disabled={!canUndoStage()}
-              className={`px-2 py-1 text-xs rounded border ${
-                canUndoStage()
-                  ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
-                  : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
-              }`}
-            >
-              Revert to Stage 2
-            </button>
-          }
+          topActions={getRevertTopActions("Design Brief")}
         >
           <div className="space-y-6">
             {contacts.length === 0 ? (
@@ -769,19 +790,7 @@ const ProjectFunnelPage: React.FC = () => {
           description="Upload and review the first round of design concepts for each contact."
           isActive={isStageActive("Design Round 1")}
           isCompleted={isStageCompleted("Design Round 1")}
-          topActions={
-            <button
-              onClick={handleUndoStage}
-              disabled={!canUndoStage()}
-              className={`px-2 py-1 text-xs rounded border ${
-                canUndoStage()
-                  ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
-                  : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
-              }`}
-            >
-              Revert to Stage 3
-            </button>
-          }
+          topActions={getRevertTopActions("Design Round 1")}
         >
           <div className="space-y-6">
             {/* Design Creator Filter */}
@@ -875,19 +884,7 @@ const ProjectFunnelPage: React.FC = () => {
           description="Upload and review the second round of design revisions for each contact."
           isActive={isStageActive("Design Round 2")}
           isCompleted={isStageCompleted("Design Round 2")}
-          topActions={
-            <button
-              onClick={handleUndoStage}
-              disabled={!canUndoStage()}
-              className={`px-2 py-1 text-xs rounded border ${
-                canUndoStage()
-                  ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
-                  : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
-              }`}
-            >
-              Revert to Stage 4
-            </button>
-          }
+          topActions={getRevertTopActions("Design Round 2")}
         >
           <div className="space-y-6">
             {/* Design Creator Filter */}
@@ -981,19 +978,7 @@ const ProjectFunnelPage: React.FC = () => {
           description="Upload the final design files that are ready for production."
           isActive={isStageActive("Handoff")}
           isCompleted={isStageCompleted("Handoff")}
-          topActions={
-            <button
-              onClick={handleUndoStage}
-              disabled={!canUndoStage()}
-              className={`px-2 py-1 text-xs rounded border ${
-                canUndoStage()
-                  ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
-                  : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
-              }`}
-            >
-              Revert to Stage 5
-            </button>
-          }
+          topActions={getRevertTopActions("Handoff")}
         >
           <div className="space-y-6">
             <FinalDesignFileUploader
@@ -1026,19 +1011,7 @@ const ProjectFunnelPage: React.FC = () => {
           description="Review and finalize all files and details before sending to print."
           isActive={isStageActive("Ready for Print")}
           isCompleted={isStageCompleted("Ready for Print")}
-          topActions={
-            <button
-              onClick={handleUndoStage}
-              disabled={!canUndoStage()}
-              className={`px-2 py-1 text-xs rounded border ${
-                canUndoStage()
-                  ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
-                  : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
-              }`}
-            >
-              Revert to Stage 6
-            </button>
-          }
+          topActions={getRevertTopActions("Ready for Print")}
         >
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1103,19 +1076,7 @@ const ProjectFunnelPage: React.FC = () => {
           description="This project has been successfully completed and delivered."
           isActive={isStageActive("Project Complete")}
           isCompleted={false}
-          topActions={
-            <button
-              onClick={handleUndoStage}
-              disabled={!canUndoStage()}
-              className={`px-2 py-1 text-xs rounded border ${
-                canUndoStage()
-                  ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
-                  : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
-              }`}
-            >
-              Revert to Stage 7
-            </button>
-          }
+          topActions={getRevertTopActions("Project Complete")}
         >
           <div className="text-center py-12">
             <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
