@@ -511,6 +511,9 @@ const ProjectFunnelPage: React.FC = () => {
       "Postal Code",
       "Country",
       "LinkedIn URL",
+      "Magic Cards",
+      "SFS Book",
+      "Golden Record",
     ];
     const headerLine = headers.map((h) => escapeCsv(h)).join(",");
     const rows = contacts.map((c) => [
@@ -523,6 +526,9 @@ const ProjectFunnelPage: React.FC = () => {
       escapeCsv(c.postCode),
       escapeCsv(c.countryCode),
       escapeCsv(c.linkedinUrl),
+      escapeCsv(c.magicCards ? "1" : ""),
+      escapeCsv(c.sfsBook ? "1" : ""),
+      escapeCsv(c.goldenRecord ? "1" : ""),
     ].join(","));
     const csv = [headerLine, ...rows].join("\r\n");
     return `data:text/csv;charset=utf-8,${encodeURIComponent(csv)}`;
