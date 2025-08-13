@@ -393,44 +393,7 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
 
   return (
     <div className="bg-white rounded-lg border border-slate-200 p-6 space-y-6">
-      {currentRound === 2 && (
-        <div className="space-y-3">
-          <h5 className="font-medium text-slate-900">Round 1 Summary</h5>
-          {previousRoundFiles.length > 0 && (
-            <div>
-              <p className="text-sm text-slate-700 mb-2">Round 1 Files ({previousRoundFiles.length})</p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {previousRoundFiles.map((file, index) => (
-                  <div key={index} className="relative group bg-slate-50 rounded-lg border border-slate-200 p-4">
-                    {isImage(file) ? (
-                      <div className="aspect-square mb-3 bg-white rounded border overflow-hidden">
-                        <img
-                          src={file.url}
-                          alt={file.filename}
-                          className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                          onClick={() => handleFilePreview(file)}
-                        />
-                      </div>
-                    ) : (
-                      <div className="aspect-square mb-3 bg-white rounded border flex items-center justify-center">
-                        {getFileIcon(file)}
-                      </div>
-                    )}
-                    <p className="text-sm font-medium text-slate-900 truncate" title={file.filename}>
-                      {file.filename}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          {previousRoundFeedback && (
-            <div className="bg-slate-50 border border-slate-200 rounded p-3">
-              <p className="text-sm text-slate-700 whitespace-pre-line">{previousRoundFeedback}</p>
-            </div>
-          )}
-        </div>
-      )}
+      
       {/* Contact Header */}
       <div className="flex items-center justify-between pb-4 border-b border-slate-200">
         <div className="flex items-center space-x-3">
