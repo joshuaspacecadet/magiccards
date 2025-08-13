@@ -61,7 +61,7 @@ const InvoiceUploader: React.FC<{
   return (
     <div className="bg-white rounded-xl p-6 border border-slate-200 max-w-lg mx-auto">
       <h4 className="text-lg font-semibold text-slate-900 mb-2">Upload Invoice</h4>
-      <p className="text-sm text-slate-600 mb-4">Upload the invoice from your print/fulfillment partner.</p>
+      <p className="text-sm text-slate-600 mb-4">Upload print/fulfillment invoice.</p>
       {errorMessage && (
         <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded p-2 mb-3">{errorMessage}</div>
       )}
