@@ -98,32 +98,34 @@ const ContactCopyEditor: React.FC<ContactCopyEditorProps> = ({
         <div className="order-2 lg:order-1 lg:col-span-1">
           <div className="border border-slate-300 rounded-lg p-4 bg-white">
             <h3 className="text-sm font-medium text-slate-700 mb-2">Live Preview</h3>
-            <div className="border border-slate-700 rounded-md p-3 space-y-3 bg-black text-white" style={{ aspectRatio: '5 / 7' }}>
-              <div className="border border-slate-700 rounded-md px-3 py-2 text-sm font-semibold text-white bg-black/30">
-                {copyData.copyTitle1 || 'Copy Title 1'}
-              </div>
-              <div className="h-40 border border-slate-700 rounded-md overflow-hidden bg-black">
-                {contact.headshot && contact.headshot.length > 0 ? (
-                  <img
-                    src={contact.headshot[0].url}
-                    alt={`${contact.name} headshot`}
-                    className="w-full h-full object-cover filter grayscale"
-                  />
-                ) : null}
-              </div>
-              <div className="border border-slate-700 rounded-md px-3 py-2 text-sm font-semibold text-white bg-black/30">
-                {copyData.copyTitle2 || 'Copy Title 2'}
-              </div>
-              <div className="border border-slate-700 rounded-md px-3 py-2 bg-black/30">
-                <div className="text-xs font-semibold text-white mb-1">
-                  {copyData.copyTitle3 || 'Copy Title 3'}
+            <div className="border border-slate-700 rounded-md p-3 bg-black text-white flex flex-col gap-3" style={{ aspectRatio: '5 / 7' }}>
+              <div className="flex-1 flex flex-col gap-3">
+                <div className="border border-slate-700 rounded-md px-3 py-2 text-sm font-semibold text-white bg-black/30">
+                  {copyData.copyTitle1 || 'Copy Title 1'}
                 </div>
-                <div className="text-xs text-white whitespace-pre-line">
-                  {copyData.copyMainText || 'Main copy will appear here...'}
+                <div className="h-40 border border-slate-700 rounded-md overflow-hidden bg-black">
+                  {contact.headshot && contact.headshot.length > 0 ? (
+                    <img
+                      src={contact.headshot[0].url}
+                      alt={`${contact.name} headshot`}
+                      className="w-full h-full object-cover filter grayscale"
+                    />
+                  ) : null}
+                </div>
+                <div className="border border-slate-700 rounded-md px-3 py-2 text-sm font-semibold text-white bg-black/30">
+                  {copyData.copyTitle2 || 'Copy Title 2'}
+                </div>
+                <div className="border border-slate-700 rounded-md px-3 py-2 bg-black/30">
+                  <div className="text-xs font-semibold text-white mb-1">
+                    {copyData.copyTitle3 || 'Copy Title 3'}
+                  </div>
+                  <div className="text-xs text-white whitespace-pre-line">
+                    {copyData.copyMainText || 'Main copy will appear here...'}
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center justify-between pt-1">
-                <img src="/spacecadet-logo.svg" alt="Spacecadet" className="h-3 opacity-80" />
+              <div className="flex items-center justify-between mt-auto">
+                <img src="/spacecadet-logo.png" alt="Spacecadet" className="h-3 opacity-80" />
                 <div className="text-[10px] text-white/60">preview</div>
               </div>
             </div>
