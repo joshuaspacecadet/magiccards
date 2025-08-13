@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { X, Loader2, Upload, Trash2, AlertCircle } from "lucide-react";
 import { Contact } from "../types";
 import { normalizeUrl, isValidUrl } from "../utils/urlHelpers";
@@ -130,6 +131,17 @@ const ContactModal: React.FC<ContactModalProps> = ({
     }
     setLinkedinUrlError("");
   }, [contact]);
+
+  // Disable background scroll when modal is open
+  useEffect(() => {
+    if (isOpen && typeof document !== "undefined") {
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = previousOverflow;
+      };
+    }
+  }, [isOpen]);
 
   const handleLinkedInUrlChange = (value: string) => {
     setFormData({ ...formData, linkedinUrl: value });
@@ -375,9 +387,9 @@ const ContactModal: React.FC<ContactModalProps> = ({
 
   if (!isOpen) return null;
 
-  return (
+  const modalContent = (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]"
       onClick={(e) => {
         console.log("Modal backdrop clicked", e.target);
         if (e.target === e.currentTarget) {
@@ -865,6 +877,8 @@ const ContactModal: React.FC<ContactModalProps> = ({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default ContactModal;
