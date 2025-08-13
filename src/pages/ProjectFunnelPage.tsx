@@ -657,6 +657,16 @@ const ProjectFunnelPage: React.FC = () => {
                     contact={contact}
                     onEdit={handleEditContact}
                     onDelete={handleDeleteContact}
+                    onUpdate={async (contactId, updates) => {
+                      try {
+                        const updated = await AirtableService.updateContact(contactId, updates);
+                        if (updated) {
+                          setContacts((prev) => prev.map((c) => (c.id === contactId ? updated : c)));
+                        }
+                      } catch (e) {
+                        console.error('Quick update failed', e);
+                      }
+                    }}
                     isStageLocked={isStageCompleted("Contacts")}
                   />
                 ))}

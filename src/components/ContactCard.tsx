@@ -7,6 +7,7 @@ interface ContactCardProps {
   contact: Contact;
   onEdit: (contact: Contact) => void;
   onDelete: (contactId: string) => void;
+  onUpdate: (contactId: string, updates: Partial<Contact>) => void | Promise<void>;
   isStageLocked?: boolean;
 }
 
@@ -14,6 +15,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
   contact, 
   onEdit, 
   onDelete, 
+  onUpdate,
   isStageLocked = false 
 }) => {
   const [showDetails] = useState(true);
@@ -164,8 +166,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
               type="checkbox"
               checked={!!contact.sfsBook}
               onChange={async () => {
-                const updated = { ...contact, sfsBook: !contact.sfsBook };
-                onEdit(updated);
+                await onUpdate(contact.id, { sfsBook: !contact.sfsBook });
               }}
               disabled={isStageLocked}
             />
@@ -176,8 +177,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
               type="checkbox"
               checked={!!contact.goldenRecord}
               onChange={async () => {
-                const updated = { ...contact, goldenRecord: !contact.goldenRecord };
-                onEdit(updated);
+                await onUpdate(contact.id, { goldenRecord: !contact.goldenRecord });
               }}
               disabled={isStageLocked}
             />
