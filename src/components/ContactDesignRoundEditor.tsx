@@ -11,6 +11,7 @@ import {
   Image,
   XCircle,
   AlertCircle,
+  Copy,
 } from "lucide-react";
 import { Contact, AirtableAttachment } from "../types";
 import { uploadToCloudinary } from "../utils/cloudinaryUpload";
@@ -52,6 +53,7 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
     [key: string]: number;
   }>({});
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [copiedConfirmUrl, setCopiedConfirmUrl] = useState(false);
 
   const currentFiles =
     currentRound === 1
@@ -75,6 +77,17 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
   const rejectField = currentRound === 1 ? "rejectRound1" : "rejectRound2";
 
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
+
+  const handleCopyConfirmUrl = async () => {
+    if (!contact.confirmAddressUrl) return;
+    try {
+      await navigator.clipboard.writeText(contact.confirmAddressUrl);
+      setCopiedConfirmUrl(true);
+      setTimeout(() => setCopiedConfirmUrl(false), 1500);
+    } catch (err) {
+      console.error("Failed to copy URL:", err);
+    }
+  };
 
   const handleDragOver = useCallback(
     (e: React.DragEvent) => {
@@ -420,7 +433,8 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
         </div>
       )}
       
-      {/* Contact Header */}
+      {/* Contact Header */
+      }
       <div className="flex items-center justify-between pb-4 border-b border-slate-200">
         <div className="flex items-center space-x-3">
           {contact.headshot && contact.headshot.length > 0 ? (
@@ -477,6 +491,26 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
           </div>
         )}
       </div>
+
+      {/* Missing Address Callout */}
+      {!contact.streetLine1 && (
+        <div className="mb-4 p-2 bg-red-50 border border-red-200 rounded flex items-center justify-between">
+          <span className="text-xs font-medium text-red-700">Missing Address</span>
+          {contact.confirmAddressUrl && (
+            <button
+              onClick={handleCopyConfirmUrl}
+              className="p-1 text-red-600 hover:text-red-700 hover:bg-red-100 rounded transition-colors flex items-center"
+              title={copiedConfirmUrl ? "Copied!" : "Copy Confirm Address URL"}
+            >
+              {copiedConfirmUrl ? (
+                <Check className="h-3 w-3" />
+              ) : (
+                <Copy className="h-3 w-3" />
+              )}
+            </button>
+          )}
+        </div>
+      )}
 
       {currentRound === 2 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

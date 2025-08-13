@@ -1215,7 +1215,7 @@ const ProjectFunnelPage: React.FC = () => {
         <FunnelStage
           ref={projectCompleteStageRef}
           title="Stage 8 — Completed"
-          description="This project has been successfully completed and delivered."
+          description="This project has been successfully completed and shipped."
           isActive={isStageActive("Project Complete")}
           isCompleted={false}
           topActions={getRevertTopActions("Project Complete")}
