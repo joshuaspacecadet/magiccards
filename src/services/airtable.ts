@@ -56,6 +56,8 @@ const transformAirtableContact = (record: any): Contact => {
     confirmAddressUrl: fields["Confirm Address URL"] || "",
     additionalContactContext: fields["Additional Contact Context"] || "",
     contactAddedBy: fields["Contact Added By"] || "", // ADD THIS LINE
+    sfsBook: fields["SFS Book"] || false,
+    goldenRecord: fields["Golden Record"] || false,
     copyTitle1: fields["Copy Title 1"] || "",
     copyTitle2: fields["Copy Title 2"] || "",
     copyTitle3: fields["Copy Title 3"] || "",
@@ -299,6 +301,10 @@ export class AirtableService {
           contactData.additionalContactContext;
       if (contactData.contactAddedBy && contactData.contactAddedBy !== "")
         createFields["Contact Added By"] = contactData.contactAddedBy;
+      if (contactData.sfsBook !== undefined)
+        createFields["SFS Book"] = contactData.sfsBook;
+      if (contactData.goldenRecord !== undefined)
+        createFields["Golden Record"] = contactData.goldenRecord;
       if (contactData.copyTitle1)
         createFields["Copy Title 1"] = contactData.copyTitle1;
       if (contactData.copyTitle2)
@@ -368,6 +374,10 @@ export class AirtableService {
           updates.additionalContactContext;
       if (updates.contactAddedBy !== undefined && updates.contactAddedBy !== "")
         updateFields["Contact Added By"] = updates.contactAddedBy;
+      if (updates.sfsBook !== undefined)
+        updateFields["SFS Book"] = updates.sfsBook;
+      if (updates.goldenRecord !== undefined)
+        updateFields["Golden Record"] = updates.goldenRecord;
       if (updates.copyTitle1 !== undefined)
         updateFields["Copy Title 1"] = updates.copyTitle1;
       if (updates.copyTitle2 !== undefined)

@@ -31,6 +31,8 @@ export interface Contact {
   confirmAddressUrl?: string;
   additionalContactContext?: string;
   contactAddedBy?: string; // New field for who added the contact
+  sfsBook?: boolean;
+  goldenRecord?: boolean;
   copyTitle1?: string;
   copyTitle2?: string;
   copyTitle3?: string;

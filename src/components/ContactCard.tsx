@@ -153,6 +153,28 @@ const ContactCard: React.FC<ContactCardProps> = ({
           </div>
         )}
 
+        {/* Items toggles */}
+        <div className="mb-2 text-xs flex items-center gap-4">
+          <label className="inline-flex items-center gap-1">
+            <input
+              type="checkbox"
+              checked={!!contact.sfsBook}
+              onChange={() => onEdit({ ...contact, sfsBook: !contact.sfsBook })}
+              disabled={isStageLocked}
+            />
+            <span>SFS Book</span>
+          </label>
+          <label className="inline-flex items-center gap-1">
+            <input
+              type="checkbox"
+              checked={!!contact.goldenRecord}
+              onChange={() => onEdit({ ...contact, goldenRecord: !contact.goldenRecord })}
+              disabled={isStageLocked}
+            />
+            <span>Golden Record</span>
+          </label>
+        </div>
+
         {/* Always-visible contact details */}
         <div className="mt-1 space-y-2 text-sm">
           {contact.email && (
