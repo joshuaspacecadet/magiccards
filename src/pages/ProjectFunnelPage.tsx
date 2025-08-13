@@ -321,13 +321,14 @@ const ProjectFunnelPage: React.FC = () => {
       }
 
       if (savedContact) {
-        // Reload contacts from backend to ensure up-to-date view
-        if (project?.linkedContacts && project.linkedContacts.length > 0) {
-          const linkedContacts = await AirtableService.getContactsByIds(
-            project.linkedContacts
-          );
-          setContacts(linkedContacts);
-        }
+        // Reload contacts using the latest linkedContacts including this saved contact
+        const currentLinked = project?.linkedContacts || [];
+        const idsSet = new Set<string>(currentLinked);
+        idsSet.add(savedContact.id);
+        const linkedContacts = await AirtableService.getContactsByIds(
+          Array.from(idsSet)
+        );
+        setContacts(linkedContacts);
         setIsContactModalOpen(false);
         setEditingContact(undefined); // Clear the editing contact
       }
