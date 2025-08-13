@@ -16,6 +16,7 @@ const ContactCopyEditor: React.FC<ContactCopyEditorProps> = ({
   const [copyData, setCopyData] = useState({
     copyTitle1: contact.copyTitle1 || '',
     copyTitle2: contact.copyTitle2 || '',
+    copyTitle3: (contact as any).copyTitle3 || '',
     copyMainText: contact.copyMainText || '',
     imageDirection: contact.imageDirection || ''
   });
@@ -27,6 +28,7 @@ const ContactCopyEditor: React.FC<ContactCopyEditorProps> = ({
     setCopyData({
       copyTitle1: contact.copyTitle1 || '',
       copyTitle2: contact.copyTitle2 || '',
+      copyTitle3: (contact as any).copyTitle3 || '',
       copyMainText: contact.copyMainText || '',
       imageDirection: contact.imageDirection || ''
     });
@@ -91,20 +93,20 @@ const ContactCopyEditor: React.FC<ContactCopyEditorProps> = ({
 
   return (
     <div className="bg-white rounded-lg border border-slate-200 p-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Live Preview */}
-        <div className="order-2 lg:order-1">
+        <div className="order-2 lg:order-1 lg:col-span-1">
           <div className="border border-slate-300 rounded-lg p-4 bg-white">
             <h3 className="text-sm font-medium text-slate-700 mb-2">Live Preview</h3>
-            <div className="border border-slate-300 rounded-md p-4 space-y-4">
-              <div className="border rounded-md p-3 text-sm font-semibold text-slate-900 bg-slate-50">
+            <div className="border border-slate-300 rounded-md p-3 space-y-3" style={{ aspectRatio: '5 / 7' }}>
+              <div className="border rounded-md px-3 py-2 text-sm font-semibold text-slate-900 bg-slate-50">
                 {copyData.copyTitle1 || 'Copy Title 1'}
               </div>
-              <div className="h-40 border rounded-md bg-slate-100" />
-              <div className="border rounded-md p-3 text-sm font-semibold text-slate-900 bg-slate-50">
+              <div className="flex-1 border rounded-md bg-slate-100" />
+              <div className="border rounded-md px-3 py-2 text-sm font-semibold text-slate-900 bg-slate-50">
                 {copyData.copyTitle2 || 'Copy Title 2'}
               </div>
-              <div className="border rounded-md p-3 bg-white">
+              <div className="border rounded-md px-3 py-2 bg-white">
                 <div className="text-xs font-semibold text-slate-800 mb-1">
                   {copyData.copyTitle3 || 'Copy Title 3'}
                 </div>
@@ -118,9 +120,9 @@ const ContactCopyEditor: React.FC<ContactCopyEditorProps> = ({
         </div>
 
         {/* Right panel - inputs */}
-        <div className="space-y-4 order-1 lg:order-2">
+        <div className="space-y-4 order-1 lg:order-2 lg:col-span-2">
       {/* Contact Header */}
-      <div className="flex items-center space-x-3 pb-4 border-b border-slate-200">
+          <div className="flex items-center space-x-3 pb-4 border-b border-slate-200">
         {contact.headshot && contact.headshot.length > 0 ? (
           <img
             src={contact.headshot[0].url}
@@ -161,7 +163,12 @@ const ContactCopyEditor: React.FC<ContactCopyEditorProps> = ({
               </p>
             </div>
           )}
-        </div>
+            </div>
+            {/* Left-side quick facts */}
+            <div className="text-xs text-slate-600">
+              {contact.email && <div>{contact.email}</div>}
+              {contact.phone && <div>{contact.phone}</div>}
+            </div>
       </div>
 
       {/* Copy Input Fields */}

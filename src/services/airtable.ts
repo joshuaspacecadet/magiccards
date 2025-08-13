@@ -58,6 +58,7 @@ const transformAirtableContact = (record: any): Contact => {
     contactAddedBy: fields["Contact Added By"] || "", // ADD THIS LINE
     copyTitle1: fields["Copy Title 1"] || "",
     copyTitle2: fields["Copy Title 2"] || "",
+    copyTitle3: fields["Copy Title 3"] || "",
     copyMainText: fields["Copy Main Text"] || "",
     imageDirection: fields["Image Direction"] || "",
     round1Draft: fields["Round 1 Draft"] || [],
@@ -304,6 +305,8 @@ export class AirtableService {
         createFields["Copy Title 2"] = contactData.copyTitle2;
       if (contactData.copyMainText)
         createFields["Copy Main Text"] = contactData.copyMainText;
+      if (contactData.copyTitle3)
+        createFields["Copy Title 3"] = contactData.copyTitle3;
       if (contactData.imageDirection)
         createFields["Image Direction"] = contactData.imageDirection;
       if (contactData.round1DraftFeedback)
@@ -371,6 +374,8 @@ export class AirtableService {
         updateFields["Copy Title 2"] = updates.copyTitle2;
       if (updates.copyMainText !== undefined)
         updateFields["Copy Main Text"] = updates.copyMainText;
+      if (updates.copyTitle3 !== undefined)
+        updateFields["Copy Title 3"] = updates.copyTitle3;
       if (updates.imageDirection !== undefined)
         updateFields["Image Direction"] = updates.imageDirection;
       if (updates.round1Draft !== undefined)

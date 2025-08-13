@@ -33,6 +33,7 @@ export interface Contact {
   contactAddedBy?: string; // New field for who added the contact
   copyTitle1?: string;
   copyTitle2?: string;
+  copyTitle3?: string;
   copyMainText?: string;
   imageDirection?: string;
   round1Draft?: AirtableAttachment[];
