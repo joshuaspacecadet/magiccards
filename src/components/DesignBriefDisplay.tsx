@@ -61,9 +61,7 @@ const DesignBriefDisplay: React.FC<DesignBriefDisplayProps> = ({ project, contac
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Live Preview card on left (re-using Stage 2 styling) */}
                 <div>
-                  <div className="border border-slate-300 rounded-lg p-4 bg-white">
-                    <h4 className="text-sm font-medium text-slate-700 mb-2">Live Preview</h4>
-                    <div className="border border-slate-700 rounded-md p-3 bg-black text-white flex flex-col gap-3 w-full max-w-[260px]" style={{ aspectRatio: '5 / 7' }}>
+                  <div className="border border-slate-700 rounded-md p-3 bg-black text-white flex flex-col gap-3 w-full" style={{ aspectRatio: '5 / 7' }}>
                       <div className="flex-1 flex flex-col gap-3">
                         <div className="border border-slate-700 rounded-md px-3 py-2 text-sm font-semibold text-white bg-black/30">
                           {contact.copyTitle1 || 'Copy Title 1'}
@@ -93,7 +91,6 @@ const DesignBriefDisplay: React.FC<DesignBriefDisplayProps> = ({ project, contac
                         <img src="/spacecadet-logo.png" alt="Spacecadet" className="h-3 opacity-80" />
                         <div className="text-[10px] text-white/60">preview</div>
                       </div>
-                    </div>
                   </div>
                 </div>
 
