@@ -102,7 +102,15 @@ const ContactCopyEditor: React.FC<ContactCopyEditorProps> = ({
               <div className="border rounded-md px-3 py-2 text-sm font-semibold text-slate-900 bg-slate-50">
                 {copyData.copyTitle1 || 'Copy Title 1'}
               </div>
-              <div className="flex-1 border rounded-md bg-slate-100" />
+              <div className="h-40 border rounded-md overflow-hidden bg-slate-100">
+                {contact.headshot && contact.headshot.length > 0 ? (
+                  <img
+                    src={contact.headshot[0].url}
+                    alt={`${contact.name} headshot`}
+                    className="w-full h-full object-cover filter grayscale"
+                  />
+                ) : null}
+              </div>
               <div className="border rounded-md px-3 py-2 text-sm font-semibold text-slate-900 bg-slate-50">
                 {copyData.copyTitle2 || 'Copy Title 2'}
               </div>
@@ -166,7 +174,6 @@ const ContactCopyEditor: React.FC<ContactCopyEditorProps> = ({
             </div>
             {/* Left-side quick facts */}
             <div className="text-xs text-slate-600">
-              {contact.email && <div>{contact.email}</div>}
               {contact.phone && <div>{contact.phone}</div>}
             </div>
       </div>
