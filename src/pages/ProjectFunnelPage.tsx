@@ -11,6 +11,7 @@ import {
   Hash,
   ExternalLink,
   Calendar,
+  Upload,
 } from "lucide-react";
 import { Project, ProjectStage, Contact } from "../types";
 import { AirtableService } from "../services/airtable";
@@ -32,6 +33,7 @@ const InvoiceUploader: React.FC<{
 }> = ({ project, onSaved }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const handleSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
@@ -58,6 +60,25 @@ const InvoiceUploader: React.FC<{
     }
   };
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    if (isUploading) return;
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length === 0) return;
+    // mimic input select
+    const fakeEvent = { target: { files } } as unknown as React.ChangeEvent<HTMLInputElement>;
+    await handleSelect(fakeEvent);
+  };
+
   return (
     <div className="bg-white rounded-xl p-6 border border-slate-200 max-w-lg mx-auto">
       <h4 className="text-lg font-semibold text-slate-900 mb-2">Upload Invoice</h4>
@@ -65,7 +86,15 @@ const InvoiceUploader: React.FC<{
       {errorMessage && (
         <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded p-2 mb-3">{errorMessage}</div>
       )}
-      <div className="flex items-center gap-3">
+      <div
+        className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${isDragOver ? "border-blue-500 bg-blue-50" : "border-slate-300 hover:border-slate-400"} ${isUploading ? "opacity-50 pointer-events-none" : ""}`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        <Upload className="h-12 w-12 text-slate-400 mx-auto mb-3" />
+        <p className="text-lg font-medium text-slate-900 mb-1">Drop invoice here or click to browse</p>
+        <p className="text-sm text-slate-600 mb-3">Supports PDF and image files (max 5MB each)</p>
         <input
           id="invoice-upload"
           type="file"
@@ -75,10 +104,7 @@ const InvoiceUploader: React.FC<{
           onChange={handleSelect}
           disabled={isUploading}
         />
-        <label
-          htmlFor="invoice-upload"
-          className={`inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors cursor-pointer ${isUploading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"}`}
-        >
+        <label htmlFor="invoice-upload" className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
           {isUploading ? "Uploading..." : "Choose File(s)"}
         </label>
       </div>
