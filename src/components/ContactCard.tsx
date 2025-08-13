@@ -86,16 +86,17 @@ const ContactCard: React.FC<ContactCardProps> = ({
             <h4 className="font-semibold text-slate-900 truncate">{contact.name}</h4>
             {contact.company && (
               <div className="flex items-center text-sm text-slate-600 mt-1">
-                <Building2 className="h-3 w-3 mr-1 flex-shrink-0" />
-                <span className="truncate">{contact.company}</span>
-                {contact.companyLogo && contact.companyLogo.length > 0 && (
+                {contact.companyLogo && contact.companyLogo.length > 0 ? (
                   <img
                     src={contact.companyLogo[0].url}
                     alt="Company logo"
-                    className="ml-2 w-4 h-4 object-contain cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
+                    className="h-4 w-4 mr-1 object-contain cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
                     onClick={() => handleImageClick(contact.companyLogo![0].url)}
                   />
+                ) : (
+                  <Building2 className="h-3 w-3 mr-1 flex-shrink-0" />
                 )}
+                <span className="truncate">{contact.company}</span>
               </div>
             )}
             
