@@ -1000,6 +1000,74 @@ const ProjectFunnelPage: React.FC = () => {
           topActions={getRevertTopActions("Ready for Print")}
         >
           <div className="space-y-6">
+            {/* Top row: Final Designs | Contacts CSV */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Final Designs Card */}
+              <div className="bg-white p-6 rounded-lg border border-slate-200 space-y-4">
+                <div className="flex items-center space-x-2">
+                  <ExternalLink className="h-5 w-5 text-blue-600" />
+                  <h4 className="text-lg font-semibold text-slate-900">Final Designs</h4>
+                </div>
+
+                <div className="space-y-2">
+                  {project.illustratorFiles && project.illustratorFiles.length > 0 && (
+                    <div>
+                      <p className="text-sm text-slate-600 mb-2">Uploaded Final Design File(s)</p>
+                      <ul className="list-disc list-inside space-y-1">
+                        {project.illustratorFiles.map((file, index) => (
+                          <li key={file.id || `${file.url}-${index}`}> 
+                            <a
+                              href={file.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-700 underline"
+                            >
+                              {file.filename || `File ${index + 1}`}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {project.finalDesignFileLink && (
+                    <div>
+                      <p className="text-sm text-slate-600 mb-1">External Final Design Link</p>
+                      <a
+                        href={project.finalDesignFileLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-700 underline break-all"
+                      >
+                        {project.finalDesignFileLink}
+                      </a>
+                    </div>
+                  )}
+
+                  {!((project.illustratorFiles && project.illustratorFiles.length > 0) || project.finalDesignFileLink) && (
+                    <p className="text-sm text-slate-500">No final designs linked yet. Add them in Stage 6.</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Contacts CSV Card */}
+              <div className="bg-white p-6 rounded-lg border border-slate-200 space-y-3">
+                <div className="flex items-center space-x-2">
+                  <ExternalLink className="h-5 w-5 text-blue-600" />
+                  <h4 className="text-lg font-semibold text-slate-900">Contacts CSV</h4>
+                </div>
+                <p className="text-sm text-slate-600">Download a CSV of all contacts for fulfillment.</p>
+                <a
+                  href={contactsCsvDataUri}
+                  download={`contacts_${project.name?.replace(/[^a-zA-Z0-9]/g, '_') || 'project'}.csv`}
+                  className="inline-flex items-center px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  Download CSV
+                </a>
+              </div>
+            </div>
+
+            {/* Bottom row: Dates */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <ProjectFieldEditor
                 label="Printer Submission Date"
@@ -1020,70 +1088,10 @@ const ProjectFunnelPage: React.FC = () => {
                   handleSaveProjectField("shippedToPacksmithDate", value)
                 }
                 type="date"
-                placeholder="Select shipping date"
+                placeholder="Select fulfillment date"
                 icon={<Hash className="h-4 w-4" />}
                 disabled={isStageCompleted("Ready for Print")}
               />
-            </div>
-
-            {/* Final Designs Links */}
-            <div className="bg-white p-6 rounded-lg border border-slate-200 space-y-4">
-              <div className="flex items-center space-x-2">
-                <ExternalLink className="h-5 w-5 text-blue-600" />
-                <h4 className="text-lg font-semibold text-slate-900">Final Designs</h4>
-              </div>
-
-              <div className="space-y-2">
-                {project.illustratorFiles && project.illustratorFiles.length > 0 && (
-                  <div>
-                    <p className="text-sm text-slate-600 mb-2">Uploaded Final Design File(s)</p>
-                    <ul className="list-disc list-inside space-y-1">
-                      {project.illustratorFiles.map((file, index) => (
-                        <li key={file.id || `${file.url}-${index}`}> 
-                          <a
-                            href={file.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-700 underline"
-                          >
-                            {file.filename || `File ${index + 1}`}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {project.finalDesignFileLink && (
-                  <div>
-                    <p className="text-sm text-slate-600 mb-1">External Final Design Link</p>
-                    <a
-                      href={project.finalDesignFileLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-700 underline break-all"
-                    >
-                      {project.finalDesignFileLink}
-                    </a>
-                  </div>
-                )}
-
-                {!((project.illustratorFiles && project.illustratorFiles.length > 0) || project.finalDesignFileLink) && (
-                  <p className="text-sm text-slate-500">No final designs linked yet. Add them in Stage 6.</p>
-                )}
-
-                {/* Contacts CSV */}
-                <div className="pt-2 border-t border-slate-200">
-                  <p className="text-sm text-slate-600 mb-1">Contacts CSV</p>
-                  <a
-                    href={contactsCsvDataUri}
-                    download={`contacts_${project.name?.replace(/[^a-zA-Z0-9]/g, '_') || 'project'}.csv`}
-                    className="inline-flex items-center text-blue-600 hover:text-blue-700 underline"
-                  >
-                    Download contacts.csv
-                  </a>
-                </div>
-              </div>
             </div>
 
             {/* Stage Completion */}
