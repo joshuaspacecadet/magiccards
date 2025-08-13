@@ -67,7 +67,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
   const hasContactDetails = contact.email || contact.phone || formatAddress(contact);
 
   return (
-    <div className="bg-white rounded-lg border border-slate-200 p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg border border-slate-200 p-4 hover:shadow-md transition-shadow flex flex-col h-full">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-start space-x-3 flex-1">
           {contact.headshot && contact.headshot.length > 0 ? (
@@ -132,29 +132,107 @@ const ContactCard: React.FC<ContactCardProps> = ({
         </div>
       </div>
 
-      {/* Missing Address Callout (visible in main view) */}
-      {!contact.streetLine1 && (
-        <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded flex items-center justify-between">
-          <span className="text-xs font-medium text-red-700">Missing Address</span>
-          {contact.confirmAddressUrl && (
-            <button
-              onClick={handleCopyConfirmUrl}
-              className="p-1 text-red-600 hover:text-red-700 hover:bg-red-100 rounded transition-colors flex items-center"
-              title={copiedConfirmUrl ? 'Copied!' : 'Copy Confirm Address URL'}
-            >
-              {copiedConfirmUrl ? (
-                <Check className="h-3 w-3" />
-              ) : (
-                <Copy className="h-3 w-3" />
-              )}
-            </button>
-          )}
-        </div>
-      )}
+      <div className="flex-1">
+        {/* Missing Address Callout (visible in main view) */}
+        {!contact.streetLine1 && (
+          <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded flex items-center justify-between">
+            <span className="text-xs font-medium text-red-700">Missing Address</span>
+            {contact.confirmAddressUrl && (
+              <button
+                onClick={handleCopyConfirmUrl}
+                className="p-1 text-red-600 hover:text-red-700 hover:bg-red-100 rounded transition-colors flex items-center"
+                title={copiedConfirmUrl ? 'Copied!' : 'Copy Confirm Address URL'}
+              >
+                {copiedConfirmUrl ? (
+                  <Check className="h-3 w-3" />
+                ) : (
+                  <Copy className="h-3 w-3" />
+                )}
+              </button>
+            )}
+          </div>
+        )}
 
-      {/* Toggle button for contact details */}
+        {/* Toggleable contact details content */}
+        {showDetails && (
+          <div className="mt-1 space-y-2 text-sm">
+            {contact.email && (
+              <div className="flex items-center text-slate-600">
+                <Mail className="h-3 w-3 mr-2 flex-shrink-0" />
+                <a href={`mailto:${contact.email}`} className="hover:text-blue-600 transition-colors truncate">
+                  {contact.email}
+                </a>
+              </div>
+            )}
+            
+            {contact.phone && (
+              <div className="flex items-center text-slate-600">
+                <Phone className="h-3 w-3 mr-2 flex-shrink-0" />
+                <a href={`tel:${contact.phone}`} className="hover:text-blue-600 transition-colors">
+                  {contact.phone}
+                </a>
+              </div>
+            )}
+
+            {formatAddress(contact) && (
+              <div className="flex items-start text-slate-600">
+                <MapPin className="h-3 w-3 mr-2 mt-0.5 flex-shrink-0" />
+                <div className="text-xs whitespace-pre-line">
+                  {formatAddress(contact)}
+                </div>
+              </div>
+            )}
+
+            {contact.linkedinUrl && (
+              <div className="flex items-center text-slate-600">
+                <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
+                <button 
+                  onClick={handleLinkedInClick}
+                  className="hover:text-blue-600 transition-colors text-xs truncate text-left"
+                >
+                  LinkedIn Profile
+                </button>
+              </div>
+            )}
+
+            {contact.confirmAddressUrl && (
+              <div className="flex items-center text-slate-600">
+                <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
+                <button
+                  onClick={() => openUrlSafely(contact.confirmAddressUrl!)}
+                  className="hover:text-blue-600 transition-colors text-xs truncate text-left mr-2"
+                  title={contact.confirmAddressUrl}
+                >
+                  Confirm Address URL
+                </button>
+                <button
+                  onClick={handleCopyConfirmUrl}
+                  className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded transition-colors"
+                  title={copiedConfirmUrl ? 'Copied!' : 'Copy URL'}
+                >
+                  {copiedConfirmUrl ? (
+                    <Check className="h-3 w-3 text-green-600" />
+                  ) : (
+                    <Copy className="h-3 w-3" />
+                  )}
+                </button>
+              </div>
+            )}
+
+            {contact.additionalContactContext && (
+              <div className="pt-2 border-t border-slate-200">
+                <p className="text-xs text-slate-600 italic">
+                  {contact.additionalContactContext}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Bottom toggle bar to keep cards uniform */}
       {hasContactDetails && (
-        <div className="border-t border-slate-200 pt-3">
+        <div className="border-t border-slate-200 pt-3 mt-3">
           <button
             onClick={() => setShowDetails(!showDetails)}
             className="flex items-center justify-between w-full text-sm text-slate-600 hover:text-slate-900 transition-colors"
@@ -166,82 +244,6 @@ const ContactCard: React.FC<ContactCardProps> = ({
               <ChevronDown className="h-4 w-4" />
             )}
           </button>
-
-          {/* Toggleable contact details */}
-          {showDetails && (
-            <div className="mt-3 space-y-2 text-sm">
-              {contact.email && (
-                <div className="flex items-center text-slate-600">
-                  <Mail className="h-3 w-3 mr-2 flex-shrink-0" />
-                  <a href={`mailto:${contact.email}`} className="hover:text-blue-600 transition-colors truncate">
-                    {contact.email}
-                  </a>
-                </div>
-              )}
-              
-              {contact.phone && (
-                <div className="flex items-center text-slate-600">
-                  <Phone className="h-3 w-3 mr-2 flex-shrink-0" />
-                  <a href={`tel:${contact.phone}`} className="hover:text-blue-600 transition-colors">
-                    {contact.phone}
-                  </a>
-                </div>
-              )}
-
-              {formatAddress(contact) && (
-                <div className="flex items-start text-slate-600">
-                  <MapPin className="h-3 w-3 mr-2 mt-0.5 flex-shrink-0" />
-                  <div className="text-xs whitespace-pre-line">
-                    {formatAddress(contact)}
-                  </div>
-                </div>
-              )}
-
-              {contact.linkedinUrl && (
-                <div className="flex items-center text-slate-600">
-                  <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
-                  <button 
-                    onClick={handleLinkedInClick}
-                    className="hover:text-blue-600 transition-colors text-xs truncate text-left"
-                  >
-                    LinkedIn Profile
-                  </button>
-                </div>
-              )}
-
-              {contact.confirmAddressUrl && (
-                <div className="flex items-center text-slate-600">
-                  <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
-                  <button
-                    onClick={() => openUrlSafely(contact.confirmAddressUrl!)}
-                    className="hover:text-blue-600 transition-colors text-xs truncate text-left mr-2"
-                    title={contact.confirmAddressUrl}
-                  >
-                    Confirm Address URL
-                  </button>
-                  <button
-                    onClick={handleCopyConfirmUrl}
-                    className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded transition-colors"
-                    title={copiedConfirmUrl ? 'Copied!' : 'Copy URL'}
-                  >
-                    {copiedConfirmUrl ? (
-                      <Check className="h-3 w-3 text-green-600" />
-                    ) : (
-                      <Copy className="h-3 w-3" />
-                    )}
-                  </button>
-                </div>
-              )}
-
-              {contact.additionalContactContext && (
-                <div className="pt-2 border-t border-slate-200">
-                  <p className="text-xs text-slate-600 italic">
-                    {contact.additionalContactContext}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
         </div>
       )}
     </div>
