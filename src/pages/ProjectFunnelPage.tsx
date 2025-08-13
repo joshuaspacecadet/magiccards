@@ -502,6 +502,7 @@ const ProjectFunnelPage: React.FC = () => {
     };
     const headers = [
       "Full Name",
+      "Company",
       "Street Line 1",
       "Street Line 2 (Apt, Suite, Floor, etc.)",
       "City",
@@ -513,6 +514,7 @@ const ProjectFunnelPage: React.FC = () => {
     const headerLine = headers.map((h) => escapeCsv(h)).join(",");
     const rows = contacts.map((c) => [
       escapeCsv(c.name),
+      escapeCsv(c.company),
       escapeCsv(c.streetLine1),
       escapeCsv(c.streetLine2),
       escapeCsv(c.city),
