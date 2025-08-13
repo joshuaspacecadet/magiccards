@@ -24,6 +24,7 @@ const transformAirtableProject = (record: any): Project => {
     trackingNumber: fields["Tracking Number"] || "",
     illustratorFiles: fields["Final Design File"] || [],
     finalDesignFileLink: fields["Final Design File Link"] || "", // New field mapping
+    invoice: fields["Invoice"] || [],
     linkedContacts: fields["Contacts"] || [], // Array of Contact record IDs
     printerSubmissionDate: fields["Printer Submission Date"] || "",
     shippedToPacksmithDate: fields["Orders Fulfillment Date"] || "",
@@ -174,6 +175,8 @@ export class AirtableService {
         updateFields["Final Design File"] = updates.illustratorFiles;
       if (updates.finalDesignFileLink !== undefined)
         updateFields["Final Design File Link"] = updates.finalDesignFileLink; // New field
+      if (updates.invoice !== undefined)
+        updateFields["Invoice"] = updates.invoice;
       if (updates.linkedContacts !== undefined)
         updateFields["Contacts"] = updates.linkedContacts;
       if (updates.printerSubmissionDate !== undefined)

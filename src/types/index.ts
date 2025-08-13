@@ -5,6 +5,7 @@ export interface Project {
   trackingNumber?: string;
   illustratorFiles?: AirtableAttachment[];
   finalDesignFileLink?: string; // New field for URL link
+  invoice?: AirtableAttachment[];
   linkedContacts?: string[]; // Array of Contact record IDs
   printerSubmissionDate?: string;
   shippedToPacksmithDate?: string;

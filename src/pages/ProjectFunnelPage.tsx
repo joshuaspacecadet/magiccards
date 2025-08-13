@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Project, ProjectStage, Contact } from "../types";
 import { AirtableService } from "../services/airtable";
+import { uploadToCloudinary } from "../utils/cloudinaryUpload";
 import { PREDEFINED_CONTACT_CREATORS } from "../config/airtable";
 import FunnelStage from "../components/FunnelStage";
 import ContactCard from "../components/ContactCard";
@@ -23,6 +24,81 @@ import ContactDesignRoundEditor from "../components/ContactDesignRoundEditor";
 import DesignBriefDisplay from "../components/DesignBriefDisplay";
 import FinalDesignFileUploader from "../components/FinalDesignFileUploader";
 import ProjectFieldEditor from "../components/ProjectFieldEditor";
+
+// Inline Invoice Uploader for Stage 8
+const InvoiceUploader: React.FC<{
+  project: Project;
+  onSaved: (project: Project) => void;
+}> = ({ project, onSaved }) => {
+  const [isUploading, setIsUploading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const handleSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const files = Array.from(e.target.files);
+    setIsUploading(true);
+    setErrorMessage("");
+    try {
+      const uploaded = [] as { url: string; filename: string }[];
+      for (const file of files) {
+        const url = await uploadToCloudinary(file);
+        uploaded.push({ url, filename: file.name });
+      }
+      const existing = (project.invoice || []).map((f) => ({ url: f.url, filename: f.filename }));
+      const updated = await AirtableService.updateProject(project.id, {
+        invoice: [...existing, ...uploaded] as unknown as import("../types").AirtableAttachment[],
+      });
+      if (updated) onSaved(updated);
+      e.target.value = "";
+    } catch (err) {
+      setErrorMessage("Failed to upload invoice. Please try again.");
+      console.error(err);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-xl p-6 border border-slate-200 max-w-lg mx-auto">
+      <h4 className="text-lg font-semibold text-slate-900 mb-2">Upload Invoice</h4>
+      <p className="text-sm text-slate-600 mb-4">Upload the invoice from your print/fulfillment partner.</p>
+      {errorMessage && (
+        <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded p-2 mb-3">{errorMessage}</div>
+      )}
+      <div className="flex items-center gap-3">
+        <input
+          id="invoice-upload"
+          type="file"
+          accept="application/pdf,image/*"
+          multiple
+          className="hidden"
+          onChange={handleSelect}
+          disabled={isUploading}
+        />
+        <label
+          htmlFor="invoice-upload"
+          className={`inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors cursor-pointer ${isUploading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"}`}
+        >
+          {isUploading ? "Uploading..." : "Choose File(s)"}
+        </label>
+      </div>
+      {project.invoice && project.invoice.length > 0 && (
+        <div className="mt-4 text-left">
+          <p className="text-sm text-slate-700 mb-2">Uploaded Invoice(s)</p>
+          <ul className="list-disc list-inside space-y-1">
+            {project.invoice.map((file, idx) => (
+              <li key={file.id || `${file.url}-${idx}`}>
+                <a href={file.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline">
+                  {file.filename || `Invoice ${idx + 1}`}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const ProjectFunnelPage: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -570,6 +646,8 @@ const ProjectFunnelPage: React.FC = () => {
 
   return (
     <div className="space-y-8">
+      {/* Local component for invoice upload */}
+      {null}
       {/* Stage 1: Contacts */}
       {shouldRenderStage("Contacts") && (
         <FunnelStage
@@ -1148,16 +1226,9 @@ const ProjectFunnelPage: React.FC = () => {
               Project Successfully Completed!
             </h3>
             <p className="text-slate-600 mb-6">
-              All custom cards have been designed, produced, and delivered.
+              All custom cards have been designed, produced, and shipped.
             </p>
-            <div className="flex justify-center space-x-4">
-              <button
-                onClick={() => navigate("/admin")}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-              >
-                Back to Projects
-              </button>
-            </div>
+            <InvoiceUploader project={project} onSaved={setProject} />
           </div>
         </FunnelStage>
       )}
