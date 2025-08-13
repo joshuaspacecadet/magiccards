@@ -130,56 +130,7 @@ const ProjectFunnelPage: React.FC = () => {
     }
   };
 
-  const handleUndoStage = async () => {
-    if (!project) return;
-
-    const stageOrder: ProjectStage[] = [
-      "Contacts",
-      "Copy",
-      "Design Brief",
-      "Design Round 1",
-      "Design Round 2",
-      "Handoff",
-      "Ready for Print",
-      "Project Complete",
-    ];
-
-    const currentIndex = stageOrder.indexOf(project.stage);
-    if (currentIndex > 0) {
-      const previousStage = stageOrder[currentIndex - 1];
-
-      try {
-        const updatedProject = await AirtableService.updateProject(project.id, {
-          stage: previousStage,
-        });
-        if (updatedProject) {
-          setProject(updatedProject);
-
-          setTimeout(() => {
-            scrollToStage(previousStage);
-          }, 300);
-        }
-      } catch (error) {
-        console.error("Error undoing stage:", error);
-      }
-    }
-  };
-
-  const canUndoStage = (): boolean => {
-    if (!project) return false;
-    const stageOrder: ProjectStage[] = [
-      "Contacts",
-      "Copy",
-      "Design Brief",
-      "Design Round 1",
-      "Design Round 2",
-      "Handoff",
-      "Ready for Print",
-      "Project Complete",
-    ];
-    const currentIndex = stageOrder.indexOf(project.stage);
-    return currentIndex > 0;
-  };
+  // Deprecated: kept for reference; revert is now handled contextually via getRevertTopActions
 
   const handleRevertToStage = async (targetStage: ProjectStage) => {
     if (!project) return;
@@ -579,7 +530,7 @@ const ProjectFunnelPage: React.FC = () => {
         <FunnelStage
           ref={contactsStageRef}
           title="Stage 1 — Add & Review Contacts"
-          description="Add and manage the contacts who will receive custom cards for this project."
+          description="Add and manage the contacts who will receive a custom Magic Cards."
           isActive={isStageActive("Contacts")}
           isCompleted={isStageCompleted("Contacts")}
           topActions={getRevertTopActions("Contacts")}
@@ -695,7 +646,7 @@ const ProjectFunnelPage: React.FC = () => {
         <FunnelStage
           ref={copyStageRef}
           title="Stage 2 — Add & Review Copy"
-          description="Create and review the copy content for each contact's custom card."
+          description="Create and review the copy content."
           isActive={isStageActive("Copy")}
           isCompleted={isStageCompleted("Copy")}
           topActions={getRevertTopActions("Copy")}
@@ -745,7 +696,7 @@ const ProjectFunnelPage: React.FC = () => {
         <FunnelStage
           ref={designBriefStageRef}
           title="Stage 3 — Project Design Brief"
-          description="Review the comprehensive design brief that will guide the creation of custom cards."
+          description="Review the design brief that will guide the creation of each contact's Magic Card."
           isActive={isStageActive("Design Brief")}
           isCompleted={isStageCompleted("Design Brief")}
           topActions={getRevertTopActions("Design Brief")}
