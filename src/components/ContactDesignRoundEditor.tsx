@@ -63,6 +63,7 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
   // For Round 2, show previous round files and feedback above for context
   const previousRoundFiles = currentRound === 2 ? contact.round1Draft || [] : [];
   const previousRoundFeedback = currentRound === 2 ? contact.round1DraftFeedback || "" : "";
+  const hasCurrentFiles = currentFiles.length > 0;
 
   const isRejected =
     currentRound === 1
@@ -460,15 +461,15 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
             {previousRoundFiles.length > 0 && (
               <div>
                 <p className="text-sm text-slate-700 mb-2">Round 1 Files ({previousRoundFiles.length})</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   {previousRoundFiles.map((file, index) => (
                     <div key={index} className="relative group bg-slate-50 rounded-lg border border-slate-200 p-4">
                       {isImage(file) ? (
-                        <div className="aspect-square mb-3 bg-white rounded border overflow-hidden">
-                          <img src={file.url} alt={file.filename} className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity" onClick={() => handleFilePreview(file)} />
+                        <div className="h-64 mb-3 bg-white rounded border overflow-hidden flex items-center justify-center">
+                          <img src={file.url} alt={file.filename} className="max-h-full max-w-full object-contain cursor-pointer hover:opacity-90 transition-opacity" onClick={() => handleFilePreview(file)} />
                         </div>
                       ) : (
-                        <div className="aspect-square mb-3 bg-white rounded border flex items-center justify-center">
+                        <div className="h-64 mb-3 bg-white rounded border flex items-center justify-center">
                           {getFileIcon(file)}
                         </div>
                       )}
@@ -491,7 +492,7 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
             {!isReadOnly && (
               <div className="space-y-4">
                 <h5 className="font-medium text-slate-900">Upload Design Round {currentRound} Files</h5>
-                <div className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${isDragOver ? "border-blue-500 bg-blue-50" : "border-slate-300 hover:border-slate-400"} ${isUploading ? "opacity-50 pointer-events-none" : ""}`} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+                <div className={`border-2 border-dashed rounded-lg ${hasCurrentFiles ? 'p-4' : 'p-8'} text-center transition-colors ${isDragOver ? "border-blue-500 bg-blue-50" : "border-slate-300 hover:border-slate-400"} ${isUploading ? "opacity-50 pointer-events-none" : ""}`} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
                   {isUploading ? (
                     <div className="flex items-center justify-center space-x-2">
                       <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
@@ -499,9 +500,11 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
                     </div>
                   ) : (
                     <>
-                      <Upload className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                      <p className="text-lg font-medium text-slate-900 mb-2">Drop design files here or click to browse</p>
-                      <p className="text-sm text-slate-600 mb-4">Supports AI, PSD, PDF, and image files (max 5MB each)</p>
+                      <Upload className={`${hasCurrentFiles ? 'h-8 w-8' : 'h-12 w-12'} text-slate-400 mx-auto mb-3`} />
+                      <p className={`${hasCurrentFiles ? 'text-sm' : 'text-lg'} font-medium text-slate-900 mb-1`}>
+                        {hasCurrentFiles ? 'Add more files' : 'Drop design files here or click to browse'}
+                      </p>
+                      <p className="text-xs text-slate-600 mb-3">Supports AI, PSD, PDF, and image files (max 5MB each)</p>
                       <input type="file" multiple accept="image/*,.pdf,.ai,.psd,.sketch,.fig,.eps,.indd,.tiff,.tif" onChange={handleFileSelect} className="hidden" id={`file-upload-${contact.id}-round${currentRound}`} />
                       <label htmlFor={`file-upload-${contact.id}-round${currentRound}`} className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
                         <Upload className="h-4 w-4 mr-2" />
@@ -535,17 +538,18 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
             {currentFiles.length > 0 && (
               <div className="space-y-4">
                 <h5 className="font-medium text-slate-900">Design Round {currentRound} Files ({currentFiles.length})</h5>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   {currentFiles.map((file, index) => (
                     <div key={index} className="relative group bg-slate-50 rounded-lg border border-slate-200 p-4">
                       {isImage(file) ? (
-                        <div className="aspect-square mb-3 bg-white rounded border overflow-hidden"><img src={file.url} alt={file.filename} className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity" onClick={() => handleFilePreview(file)} /></div>
+                        <div className="h-64 mb-3 bg-white rounded border overflow-hidden flex items-center justify-center">
+                          <img src={file.url} alt={file.filename} className="max-h-full max-w-full object-contain cursor-pointer hover:opacity-90 transition-opacity" onClick={() => handleFilePreview(file)} />
+                        </div>
                       ) : (
-                        <div className="aspect-square mb-3 bg-white rounded border flex items-center justify-center">{getFileIcon(file)}</div>
+                        <div className="h-64 mb-3 bg-white rounded border flex items-center justify-center">{getFileIcon(file)}</div>
                       )}
                       <div className="space-y-2"><p className="text-sm font-medium text-slate-900 truncate" title={file.filename}>{file.filename}</p>{file.size && (<p className="text-xs text-slate-500">{formatFileSize(file.size)}</p>)}</div>
-                      <div className="flex items-center justify-between mt-3">
-                        <button onClick={() => handleFilePreview(file)} className="flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"><Eye className="h-3 w-3" /><span>Preview</span></button>
+                      <div className="flex items-center justify-end mt-3">
                         {!isReadOnly && (<button onClick={() => handleRemoveFile(index)} className="flex items-center space-x-1 text-xs text-red-600 hover:text-red-700 transition-colors"><X className="h-3 w-3" /><span>Remove</span></button>)}
                       </div>
                     </div>
