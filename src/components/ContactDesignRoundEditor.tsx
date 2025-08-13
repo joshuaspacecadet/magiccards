@@ -489,203 +489,162 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
         )}
       </div>
 
-      {/* File Upload Area */}
-      {!isReadOnly && (
-        <div className="space-y-4">
-          <h5 className="font-medium text-slate-900">
-            Upload Design Round {currentRound} Files
-          </h5>
-          <div
-            className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-              isDragOver
-                ? "border-blue-500 bg-blue-50"
-                : "border-slate-300 hover:border-slate-400"
-            } ${isUploading ? "opacity-50 pointer-events-none" : ""}`}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            {isUploading ? (
-              <div className="flex items-center justify-center space-x-2">
-                <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
-                <span className="text-slate-600">Uploading files...</span>
+      {currentRound === 2 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left: Round 1 summary */}
+          <div className="space-y-3">
+            <h5 className="font-medium text-slate-900">Round 1 Summary</h5>
+            {previousRoundFiles.length > 0 && (
+              <div>
+                <p className="text-sm text-slate-700 mb-2">Round 1 Files ({previousRoundFiles.length})</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {previousRoundFiles.map((file, index) => (
+                    <div key={index} className="relative group bg-slate-50 rounded-lg border border-slate-200 p-4">
+                      {isImage(file) ? (
+                        <div className="aspect-square mb-3 bg-white rounded border overflow-hidden">
+                          <img src={file.url} alt={file.filename} className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity" onClick={() => handleFilePreview(file)} />
+                        </div>
+                      ) : (
+                        <div className="aspect-square mb-3 bg-white rounded border flex items-center justify-center">
+                          {getFileIcon(file)}
+                        </div>
+                      )}
+                      <p className="text-sm font-medium text-slate-900 truncate" title={file.filename}>{file.filename}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ) : (
-              <>
-                <Upload className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                <p className="text-lg font-medium text-slate-900 mb-2">
-                  Drop design files here or click to browse
-                </p>
-                <p className="text-sm text-slate-600 mb-4">
-                  Supports AI, PSD, PDF, and image files (max 5MB each)
-                </p>
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*,.pdf,.ai,.psd,.sketch,.fig,.eps,.indd,.tiff,.tif"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                  id={`file-upload-${contact.id}-round${currentRound}`}
-                />
-                <label
-                  htmlFor={`file-upload-${contact.id}-round${currentRound}`}
-                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
-                >
-                  <Upload className="h-4 w-4 mr-2" />
-                  Choose Files
-                </label>
-              </>
+            )}
+            {previousRoundFeedback && (
+              <div className="bg-slate-50 border border-slate-200 rounded p-3">
+                <p className="text-sm text-slate-700 whitespace-pre-line">{previousRoundFeedback}</p>
+              </div>
             )}
           </div>
-        </div>
-      )}
 
-      {/* Upload Progress */}
-      {Object.keys(uploadProgress).length > 0 && (
-        <div className="space-y-2">
-          <h5 className="text-sm font-medium text-slate-700">
-            Upload Progress
-          </h5>
-          {Object.entries(uploadProgress).map(([fileName, progress]) => (
-            <div key={fileName} className="space-y-1">
-              <div className="flex justify-between text-xs text-slate-600">
-                <span className="truncate">{fileName}</span>
-                <span>{progress}%</span>
+          {/* Right: Round 2 editor */}
+          <div className="space-y-6">
+            {/* File Upload Area */}
+            {!isReadOnly && (
+              <div className="space-y-4">
+                <h5 className="font-medium text-slate-900">Upload Design Round {currentRound} Files</h5>
+                <div className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${isDragOver ? "border-blue-500 bg-blue-50" : "border-slate-300 hover:border-slate-400"} ${isUploading ? "opacity-50 pointer-events-none" : ""}`} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+                  {isUploading ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                      <span className="text-slate-600">Uploading files...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                      <p className="text-lg font-medium text-slate-900 mb-2">Drop design files here or click to browse</p>
+                      <p className="text-sm text-slate-600 mb-4">Supports AI, PSD, PDF, and image files (max 5MB each)</p>
+                      <input type="file" multiple accept="image/*,.pdf,.ai,.psd,.sketch,.fig,.eps,.indd,.tiff,.tif" onChange={handleFileSelect} className="hidden" id={`file-upload-${contact.id}-round${currentRound}`} />
+                      <label htmlFor={`file-upload-${contact.id}-round${currentRound}`} className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
+                        <Upload className="h-4 w-4 mr-2" />
+                        Choose Files
+                      </label>
+                    </>
+                  )}
+                </div>
               </div>
-              <div className="w-full bg-slate-200 rounded-full h-2">
-                <div
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+            )}
 
-      {/* Error Message */}
-      {errorMessage && (
-        <div className="flex items-start space-x-2 text-sm text-red-600 bg-red-50 p-3 rounded-md border border-red-200">
-          <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-          <span>{errorMessage}</span>
-        </div>
-      )}
-
-      {/* Uploaded Files Display */}
-      {currentFiles.length > 0 && (
-        <div className="space-y-4">
-          <h5 className="font-medium text-slate-900">
-            Design Round {currentRound} Files ({currentFiles.length})
-          </h5>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {currentFiles.map((file, index) => (
-              <div
-                key={index}
-                className="relative group bg-slate-50 rounded-lg border border-slate-200 p-4"
-              >
-                {isImage(file) ? (
-                  <div className="aspect-square mb-3 bg-white rounded border overflow-hidden">
-                    <img
-                      src={file.url}
-                      alt={file.filename}
-                      className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={() => handleFilePreview(file)}
-                    />
+            {/* Upload Progress */}
+            {Object.keys(uploadProgress).length > 0 && (
+              <div className="space-y-2">
+                <h5 className="text-sm font-medium text-slate-700">Upload Progress</h5>
+                {Object.entries(uploadProgress).map(([fileName, progress]) => (
+                  <div key={fileName} className="space-y-1">
+                    <div className="flex justify-between text-xs text-slate-600"><span className="truncate">{fileName}</span><span>{progress}%</span></div>
+                    <div className="w-full bg-slate-200 rounded-full h-2"><div className="bg-blue-600 h-2 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} /></div>
                   </div>
-                ) : (
-                  <div className="aspect-square mb-3 bg-white rounded border flex items-center justify-center">
-                    {getFileIcon(file)}
+                ))}
+              </div>
+            )}
+
+            {/* Error Message */}
+            {errorMessage && (
+              <div className="flex items-start space-x-2 text-sm text-red-600 bg-red-50 p-3 rounded-md border border-red-200"><AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" /><span>{errorMessage}</span></div>
+            )}
+
+            {/* Uploaded Files Display */}
+            {currentFiles.length > 0 && (
+              <div className="space-y-4">
+                <h5 className="font-medium text-slate-900">Design Round {currentRound} Files ({currentFiles.length})</h5>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {currentFiles.map((file, index) => (
+                    <div key={index} className="relative group bg-slate-50 rounded-lg border border-slate-200 p-4">
+                      {isImage(file) ? (
+                        <div className="aspect-square mb-3 bg-white rounded border overflow-hidden"><img src={file.url} alt={file.filename} className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity" onClick={() => handleFilePreview(file)} /></div>
+                      ) : (
+                        <div className="aspect-square mb-3 bg-white rounded border flex items-center justify-center">{getFileIcon(file)}</div>
+                      )}
+                      <div className="space-y-2"><p className="text-sm font-medium text-slate-900 truncate" title={file.filename}>{file.filename}</p>{file.size && (<p className="text-xs text-slate-500">{formatFileSize(file.size)}</p>)}</div>
+                      <div className="flex items-center justify-between mt-3">
+                        <button onClick={() => handleFilePreview(file)} className="flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"><Eye className="h-3 w-3" /><span>Preview</span></button>
+                        {!isReadOnly && (<button onClick={() => handleRemoveFile(index)} className="flex items-center space-x-1 text-xs text-red-600 hover:text-red-700 transition-colors"><X className="h-3 w-3" /><span>Remove</span></button>)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Status Messages */}
+            {saveStatus === "success" && (<div className="text-sm text-green-600 bg-green-50 p-3 rounded-md border border-green-200">Files uploaded successfully!</div>)}
+
+            {/* Feedback Section - Hide for Round 3 */}
+            {currentRound !== 3 && (
+              <div className="space-y-4">
+                <h5 className="font-medium text-slate-900">Design Round {currentRound} Feedback</h5>
+                <textarea value={feedback} onChange={(e) => handleFeedbackChange(e.target.value)} disabled={isReadOnly} rows={4} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-50 disabled:text-slate-500" placeholder={`Enter feedback for ${contact.name}'s design round ${currentRound}...`} />
+                {!isReadOnly && (
+                  <div className="flex justify-end">
+                    <button onClick={handleSaveFeedback} disabled={!hasChanges || isSaving} className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center ${hasChanges && !isSaving ? "bg-blue-600 text-white hover:bg-blue-700" : saveStatus === "success" ? "bg-green-600 text-white" : saveStatus === "error" ? "bg-red-600 text-white" : "bg-slate-200 text-slate-500 cursor-not-allowed"}`}>
+                      {getSaveButtonContent()}
+                    </button>
                   </div>
                 )}
-
-                <div className="space-y-2">
-                  <p
-                    className="text-sm font-medium text-slate-900 truncate"
-                    title={file.filename}
-                  >
-                    {file.filename}
-                  </p>
-                  {file.size && (
-                    <p className="text-xs text-slate-500">
-                      {formatFileSize(file.size)}
-                    </p>
-                  )}
-                </div>
-
-                <div className="flex items-center justify-between mt-3">
-                  <button
-                    onClick={() => handleFilePreview(file)}
-                    className="flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
-                  >
-                    <Eye className="h-3 w-3" />
-                    <span>Preview</span>
-                  </button>
-
-                  {!isReadOnly && (
-                    <button
-                      onClick={() => handleRemoveFile(index)}
-                      className="flex items-center space-x-1 text-xs text-red-600 hover:text-red-700 transition-colors"
-                    >
-                      <X className="h-3 w-3" />
-                      <span>Remove</span>
-                    </button>
-                  )}
-                </div>
               </div>
-            ))}
+            )}
+
+            {/* Status Messages */}
+            {saveStatus === "error" && (<div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">Failed to save changes. Please try again.</div>)}
           </div>
         </div>
-      )}
-
-      {/* Status Messages */}
-      {saveStatus === "success" && (
-        <div className="text-sm text-green-600 bg-green-50 p-3 rounded-md border border-green-200">
-          Files uploaded successfully!
-        </div>
-      )}
-
-      {/* Feedback Section - Hide for Round 3 */}
-      {currentRound !== 3 && (
-        <div className="space-y-4">
-          <h5 className="font-medium text-slate-900">
-            Design Round {currentRound} Feedback
-          </h5>
-          <textarea
-            value={feedback}
-            onChange={(e) => handleFeedbackChange(e.target.value)}
-            disabled={isReadOnly}
-            rows={4}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-50 disabled:text-slate-500"
-            placeholder={`Enter feedback for ${contact.name}'s design round ${currentRound}...`}
-          />
-
+      ) : (
+        <>
+          {/* File Upload Area */}
           {!isReadOnly && (
-            <div className="flex justify-end">
-              <button
-                onClick={handleSaveFeedback}
-                disabled={!hasChanges || isSaving}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center ${
-                  hasChanges && !isSaving
-                    ? "bg-blue-600 text-white hover:bg-blue-700"
-                    : saveStatus === "success"
-                    ? "bg-green-600 text-white"
-                    : saveStatus === "error"
-                    ? "bg-red-600 text-white"
-                    : "bg-slate-200 text-slate-500 cursor-not-allowed"
-                }`}
-              >
-                {getSaveButtonContent()}
-              </button>
+            <div className="space-y-4">
+              <h5 className="font-medium text-slate-900">Upload Design Round {currentRound} Files</h5>
+              <div className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${isDragOver ? "border-blue-500 bg-blue-50" : "border-slate-300 hover:border-slate-400"} ${isUploading ? "opacity-50 pointer-events-none" : ""}`} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+                {isUploading ? (
+                  <div className="flex items-center justify-center space-x-2"><Loader2 className="h-6 w-6 animate-spin text-blue-600" /><span className="text-slate-600">Uploading files...</span></div>
+                ) : (
+                  <>
+                    <Upload className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                    <p className="text-lg font-medium text-slate-900 mb-2">Drop design files here or click to browse</p>
+                    <p className="text-sm text-slate-600 mb-4">Supports AI, PSD, PDF, and image files (max 5MB each)</p>
+                    <input type="file" multiple accept="image/*,.pdf,.ai,.psd,.sketch,.fig,.eps,.indd,.tiff,.tif" onChange={handleFileSelect} className="hidden" id={`file-upload-${contact.id}-round${currentRound}`} />
+                    <label htmlFor={`file-upload-${contact.id}-round${currentRound}`} className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"><Upload className="h-4 w-4 mr-2" />Choose Files</label>
+                  </>
+                )}
+              </div>
             </div>
           )}
-        </div>
-      )}
-
-      {/* Status Messages */}
-      {saveStatus === "error" && (
-        <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">
-          Failed to save changes. Please try again.
-        </div>
+          {Object.keys(uploadProgress).length > 0 && (
+            <div className="space-y-2"><h5 className="text-sm font-medium text-slate-700">Upload Progress</h5>{Object.entries(uploadProgress).map(([fileName, progress]) => (<div key={fileName} className="space-y-1"><div className="flex justify-between text-xs text-slate-600"><span className="truncate">{fileName}</span><span>{progress}%</span></div><div className="w-full bg-slate-200 rounded-full h-2"><div className="bg-blue-600 h-2 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} /></div></div>))}</div>
+          )}
+          {errorMessage && (<div className="flex items-start space-x-2 text-sm text-red-600 bg-red-50 p-3 rounded-md border border-red-200"><AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" /><span>{errorMessage}</span></div>)}
+          {currentFiles.length > 0 && (
+            <div className="space-y-4"><h5 className="font-medium text-slate-900">Design Round {currentRound} Files ({currentFiles.length})</h5><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{currentFiles.map((file, index) => (<div key={index} className="relative group bg-slate-50 rounded-lg border border-slate-200 p-4">{isImage(file) ? (<div className="aspect-square mb-3 bg-white rounded border overflow-hidden"><img src={file.url} alt={file.filename} className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity" onClick={() => handleFilePreview(file)} /></div>) : (<div className="aspect-square mb-3 bg-white rounded border flex items-center justify-center">{getFileIcon(file)}</div>)}<div className="space-y-2"><p className="text-sm font-medium text-slate-900 truncate" title={file.filename}>{file.filename}</p>{file.size && (<p className="text-xs text-slate-500">{formatFileSize(file.size)}</p>)}</div><div className="flex items-center justify-between mt-3"><button onClick={() => handleFilePreview(file)} className="flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"><Eye className="h-3 w-3" /><span>Preview</span></button>{!isReadOnly && (<button onClick={() => handleRemoveFile(index)} className="flex items-center space-x-1 text-xs text-red-600 hover:text-red-700 transition-colors"><X className="h-3 w-3" /><span>Remove</span></button>)}</div></div>))}</div></div>
+          )}
+          {saveStatus === "success" && (<div className="text-sm text-green-600 bg-green-50 p-3 rounded-md border border-green-200">Files uploaded successfully!</div>)}
+          {currentRound !== 3 && (<div className="space-y-4"><h5 className="font-medium text-slate-900">Design Round {currentRound} Feedback</h5><textarea value={feedback} onChange={(e) => handleFeedbackChange(e.target.value)} disabled={isReadOnly} rows={4} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-50 disabled:text-slate-500" placeholder={`Enter feedback for ${contact.name}'s design round ${currentRound}...`} />{!isReadOnly && (<div className="flex justify-end"><button onClick={handleSaveFeedback} disabled={!hasChanges || isSaving} className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center ${hasChanges && !isSaving ? "bg-blue-600 text-white hover:bg-blue-700" : saveStatus === "success" ? "bg-green-600 text-white" : saveStatus === "error" ? "bg-red-600 text-white" : "bg-slate-200 text-slate-500 cursor-not-allowed"}`}>{getSaveButtonContent()}</button></div>)}</div>)}
+          {saveStatus === "error" && (<div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">Failed to save changes. Please try again.</div>)}
+        </>
       )}
     </div>
   );
