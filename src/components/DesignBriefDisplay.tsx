@@ -47,7 +47,7 @@ const DesignBriefDisplay: React.FC<DesignBriefDisplayProps> = ({ project, contac
                 )}
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-slate-900 mb-1">
-                    Contact #{index + 1}: {contact.name}
+                    {contact.name}
                   </h3>
                   {contact.company && (
                     <div className="flex items-center text-slate-600 mb-2">
@@ -61,7 +61,7 @@ const DesignBriefDisplay: React.FC<DesignBriefDisplayProps> = ({ project, contac
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Live Preview card on left (re-using Stage 2 styling) */}
                 <div>
-                  <div className="border border-slate-700 rounded-md p-3 bg-black text-white flex flex-col gap-3 w-full" style={{ aspectRatio: '5 / 7' }}>
+                  <div className="border border-slate-700 rounded-md p-3 bg-black text-white flex flex-col gap-3 w-full md:w-2/3" style={{ aspectRatio: '5 / 7' }}>
                       <div className="flex-1 flex flex-col gap-3">
                         <div className="border border-slate-700 rounded-md px-3 py-2 text-sm font-semibold text-white bg-black/30">
                           {contact.copyTitle1 || 'Copy Title 1'}
