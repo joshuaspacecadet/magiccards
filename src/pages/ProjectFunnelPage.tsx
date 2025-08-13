@@ -9,6 +9,7 @@ import {
   Palette,
   Filter,
   Hash,
+  ExternalLink,
 } from "lucide-react";
 import { Project, ProjectStage, Contact } from "../types";
 import { AirtableService } from "../services/airtable";
@@ -965,7 +966,7 @@ const ProjectFunnelPage: React.FC = () => {
           topActions={getRevertTopActions("Ready for Print")}
         >
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <ProjectFieldEditor
                 label="Printer Submission Date"
                 value={project.printerSubmissionDate || ""}
@@ -979,7 +980,7 @@ const ProjectFunnelPage: React.FC = () => {
               />
 
               <ProjectFieldEditor
-                label="Shipped to Packsmith Date"
+                label="Orders Fulfillment Date"
                 value={project.shippedToPacksmithDate || ""}
                 onSave={(value) =>
                   handleSaveProjectField("shippedToPacksmithDate", value)
@@ -989,18 +990,54 @@ const ProjectFunnelPage: React.FC = () => {
                 icon={<Hash className="h-4 w-4" />}
                 disabled={isStageCompleted("Ready for Print")}
               />
+            </div>
 
-              <ProjectFieldEditor
-                label="Tracking Number"
-                value={project.trackingNumber || ""}
-                onSave={(value) =>
-                  handleSaveProjectField("trackingNumber", value)
-                }
-                type="text"
-                placeholder="Enter tracking number"
-                icon={<Hash className="h-4 w-4" />}
-                disabled={isStageCompleted("Ready for Print")}
-              />
+            {/* Final Designs Links */}
+            <div className="bg-white p-6 rounded-lg border border-slate-200 space-y-4">
+              <div className="flex items-center space-x-2">
+                <ExternalLink className="h-5 w-5 text-blue-600" />
+                <h4 className="text-lg font-semibold text-slate-900">Final Designs</h4>
+              </div>
+
+              <div className="space-y-2">
+                {project.illustratorFiles && project.illustratorFiles.length > 0 && (
+                  <div>
+                    <p className="text-sm text-slate-600 mb-2">Uploaded Final Design File(s)</p>
+                    <ul className="list-disc list-inside space-y-1">
+                      {project.illustratorFiles.map((file, index) => (
+                        <li key={file.id || `${file.url}-${index}`}> 
+                          <a
+                            href={file.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-700 underline"
+                          >
+                            {file.filename || `File ${index + 1}`}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {project.finalDesignFileLink && (
+                  <div>
+                    <p className="text-sm text-slate-600 mb-1">External Final Design Link</p>
+                    <a
+                      href={project.finalDesignFileLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-700 underline break-all"
+                    >
+                      {project.finalDesignFileLink}
+                    </a>
+                  </div>
+                )}
+
+                {!((project.illustratorFiles && project.illustratorFiles.length > 0) || project.finalDesignFileLink) && (
+                  <p className="text-sm text-slate-500">No final designs linked yet. Add them in Stage 6.</p>
+                )}
+              </div>
             </div>
 
             {/* Stage Completion */}
