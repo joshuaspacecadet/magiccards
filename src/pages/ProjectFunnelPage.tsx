@@ -130,6 +130,57 @@ const ProjectFunnelPage: React.FC = () => {
     }
   };
 
+  const handleUndoStage = async () => {
+    if (!project) return;
+
+    const stageOrder: ProjectStage[] = [
+      "Contacts",
+      "Copy",
+      "Design Brief",
+      "Design Round 1",
+      "Design Round 2",
+      "Handoff",
+      "Ready for Print",
+      "Project Complete",
+    ];
+
+    const currentIndex = stageOrder.indexOf(project.stage);
+    if (currentIndex > 0) {
+      const previousStage = stageOrder[currentIndex - 1];
+
+      try {
+        const updatedProject = await AirtableService.updateProject(project.id, {
+          stage: previousStage,
+        });
+        if (updatedProject) {
+          setProject(updatedProject);
+
+          setTimeout(() => {
+            scrollToStage(previousStage);
+          }, 300);
+        }
+      } catch (error) {
+        console.error("Error undoing stage:", error);
+      }
+    }
+  };
+
+  const canUndoStage = (): boolean => {
+    if (!project) return false;
+    const stageOrder: ProjectStage[] = [
+      "Contacts",
+      "Copy",
+      "Design Brief",
+      "Design Round 1",
+      "Design Round 2",
+      "Handoff",
+      "Ready for Print",
+      "Project Complete",
+    ];
+    const currentIndex = stageOrder.indexOf(project.stage);
+    return currentIndex > 0;
+  };
+
   const scrollToStage = (stage: ProjectStage) => {
     const stageRefs = {
       Contacts: contactsStageRef,
@@ -579,13 +630,24 @@ const ProjectFunnelPage: React.FC = () => {
 
             {/* Stage Completion */}
             {isStageActive("Contacts") && contacts.length > 0 && (
-              <div className="flex justify-center pt-6">
+              <div className="flex justify-center gap-3 pt-6">
                 <button
                   onClick={handleAdvanceStage}
                   className="flex items-center space-x-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
                 >
                   <CheckCircle className="h-5 w-5" />
                   <span>Complete Contacts Stage</span>
+                </button>
+                <button
+                  onClick={handleUndoStage}
+                  disabled={!canUndoStage()}
+                  className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-colors font-medium border ${
+                    canUndoStage()
+                      ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                      : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+                  }`}
+                >
+                  <span>Undo</span>
                 </button>
               </div>
             )}
@@ -628,13 +690,24 @@ const ProjectFunnelPage: React.FC = () => {
 
             {/* Stage Completion */}
             {isStageActive("Copy") && contacts.length > 0 && (
-              <div className="flex justify-center pt-6">
+              <div className="flex justify-center gap-3 pt-6">
                 <button
                   onClick={handleAdvanceStage}
                   className="flex items-center space-x-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
                 >
                   <CheckCircle className="h-5 w-5" />
                   <span>Complete Copy Stage</span>
+                </button>
+                <button
+                  onClick={handleUndoStage}
+                  disabled={!canUndoStage()}
+                  className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-colors font-medium border ${
+                    canUndoStage()
+                      ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                      : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+                  }`}
+                >
+                  <span>Undo</span>
                 </button>
               </div>
             )}
@@ -669,13 +742,24 @@ const ProjectFunnelPage: React.FC = () => {
 
             {/* Stage Completion */}
             {isStageActive("Design Brief") && contacts.length > 0 && (
-              <div className="flex justify-center pt-6">
+              <div className="flex justify-center gap-3 pt-6">
                 <button
                   onClick={handleAdvanceStage}
                   className="flex items-center space-x-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
                 >
                   <CheckCircle className="h-5 w-5" />
                   <span>Complete Design Brief Stage</span>
+                </button>
+                <button
+                  onClick={handleUndoStage}
+                  disabled={!canUndoStage()}
+                  className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-colors font-medium border ${
+                    canUndoStage()
+                      ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                      : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+                  }`}
+                >
+                  <span>Undo</span>
                 </button>
               </div>
             )}
@@ -762,13 +846,24 @@ const ProjectFunnelPage: React.FC = () => {
 
             {/* Stage Completion */}
             {isStageActive("Design Round 1") && contacts.length > 0 && (
-              <div className="flex justify-center pt-6">
+              <div className="flex justify-center gap-3 pt-6">
                 <button
                   onClick={handleAdvanceStage}
                   className="flex items-center space-x-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
                 >
                   <CheckCircle className="h-5 w-5" />
                   <span>Complete Design Round 1</span>
+                </button>
+                <button
+                  onClick={handleUndoStage}
+                  disabled={!canUndoStage()}
+                  className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-colors font-medium border ${
+                    canUndoStage()
+                      ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                      : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+                  }`}
+                >
+                  <span>Undo</span>
                 </button>
               </div>
             )}
@@ -855,13 +950,24 @@ const ProjectFunnelPage: React.FC = () => {
 
             {/* Stage Completion */}
             {isStageActive("Design Round 2") && contacts.length > 0 && (
-              <div className="flex justify-center pt-6">
+              <div className="flex justify-center gap-3 pt-6">
                 <button
                   onClick={handleAdvanceStage}
                   className="flex items-center space-x-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
                 >
                   <CheckCircle className="h-5 w-5" />
                   <span>Complete Design Round 2</span>
+                </button>
+                <button
+                  onClick={handleUndoStage}
+                  disabled={!canUndoStage()}
+                  className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-colors font-medium border ${
+                    canUndoStage()
+                      ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                      : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+                  }`}
+                >
+                  <span>Undo</span>
                 </button>
               </div>
             )}
@@ -887,13 +993,24 @@ const ProjectFunnelPage: React.FC = () => {
 
             {/* Stage Completion */}
             {isStageActive("Handoff") && (
-              <div className="flex justify-center pt-6">
+              <div className="flex justify-center gap-3 pt-6">
                 <button
                   onClick={handleAdvanceStage}
                   className="flex items-center space-x-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
                 >
                   <CheckCircle className="h-5 w-5" />
                   <span>Complete Handoff Stage</span>
+                </button>
+                <button
+                  onClick={handleUndoStage}
+                  disabled={!canUndoStage()}
+                  className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-colors font-medium border ${
+                    canUndoStage()
+                      ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                      : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+                  }`}
+                >
+                  <span>Undo</span>
                 </button>
               </div>
             )}
@@ -951,13 +1068,24 @@ const ProjectFunnelPage: React.FC = () => {
 
             {/* Stage Completion */}
             {isStageActive("Ready for Print") && (
-              <div className="flex justify-center pt-6">
+              <div className="flex justify-center gap-3 pt-6">
                 <button
                   onClick={handleAdvanceStage}
                   className="flex items-center space-x-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
                 >
                   <CheckCircle className="h-5 w-5" />
                   <span>Mark Project Complete</span>
+                </button>
+                <button
+                  onClick={handleUndoStage}
+                  disabled={!canUndoStage()}
+                  className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-colors font-medium border ${
+                    canUndoStage()
+                      ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                      : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+                  }`}
+                >
+                  <span>Undo</span>
                 </button>
               </div>
             )}
@@ -988,6 +1116,17 @@ const ProjectFunnelPage: React.FC = () => {
                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
                 Back to Projects
+              </button>
+              <button
+                onClick={handleUndoStage}
+                disabled={!canUndoStage()}
+                className={`px-6 py-2 rounded-lg transition-colors font-medium border ${
+                  canUndoStage()
+                    ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                    : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+                }`}
+              >
+                Undo
               </button>
             </div>
           </div>
