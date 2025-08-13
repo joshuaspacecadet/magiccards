@@ -493,6 +493,13 @@ const ProjectFunnelPage: React.FC = () => {
 
   // CSV generation for Stage 7
   const contactsCsvDataUri = useMemo(() => {
+    const escapeCsv = (value: string | undefined) => {
+      const str = (value ?? "").toString();
+      if (str.includes('"') || str.includes(',') || str.includes('\n') || str.includes('\r')) {
+        return '"' + str.replace(/"/g, '""') + '"';
+      }
+      return str;
+    };
     const headers = [
       "Full Name",
       "Street Line 1",
@@ -502,13 +509,7 @@ const ProjectFunnelPage: React.FC = () => {
       "Postal Code",
       "Country",
     ];
-    const escapeCsv = (value: string | undefined) => {
-      const str = (value ?? "").toString();
-      if (str.includes('"') || str.includes(',') || str.includes('\n') || str.includes('\r')) {
-        return '"' + str.replace(/"/g, '""') + '"';
-      }
-      return str;
-    };
+    const headerLine = headers.map((h) => escapeCsv(h)).join(",");
     const rows = contacts.map((c) => [
       escapeCsv(c.name),
       escapeCsv(c.streetLine1),
@@ -518,7 +519,7 @@ const ProjectFunnelPage: React.FC = () => {
       escapeCsv(c.postCode),
       escapeCsv(c.countryCode),
     ].join(","));
-    const csv = [headers.join(","), ...rows].join("\r\n");
+    const csv = [headerLine, ...rows].join("\r\n");
     return `data:text/csv;charset=utf-8,${encodeURIComponent(csv)}`;
   }, [contacts]);
 
