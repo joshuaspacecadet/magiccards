@@ -64,8 +64,6 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
   const previousRoundFiles = currentRound === 2 ? contact.round1Draft || [] : [];
   const previousRoundFeedback = currentRound === 2 ? contact.round1DraftFeedback || "" : "";
   const hasCurrentFiles = currentFiles.length > 0;
-  const isFeedbackDisabled = isReadOnly || !isRejected;
-  const feedbackChars = feedback.length;
 
   const isRejected =
     currentRound === 1
@@ -343,8 +341,13 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
     }
   };
 
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const handleFilePreview = (file: AirtableAttachment) => {
-    window.open(file.url, "_blank");
+    if (isImage(file)) {
+      setPreviewUrl(file.url);
+    } else {
+      window.open(file.url, "_blank");
+    }
   };
 
   const isImage = (file: AirtableAttachment) => {
@@ -396,6 +399,26 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
 
   return (
     <div className="bg-white rounded-lg border border-slate-200 p-6 space-y-6">
+      {previewUrl && (
+        <div
+          className="fixed inset-0 bg-black/80 z-[1000] flex items-center justify-center p-4"
+          onClick={() => setPreviewUrl(null)}
+        >
+          <img
+            src={previewUrl}
+            alt="Preview"
+            className="max-h-[90vh] max-w-[90vw] object-contain rounded shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button
+            onClick={() => setPreviewUrl(null)}
+            className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white rounded-full p-2"
+            aria-label="Close preview"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+      )}
       
       {/* Contact Header */}
       <div className="flex items-center justify-between pb-4 border-b border-slate-200">
@@ -456,26 +479,26 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
       </div>
 
       {currentRound === 2 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left: Round 1 summary */}
-          <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-4">
-            <h5 className="text-sm font-semibold text-slate-900">Round 1 Summary</h5>
+          <div className="space-y-3">
+            <h5 className="font-medium text-slate-900">Round 1 Summary</h5>
             {previousRoundFiles.length > 0 && (
               <div>
-                <p className="text-xs text-slate-600 mb-2">Round 1 Files ({previousRoundFiles.length})</p>
-                <div className="grid grid-cols-1 gap-3">
+                <p className="text-sm text-slate-700 mb-2">Round 1 Files ({previousRoundFiles.length})</p>
+                <div className="grid grid-cols-1 gap-4">
                   {previousRoundFiles.map((file, index) => (
-                    <div key={index} className="relative group bg-slate-50 rounded-lg border border-slate-200 p-3 hover:shadow-sm transition-shadow">
+                    <div key={index} className="relative group bg-slate-50 rounded-lg border border-slate-200 p-4">
                       {isImage(file) ? (
-                        <div className="h-64 mb-2 bg-white rounded border overflow-hidden flex items-center justify-center">
+                        <div className="h-64 mb-3 bg-white rounded border overflow-hidden flex items-center justify-center">
                           <img src={file.url} alt={file.filename} className="max-h-full max-w-full object-contain cursor-pointer hover:opacity-90 transition-opacity" onClick={() => handleFilePreview(file)} />
                         </div>
                       ) : (
-                        <div className="h-64 mb-2 bg-white rounded border flex items-center justify-center">
+                        <div className="h-64 mb-3 bg-white rounded border flex items-center justify-center">
                           {getFileIcon(file)}
                         </div>
                       )}
-                      <p className="text-xs font-medium text-slate-900 truncate" title={file.filename}>{file.filename}</p>
+                      <p className="text-sm font-medium text-slate-900 truncate" title={file.filename}>{file.filename}</p>
                     </div>
                   ))}
                 </div>
@@ -483,17 +506,17 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
             )}
             {previousRoundFeedback && (
               <div className="bg-slate-50 border border-slate-200 rounded p-3">
-                <p className="text-xs text-slate-700 whitespace-pre-line">{previousRoundFeedback}</p>
+                <p className="text-sm text-slate-700 whitespace-pre-line">{previousRoundFeedback}</p>
               </div>
             )}
           </div>
 
           {/* Right: Round 2 editor */}
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* File Upload Area */}
             {!isReadOnly && (
-              <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
-                <h5 className="text-sm font-semibold text-slate-900">Upload Design Round {currentRound} Files</h5>
+              <div className="space-y-4">
+                <h5 className="font-medium text-slate-900">Upload Design Round {currentRound} Files</h5>
                 <div className={`border-2 border-dashed rounded-lg ${hasCurrentFiles ? 'p-4' : 'p-8'} text-center transition-colors ${isDragOver ? "border-blue-500 bg-blue-50" : "border-slate-300 hover:border-slate-400"} ${isUploading ? "opacity-50 pointer-events-none" : ""}`} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
                   {isUploading ? (
                     <div className="flex items-center justify-center space-x-2">
@@ -503,10 +526,10 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
                   ) : (
                     <>
                       <Upload className={`${hasCurrentFiles ? 'h-8 w-8' : 'h-12 w-12'} text-slate-400 mx-auto mb-3`} />
-                      <p className={`${hasCurrentFiles ? 'text-sm' : 'text-base'} font-medium text-slate-900 mb-1`}>
+                      <p className={`${hasCurrentFiles ? 'text-sm' : 'text-lg'} font-medium text-slate-900 mb-1`}>
                         {hasCurrentFiles ? 'Add more files' : 'Drop design files here or click to browse'}
                       </p>
-                      <p className="text-xs text-slate-600">Supports AI, PSD, PDF, and image files (max 5MB each)</p>
+                      <p className="text-xs text-slate-600 mb-3">Supports AI, PSD, PDF, and image files (max 5MB each)</p>
                       <input type="file" multiple accept="image/*,.pdf,.ai,.psd,.sketch,.fig,.eps,.indd,.tiff,.tif" onChange={handleFileSelect} className="hidden" id={`file-upload-${contact.id}-round${currentRound}`} />
                       <label htmlFor={`file-upload-${contact.id}-round${currentRound}`} className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
                         <Upload className="h-4 w-4 mr-2" />
@@ -520,8 +543,8 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
 
             {/* Upload Progress */}
             {Object.keys(uploadProgress).length > 0 && (
-              <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-2">
-                <h5 className="text-xs font-semibold text-slate-900">Upload Progress</h5>
+              <div className="space-y-2">
+                <h5 className="text-sm font-medium text-slate-700">Upload Progress</h5>
                 {Object.entries(uploadProgress).map(([fileName, progress]) => (
                   <div key={fileName} className="space-y-1">
                     <div className="flex justify-between text-xs text-slate-600"><span className="truncate">{fileName}</span><span>{progress}%</span></div>
@@ -533,24 +556,24 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
 
             {/* Error Message */}
             {errorMessage && (
-              <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700 flex items-start space-x-2"><AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" /><span>{errorMessage}</span></div>
+              <div className="flex items-start space-x-2 text-sm text-red-600 bg-red-50 p-3 rounded-md border border-red-200"><AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" /><span>{errorMessage}</span></div>
             )}
 
             {/* Uploaded Files Display */}
             {currentFiles.length > 0 && (
-              <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
-                <h5 className="text-sm font-semibold text-slate-900">Design Round {currentRound} Files ({currentFiles.length})</h5>
-                <div className="grid grid-cols-1 gap-3">
+              <div className="space-y-4">
+                <h5 className="font-medium text-slate-900">Design Round {currentRound} Files ({currentFiles.length})</h5>
+                <div className="grid grid-cols-1 gap-4">
                   {currentFiles.map((file, index) => (
-                    <div key={index} className="relative group bg-slate-50 rounded-lg border border-slate-200 p-3 hover:shadow-sm transition-shadow">
+                    <div key={index} className="relative group bg-slate-50 rounded-lg border border-slate-200 p-4">
                       {isImage(file) ? (
-                        <div className="h-64 mb-2 bg-white rounded border overflow-hidden flex items-center justify-center">
+                        <div className="h-64 mb-3 bg-white rounded border overflow-hidden flex items-center justify-center">
                           <img src={file.url} alt={file.filename} className="max-h-full max-w-full object-contain cursor-pointer hover:opacity-90 transition-opacity" onClick={() => handleFilePreview(file)} />
                         </div>
                       ) : (
-                        <div className="h-64 mb-2 bg-white rounded border flex items-center justify-center">{getFileIcon(file)}</div>
+                        <div className="h-64 mb-3 bg-white rounded border flex items-center justify-center">{getFileIcon(file)}</div>
                       )}
-                      <div className="space-y-1"><p className="text-sm font-medium text-slate-900 truncate" title={file.filename}>{file.filename}</p>{file.size && (<p className="text-xs text-slate-500">{formatFileSize(file.size)}</p>)}</div>
+                      <div className="space-y-2"><p className="text-sm font-medium text-slate-900 truncate" title={file.filename}>{file.filename}</p>{file.size && (<p className="text-xs text-slate-500">{formatFileSize(file.size)}</p>)}</div>
                       <div className="flex items-center justify-end mt-3">
                         {!isReadOnly && (<button onClick={() => handleRemoveFile(index)} className="flex items-center space-x-1 text-xs text-red-600 hover:text-red-700 transition-colors"><X className="h-3 w-3" /><span>Remove</span></button>)}
                       </div>
@@ -561,24 +584,20 @@ const ContactDesignRoundEditor: React.FC<ContactDesignRoundEditorProps> = ({
             )}
 
             {/* Status Messages */}
-            {saveStatus === "success" && (<div className="rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-700">Files uploaded successfully!</div>)}
+            {saveStatus === "success" && (<div className="text-sm text-green-600 bg-green-50 p-3 rounded-md border border-green-200">Files uploaded successfully!</div>)}
 
             {/* Feedback Section - Hide for Round 3 */}
             {currentRound !== 3 && (
-              <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <h5 className="text-sm font-semibold text-slate-900">Design Round {currentRound} Feedback</h5>
-                  {!isRejected && <span className="text-xs text-slate-500">Enable by clicking Reject</span>}
-                </div>
-                <textarea value={feedback} onChange={(e) => handleFeedbackChange(e.target.value)} disabled={isFeedbackDisabled} rows={4} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-50 disabled:text-slate-500" placeholder={isRejected ? `Enter feedback for ${contact.name}'s design round ${currentRound}...` : 'Feedback enabled after clicking Reject'} />
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-500">{feedbackChars} characters</span>
-                  {!isReadOnly && (
+              <div className="space-y-4">
+                <h5 className="font-medium text-slate-900">Design Round {currentRound} Feedback</h5>
+                <textarea value={feedback} onChange={(e) => handleFeedbackChange(e.target.value)} disabled={isReadOnly || !isRejected} rows={4} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-50 disabled:text-slate-500" placeholder={isRejected ? `Enter feedback for ${contact.name}'s design round ${currentRound}...` : 'Feedback enabled after clicking Reject'} />
+                {!isReadOnly && (
+                  <div className="flex justify-end">
                     <button onClick={handleSaveFeedback} disabled={!isRejected || !hasChanges || isSaving} className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center ${hasChanges && !isSaving && isRejected ? "bg-blue-600 text-white hover:bg-blue-700" : saveStatus === "success" ? "bg-green-600 text-white" : saveStatus === "error" ? "bg-red-600 text-white" : "bg-slate-200 text-slate-500 cursor-not-allowed"}`}>
                       {getSaveButtonContent()}
                     </button>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             )}
 
