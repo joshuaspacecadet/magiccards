@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit, Trash2, Mail, Phone, MapPin, ExternalLink, Copy, Check } from 'lucide-react';
+import { Edit, Trash2, Mail, Phone, MapPin, ExternalLink, Copy, Check, X } from 'lucide-react';
 import { Contact } from '../types';
 import { normalizeUrl, openUrlSafely } from '../utils/urlHelpers';
 
@@ -20,6 +20,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
 }) => {
   const [showDetails] = useState(true);
   const [copiedConfirmUrl, setCopiedConfirmUrl] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   console.log("Debug: ContactCard received contact:", contact);
 
@@ -69,7 +70,29 @@ const ContactCard: React.FC<ContactCardProps> = ({
   // Details are always shown; no toggle
 
   return (
-    <div className="bg-white rounded-lg border border-slate-200 p-4 hover:shadow-md transition-shadow flex flex-col h-full">
+    <>
+      {previewUrl && (
+        <div
+          className="fixed inset-0 bg-black/80 z-[1000] flex items-center justify-center p-4"
+          onClick={() => setPreviewUrl(null)}
+        >
+          <img
+            src={previewUrl}
+            alt="Preview"
+            className="max-h-[90vh] max-w-[90vw] object-contain rounded shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button
+            onClick={() => setPreviewUrl(null)}
+            className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white rounded-full p-2"
+            aria-label="Close preview"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+      )}
+
+      <div className="bg-white rounded-lg border border-slate-200 p-4 hover:shadow-md transition-shadow flex flex-col h-full">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-start space-x-3 flex-1">
           {contact.headshot && contact.headshot.length > 0 ? (
@@ -77,7 +100,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
               src={contact.headshot[0].url}
               alt={`${contact.name} headshot`}
               className="w-12 h-12 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={() => handleImageClick(contact.headshot![0].url)}
+              onClick={() => setPreviewUrl(contact.headshot![0].url)}
             />
           ) : (
             <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
@@ -261,7 +284,8 @@ const ContactCard: React.FC<ContactCardProps> = ({
       </div>
 
       {/* No toggle; details are always shown */}
-    </div>
+      </div>
+    </>
   );
 };
 
