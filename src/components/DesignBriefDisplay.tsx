@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Download, Loader2, User, Building2, Palette } from 'lucide-react';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+// PDF generation disabled for Stage 3 per request
 import { Project, Contact } from '../types';
 
 interface DesignBriefDisplayProps {
@@ -11,53 +10,7 @@ interface DesignBriefDisplayProps {
 
 const DesignBriefDisplay: React.FC<DesignBriefDisplayProps> = ({ project, contacts }) => {
   const briefRef = useRef<HTMLDivElement>(null);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-
-  const generatePDF = async () => {
-    if (!briefRef.current) return;
-
-    setIsGeneratingPDF(true);
-    try {
-      // Create canvas from the brief content
-      const canvas = await html2canvas(briefRef.current, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff'
-      });
-
-      // Create PDF
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      
-      const imgWidth = 210; // A4 width in mm
-      const pageHeight = 295; // A4 height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 0;
-
-      // Add first page
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      // Add additional pages if needed
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      // Download the PDF
-      const fileName = `Design_Brief_${project.name.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
-      pdf.save(fileName);
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      alert('Failed to generate PDF. Please try again.');
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  };
+  const [isGeneratingPDF] = useState(false);
 
   const handleFileDownload = (fileUrl: string, fileName: string) => {
     const link = document.createElement('a');
@@ -72,26 +25,7 @@ const DesignBriefDisplay: React.FC<DesignBriefDisplayProps> = ({ project, contac
 
   return (
     <div className="space-y-6">
-      {/* Compact PDF Generation Button */}
-      <div className="flex justify-end">
-        <button
-          onClick={generatePDF}
-          disabled={isGeneratingPDF}
-          className="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isGeneratingPDF ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span>Generating...</span>
-            </>
-          ) : (
-            <>
-              <Download className="h-4 w-4" />
-              <span>PDF</span>
-            </>
-          )}
-        </button>
-      </div>
+      {/* PDF generation removed */}
 
       {/* Design Brief Content */}
       <div ref={briefRef} className="bg-white p-8 rounded-lg border border-slate-200 space-y-8">

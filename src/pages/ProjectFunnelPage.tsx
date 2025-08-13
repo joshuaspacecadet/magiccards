@@ -537,19 +537,7 @@ const ProjectFunnelPage: React.FC = () => {
           description="Add and manage the contacts who will receive custom cards for this project."
           isActive={isStageActive("Contacts")}
           isCompleted={isStageCompleted("Contacts")}
-          topActions={
-            <button
-              onClick={handleUndoStage}
-              disabled={!canUndoStage()}
-              className={`px-2 py-1 text-xs rounded border ${
-                canUndoStage()
-                  ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
-                  : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
-              }`}
-            >
-              Undo
-            </button>
-          }
+          topActions={null}
         >
           <div className="space-y-6">
             {/* Contact Management Controls */}
@@ -791,7 +779,7 @@ const ProjectFunnelPage: React.FC = () => {
                   : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
               }`}
             >
-              Undo
+              Revert to Stage 3
             </button>
           }
         >
@@ -897,7 +885,7 @@ const ProjectFunnelPage: React.FC = () => {
                   : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
               }`}
             >
-              Undo
+              Revert to Stage 4
             </button>
           }
         >
@@ -1003,7 +991,7 @@ const ProjectFunnelPage: React.FC = () => {
                   : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
               }`}
             >
-              Undo
+              Revert to Stage 5
             </button>
           }
         >
@@ -1048,7 +1036,7 @@ const ProjectFunnelPage: React.FC = () => {
                   : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
               }`}
             >
-              Undo
+              Revert to Stage 6
             </button>
           }
         >
@@ -1125,7 +1113,7 @@ const ProjectFunnelPage: React.FC = () => {
                   : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
               }`}
             >
-              Undo
+              Revert to Stage 7
             </button>
           }
         >
