@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit, Trash2, Mail, Phone, Building2, MapPin, ExternalLink, ChevronDown, ChevronUp, User, Copy, Check } from 'lucide-react';
+import { Edit, Trash2, Mail, Phone, MapPin, ExternalLink, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
 import { Contact } from '../types';
 import { normalizeUrl, openUrlSafely } from '../utils/urlHelpers';
 
@@ -94,7 +94,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
                     onClick={() => handleImageClick(contact.companyLogo![0].url)}
                   />
                 ) : (
-                  <Building2 className="h-3 w-3 mr-1 flex-shrink-0" />
+                  <div className="h-4 w-4 mr-1 flex items-center justify-center border border-red-600 rounded bg-red-50 text-red-600 text-[10px] leading-none flex-shrink-0">?</div>
                 )}
                 <span className="truncate">{contact.company}</span>
               </div>
@@ -103,7 +103,6 @@ const ContactCard: React.FC<ContactCardProps> = ({
             {/* Display "Added by [Name]" if contactAddedBy has a value */}
             {contact.contactAddedBy && (
               <div className="flex items-center text-xs text-slate-500 mt-1">
-                <User className="h-3 w-3 mr-1 flex-shrink-0" />
                 <span>Added by {contact.contactAddedBy}</span>
               </div>
             )}
