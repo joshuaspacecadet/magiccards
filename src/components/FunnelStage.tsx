@@ -13,10 +13,11 @@ interface FunnelStageProps {
   isActive: boolean;
   isCompleted: boolean;
   children?: React.ReactNode;
+  topActions?: React.ReactNode;
 }
 
 const FunnelStage = forwardRef<HTMLDivElement, FunnelStageProps>(
-  ({ title, description, isActive, isCompleted, children }, ref) => {
+  ({ title, description, isActive, isCompleted, children, topActions }, ref) => {
     // Initialize content open state based on stage status
     const [isContentOpen, setIsContentOpen] = useState(() => {
       if (isActive) return true;
@@ -103,8 +104,13 @@ const FunnelStage = forwardRef<HTMLDivElement, FunnelStageProps>(
               </div>
             </div>
 
-            {/* Chevron Icon */}
-            <div className="flex-shrink-0 ml-4">{getChevronIcon()}</div>
+            {/* Top actions + Chevron */}
+            <div className="flex items-center space-x-2 ml-4" onClick={(e) => e.stopPropagation()}>
+              {topActions}
+              <button type="button" className="p-1" onClick={toggleContent}>
+                {getChevronIcon()}
+              </button>
+            </div>
           </div>
         </div>
 
