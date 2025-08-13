@@ -10,6 +10,7 @@ import {
   Filter,
   Hash,
   ExternalLink,
+  Calendar,
 } from "lucide-react";
 import { Project, ProjectStage, Contact } from "../types";
 import { AirtableService } from "../services/airtable";
@@ -995,8 +996,8 @@ const ProjectFunnelPage: React.FC = () => {
       {shouldRenderStage("Ready for Print") && (
         <FunnelStage
           ref={readyForPrintStageRef}
-          title="Stage 7 — Ready for Print"
-          description="Review and finalize all files and details before sending to print."
+          title="Stage 7 — Ready for Print & Fulfillment"
+          description="Review and finalize all files and details before sending to print and fulfillment."
           isActive={isStageActive("Ready for Print")}
           isCompleted={isStageCompleted("Ready for Print")}
           topActions={getRevertTopActions("Ready for Print")}
@@ -1052,19 +1053,19 @@ const ProjectFunnelPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Contacts CSV Card */}
+              {/* Recipients CSV Card */}
               <div className="bg-white p-6 rounded-lg border border-slate-200 space-y-3">
                 <div className="flex items-center space-x-2">
                   <ExternalLink className="h-5 w-5 text-blue-600" />
-                  <h4 className="text-lg font-semibold text-slate-900">Contacts CSV</h4>
+                  <h4 className="text-lg font-semibold text-slate-900">Recipients CSV</h4>
                 </div>
-                <p className="text-sm text-slate-600">Download a CSV of all contacts for fulfillment.</p>
+                <p className="text-sm text-slate-600">Download a CSV of all recipients for fulfillment.</p>
                 <a
                   href={contactsCsvDataUri}
                   download={`contacts_${project.name?.replace(/[^a-zA-Z0-9]/g, '_') || 'project'}.csv`}
                   className="inline-flex items-center px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors"
                 >
-                  Download CSV
+                  Download Recipients CSV
                 </a>
               </div>
             </div>
@@ -1079,7 +1080,7 @@ const ProjectFunnelPage: React.FC = () => {
                 }
                 type="date"
                 placeholder="Select submission date"
-                icon={<Hash className="h-4 w-4" />}
+                icon={<Calendar className="h-4 w-4" />}
                 disabled={isStageCompleted("Ready for Print")}
               />
 
@@ -1091,7 +1092,7 @@ const ProjectFunnelPage: React.FC = () => {
                 }
                 type="date"
                 placeholder="Select fulfillment date"
-                icon={<Hash className="h-4 w-4" />}
+                icon={<Calendar className="h-4 w-4" />}
                 disabled={isStageCompleted("Ready for Print")}
               />
             </div>
