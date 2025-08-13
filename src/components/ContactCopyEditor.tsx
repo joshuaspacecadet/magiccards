@@ -122,7 +122,10 @@ const ContactCopyEditor: React.FC<ContactCopyEditorProps> = ({
                   {copyData.copyMainText || 'Main copy will appear here...'}
                 </div>
               </div>
-              <div className="text-[10px] text-white/60 text-right">SPACECADET • preview</div>
+              <div className="flex items-center justify-between pt-1">
+                <img src="/spacecadet-logo.svg" alt="Spacecadet" className="h-3 opacity-80" />
+                <div className="text-[10px] text-white/60">preview</div>
+              </div>
             </div>
           </div>
         </div>

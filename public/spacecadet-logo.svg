@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="25" viewBox="0 0 200 25" fill="none">
+  <rect width="200" height="25" fill="none"/>
+  <text x="0" y="18" font-family="monospace" font-size="18" fill="white" stroke="black" stroke-width="1.2">SPACECADET</text>
+  <circle cx="190" cy="8" r="3" fill="#ff5a1f" />
+</svg>
+
