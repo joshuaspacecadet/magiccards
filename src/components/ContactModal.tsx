@@ -404,7 +404,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
           e.stopPropagation();
         }}
       >
-        <div className="flex items-center justify-between p-6 border-b border-slate-200 sticky top-0 bg-white">
+        <div className="flex items-center justify-between p-6 border-b border-slate-200 sticky top-0 bg-white z-20">
           <h2 className="text-lg font-semibold text-slate-900">
             {contact ? "Edit Contact" : "Add New Contact"}
           </h2>
