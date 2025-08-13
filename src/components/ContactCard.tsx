@@ -156,10 +156,17 @@ const ContactCard: React.FC<ContactCardProps> = ({
         {/* Items toggles */}
         <div className="mb-2 text-xs flex items-center gap-4">
           <label className="inline-flex items-center gap-1">
+            <input type="checkbox" checked={true} disabled />
+            <span>Magic Cards</span>
+          </label>
+          <label className="inline-flex items-center gap-1">
             <input
               type="checkbox"
               checked={!!contact.sfsBook}
-              onChange={() => onEdit({ ...contact, sfsBook: !contact.sfsBook })}
+              onChange={async () => {
+                const updated = { ...contact, sfsBook: !contact.sfsBook };
+                onEdit(updated);
+              }}
               disabled={isStageLocked}
             />
             <span>SFS Book</span>
@@ -168,7 +175,10 @@ const ContactCard: React.FC<ContactCardProps> = ({
             <input
               type="checkbox"
               checked={!!contact.goldenRecord}
-              onChange={() => onEdit({ ...contact, goldenRecord: !contact.goldenRecord })}
+              onChange={async () => {
+                const updated = { ...contact, goldenRecord: !contact.goldenRecord };
+                onEdit(updated);
+              }}
               disabled={isStageLocked}
             />
             <span>Golden Record</span>

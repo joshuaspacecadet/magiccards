@@ -46,6 +46,9 @@ const ContactModal: React.FC<ContactModalProps> = ({
     linkedinUrl: "",
     additionalContactContext: "",
     contactAddedBy: "",
+    magicCards: true,
+    sfsBook: false,
+    goldenRecord: false,
   });
 
   const [headshots, setHeadshots] = useState<
@@ -84,6 +87,9 @@ const ContactModal: React.FC<ContactModalProps> = ({
         linkedinUrl: contact.linkedinUrl || "",
         additionalContactContext: contact.additionalContactContext || "",
         contactAddedBy: contact.contactAddedBy || "",
+        magicCards: contact.magicCards ?? true,
+        sfsBook: !!contact.sfsBook,
+        goldenRecord: !!contact.goldenRecord,
       });
 
       // Convert AirtableAttachment format to internal format
@@ -125,6 +131,9 @@ const ContactModal: React.FC<ContactModalProps> = ({
         linkedinUrl: "",
         additionalContactContext: "",
         contactAddedBy: "",
+        magicCards: true,
+        sfsBook: false,
+        goldenRecord: false,
       });
       setHeadshots([]);
       setCompanyLogos([]);
@@ -505,6 +514,33 @@ const ContactModal: React.FC<ContactModalProps> = ({
                     </option>
                   ))}
                 </select>
+              </div>
+            </div>
+
+            {/* Items */}
+            <div className="space-y-2">
+              <h4 className="text-sm font-medium text-slate-900">Items</h4>
+              <div className="flex items-center gap-4 text-sm">
+                <label className="inline-flex items-center gap-2">
+                  <input type="checkbox" checked={true} disabled />
+                  <span>Magic Cards</span>
+                </label>
+                <label className="inline-flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.sfsBook}
+                    onChange={(e) => setFormData({ ...formData, sfsBook: e.target.checked })}
+                  />
+                  <span>SFS Book</span>
+                </label>
+                <label className="inline-flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.goldenRecord}
+                    onChange={(e) => setFormData({ ...formData, goldenRecord: e.target.checked })}
+                  />
+                  <span>Golden Record</span>
+                </label>
               </div>
             </div>
           </div>

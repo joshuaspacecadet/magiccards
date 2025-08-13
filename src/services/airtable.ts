@@ -56,6 +56,7 @@ const transformAirtableContact = (record: any): Contact => {
     confirmAddressUrl: fields["Confirm Address URL"] || "",
     additionalContactContext: fields["Additional Contact Context"] || "",
     contactAddedBy: fields["Contact Added By"] || "", // ADD THIS LINE
+    magicCards: fields["Magic Cards"] ?? true,
     sfsBook: fields["SFS Book"] || false,
     goldenRecord: fields["Golden Record"] || false,
     copyTitle1: fields["Copy Title 1"] || "",
@@ -301,6 +302,8 @@ export class AirtableService {
           contactData.additionalContactContext;
       if (contactData.contactAddedBy && contactData.contactAddedBy !== "")
         createFields["Contact Added By"] = contactData.contactAddedBy;
+      if (contactData.magicCards !== undefined)
+        createFields["Magic Cards"] = contactData.magicCards;
       if (contactData.sfsBook !== undefined)
         createFields["SFS Book"] = contactData.sfsBook;
       if (contactData.goldenRecord !== undefined)
@@ -374,6 +377,8 @@ export class AirtableService {
           updates.additionalContactContext;
       if (updates.contactAddedBy !== undefined && updates.contactAddedBy !== "")
         updateFields["Contact Added By"] = updates.contactAddedBy;
+      if (updates.magicCards !== undefined)
+        updateFields["Magic Cards"] = updates.magicCards;
       if (updates.sfsBook !== undefined)
         updateFields["SFS Book"] = updates.sfsBook;
       if (updates.goldenRecord !== undefined)
