@@ -502,19 +502,30 @@ const ProjectFunnelPage: React.FC = () => {
                         Review contacts as:
                       </label>
                     </div>
-                    <select
-                      id="contact-filter"
-                      value={selectedFilterCreator}
-                      onChange={(e) => setSelectedFilterCreator(e.target.value)}
-                      className="px-3 py-1.5 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white min-w-[200px]"
-                    >
-                      <option value="">Select Name</option>
-                      {PREDEFINED_CONTACT_CREATORS.map((creator) => (
-                        <option key={creator} value={creator}>
-                          {creator}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="flex items-center gap-2">
+                      {PREDEFINED_CONTACT_CREATORS.map((creator) => {
+                        const isSelected = selectedFilterCreator === creator;
+                        return (
+                          <button
+                            key={creator}
+                            type="button"
+                            onClick={() =>
+                              setSelectedFilterCreator(
+                                isSelected ? "" : creator
+                              )
+                            }
+                            className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
+                              isSelected
+                                ? "bg-blue-600 text-white border-blue-600"
+                                : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                            }`}
+                            title={`Review contacts as ${creator}`}
+                          >
+                            {creator}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </>
                 )}
               </div>
@@ -694,21 +705,30 @@ const ProjectFunnelPage: React.FC = () => {
                     Review designs as:
                   </label>
                 </div>
-                <select
-                  id="design-creator-filter"
-                  value={selectedDesignCreatorFilter}
-                  onChange={(e) =>
-                    setSelectedDesignCreatorFilter(e.target.value)
-                  }
-                  className="px-3 py-1.5 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white min-w-[200px]"
-                >
-                  <option value="">Select Name</option>
-                  {PREDEFINED_CONTACT_CREATORS.map((creator) => (
-                    <option key={creator} value={creator}>
-                      {creator}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center gap-2">
+                  {PREDEFINED_CONTACT_CREATORS.map((creator) => {
+                    const isSelected = selectedDesignCreatorFilter === creator;
+                    return (
+                      <button
+                        key={creator}
+                        type="button"
+                        onClick={() =>
+                          setSelectedDesignCreatorFilter(
+                            isSelected ? "" : creator
+                          )
+                        }
+                        className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
+                          isSelected
+                            ? "bg-blue-600 text-white border-blue-600"
+                            : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                        }`}
+                        title={`Review designs as ${creator}`}
+                      >
+                        {creator}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
 
@@ -778,21 +798,30 @@ const ProjectFunnelPage: React.FC = () => {
                     Review designs as:
                   </label>
                 </div>
-                <select
-                  id="design-creator-filter-round2"
-                  value={selectedDesignCreatorFilter}
-                  onChange={(e) =>
-                    setSelectedDesignCreatorFilter(e.target.value)
-                  }
-                  className="px-3 py-1.5 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white min-w-[200px]"
-                >
-                  <option value="">Select Name</option>
-                  {PREDEFINED_CONTACT_CREATORS.map((creator) => (
-                    <option key={creator} value={creator}>
-                      {creator}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center gap-2">
+                  {PREDEFINED_CONTACT_CREATORS.map((creator) => {
+                    const isSelected = selectedDesignCreatorFilter === creator;
+                    return (
+                      <button
+                        key={creator}
+                        type="button"
+                        onClick={() =>
+                          setSelectedDesignCreatorFilter(
+                            isSelected ? "" : creator
+                          )
+                        }
+                        className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
+                          isSelected
+                            ? "bg-blue-600 text-white border-blue-600"
+                            : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                        }`}
+                        title={`Review designs as ${creator}`}
+                      >
+                        {creator}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
 
