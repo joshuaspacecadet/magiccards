@@ -90,7 +90,35 @@ const ContactCopyEditor: React.FC<ContactCopyEditorProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg border border-slate-200 p-6 space-y-4">
+    <div className="bg-white rounded-lg border border-slate-200 p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Live Preview */}
+        <div className="order-2 lg:order-1">
+          <div className="border border-slate-300 rounded-lg p-4 bg-white">
+            <h3 className="text-sm font-medium text-slate-700 mb-2">Live Preview</h3>
+            <div className="border border-slate-300 rounded-md p-4 space-y-4">
+              <div className="border rounded-md p-3 text-sm font-semibold text-slate-900 bg-slate-50">
+                {copyData.copyTitle1 || 'Copy Title 1'}
+              </div>
+              <div className="h-40 border rounded-md bg-slate-100" />
+              <div className="border rounded-md p-3 text-sm font-semibold text-slate-900 bg-slate-50">
+                {copyData.copyTitle2 || 'Copy Title 2'}
+              </div>
+              <div className="border rounded-md p-3 bg-white">
+                <div className="text-xs font-semibold text-slate-800 mb-1">
+                  {copyData.copyTitle3 || 'Copy Title 3'}
+                </div>
+                <div className="text-xs text-slate-700 whitespace-pre-line">
+                  {copyData.copyMainText || 'Main copy will appear here...'}
+                </div>
+              </div>
+              <div className="text-[10px] text-slate-500 text-right">SPACECADET • preview</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right panel - inputs */}
+        <div className="space-y-4 order-1 lg:order-2">
       {/* Contact Header */}
       <div className="flex items-center space-x-3 pb-4 border-b border-slate-200">
         {contact.headshot && contact.headshot.length > 0 ? (
@@ -168,6 +196,20 @@ const ContactCopyEditor: React.FC<ContactCopyEditorProps> = ({
 
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">
+            Copy Title 3
+          </label>
+          <input
+            type="text"
+            value={copyData.copyTitle3 as any}
+            onChange={(e) => handleInputChange('copyTitle3' as any, e.target.value)}
+            disabled={isReadOnly}
+            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-50 disabled:text-slate-500"
+            placeholder="Enter third title line..."
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">
             Copy Main Text
           </label>
           <textarea
@@ -194,34 +236,35 @@ const ContactCopyEditor: React.FC<ContactCopyEditorProps> = ({
           />
         </div>
       </div>
+        {/* Save Button */}
+        {!isReadOnly && (
+          <div className="flex justify-end pt-4 border-t border-slate-200">
+            <button
+              onClick={handleSave}
+              disabled={!hasChanges || isSaving}
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center ${
+                hasChanges && !isSaving
+                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  : saveStatus === 'success'
+                  ? 'bg-green-600 text-white'
+                  : saveStatus === 'error'
+                  ? 'bg-red-600 text-white'
+                  : 'bg-slate-200 text-slate-500 cursor-not-allowed'
+              }`}
+            >
+              {getSaveButtonContent()}
+            </button>
+          </div>
+        )}
 
-      {/* Save Button */}
-      {!isReadOnly && (
-        <div className="flex justify-end pt-4 border-t border-slate-200">
-          <button
-            onClick={handleSave}
-            disabled={!hasChanges || isSaving}
-            className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center ${
-              hasChanges && !isSaving
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : saveStatus === 'success'
-                ? 'bg-green-600 text-white'
-                : saveStatus === 'error'
-                ? 'bg-red-600 text-white'
-                : 'bg-slate-200 text-slate-500 cursor-not-allowed'
-            }`}
-          >
-            {getSaveButtonContent()}
-          </button>
+        {/* Error Message */}
+        {saveStatus === 'error' && (
+          <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">
+            Failed to save copy. Please try again.
+          </div>
+        )}
         </div>
-      )}
-
-      {/* Error Message */}
-      {saveStatus === 'error' && (
-        <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">
-          Failed to save copy. Please try again.
-        </div>
-      )}
+      </div>
     </div>
   );
 };
