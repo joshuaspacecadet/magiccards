@@ -67,8 +67,7 @@ const DesignBriefDisplay: React.FC<DesignBriefDisplayProps> = ({ project, contac
                           {contact.copyTitle1 || 'Copy Title 1'}
                         </div>
                         <div className="h-40 border border-slate-700 rounded-md overflow-auto bg-slate-700/90 p-2">
-                          <div className="flex items-center text-[11px] font-semibold text-white mb-1">
-                            <Palette className="h-3 w-3 mr-1" />
+                          <div className="text-[11px] font-semibold text-white mb-1">
                             Image Direction & Visual Notes
                           </div>
                           <div className="text-xs text-white whitespace-pre-line">
@@ -154,13 +153,7 @@ const DesignBriefDisplay: React.FC<DesignBriefDisplayProps> = ({ project, contac
 
               {/* Removed separate Image Direction box; preview above includes it */}
 
-              {/* Additional Context */}
-              {contact.additionalContactContext && (
-                <div className="mt-4 pt-4 border-t border-slate-200">
-                  <h4 className="font-medium text-slate-900 mb-2">Additional Context</h4>
-                  <p className="text-sm text-slate-600 italic">{contact.additionalContactContext}</p>
-                </div>
-              )}
+              {/* Removed Additional Context section per request */}
             </div>
           ))}
         </div>
