@@ -92,8 +92,28 @@ const ContactCard: React.FC<ContactCardProps> = ({
         </div>
       )}
 
-      <div className="bg-white rounded-lg border border-slate-200 p-4 hover:shadow-md transition-shadow flex flex-col h-full">
-      <div className="flex items-start justify-between mb-4">
+      <div className="bg-white rounded-lg border border-slate-200 p-4 hover:shadow-md transition-shadow flex flex-col h-full relative">
+      {/* Absolutized action buttons to avoid layout shift/overlap */}
+      {!isStageLocked && (
+        <div className="absolute top-2 right-2 flex space-x-1 z-10">
+          <button
+            onClick={() => onEdit(contact)}
+            className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+            title="Edit contact"
+          >
+            <Edit className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => onDelete(contact.id)}
+            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+            title="Delete contact"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
+      <div className="flex items-start mb-4 pr-10">
         <div className="flex items-start space-x-3 flex-1">
           {contact.headshot && contact.headshot.length > 0 ? (
             <img
@@ -132,28 +152,6 @@ const ContactCard: React.FC<ContactCardProps> = ({
               </div>
             )}
           </div>
-        </div>
-        
-        {/* Action buttons - always visible */}
-        <div className="flex space-x-1 flex-shrink-0">
-          {!isStageLocked && (
-            <>
-              <button
-                onClick={() => onEdit(contact)}
-                className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                title="Edit contact"
-              >
-                <Edit className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => onDelete(contact.id)}
-                className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                title="Delete contact"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </>
-          )}
         </div>
       </div>
 
