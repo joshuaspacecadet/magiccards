@@ -63,14 +63,18 @@ const DesignBriefDisplay: React.FC<DesignBriefDisplayProps> = ({ project, contac
                 <div>
                   <div className="border border-slate-300 rounded-lg p-4 bg-white">
                     <h4 className="text-sm font-medium text-slate-700 mb-2">Live Preview</h4>
-                    <div className="border border-slate-700 rounded-md p-3 bg-black text-white flex flex-col gap-3" style={{ aspectRatio: '5 / 7' }}>
+                    <div className="border border-slate-700 rounded-md p-3 bg-black text-white flex flex-col gap-3 w-full max-w-[260px]" style={{ aspectRatio: '5 / 7' }}>
                       <div className="flex-1 flex flex-col gap-3">
                         <div className="border border-slate-700 rounded-md px-3 py-2 text-sm font-semibold text-white bg-black/30">
                           {contact.copyTitle1 || 'Copy Title 1'}
                         </div>
-                        <div className="h-40 border border-slate-700 rounded-md overflow-auto bg-black/30 p-2">
+                        <div className="h-40 border border-slate-700 rounded-md overflow-auto bg-slate-700/90 p-2">
+                          <div className="flex items-center text-[11px] font-semibold text-white mb-1">
+                            <Palette className="h-3 w-3 mr-1" />
+                            Image Direction & Visual Notes
+                          </div>
                           <div className="text-xs text-white whitespace-pre-line">
-                            {contact.imageDirection || 'Image direction & visual notes will appear here...'}
+                            {contact.imageDirection || 'Add image direction & visual notes in Stage 2.'}
                           </div>
                         </div>
                         <div className="border border-slate-700 rounded-md px-3 py-2 text-sm font-semibold text-white bg-black/30">
@@ -151,18 +155,7 @@ const DesignBriefDisplay: React.FC<DesignBriefDisplayProps> = ({ project, contac
                 </div>
               </div>
 
-              {/* Image Direction */}
-              {contact.imageDirection && (
-                <div className="mt-4 pt-4 border-t border-slate-200">
-                  <h4 className="font-medium text-slate-900 mb-2 flex items-center">
-                    <Palette className="h-4 w-4 mr-2" />
-                    Image Direction & Visual Notes
-                  </h4>
-                  <div className="bg-blue-50 p-3 rounded-md border border-blue-200">
-                    <p className="text-sm text-blue-900 whitespace-pre-line">{contact.imageDirection}</p>
-                  </div>
-                </div>
-              )}
+              {/* Removed separate Image Direction box; preview above includes it */}
 
               {/* Additional Context */}
               {contact.additionalContactContext && (
