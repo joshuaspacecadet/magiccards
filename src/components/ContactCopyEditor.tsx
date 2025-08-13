@@ -94,7 +94,38 @@ const ContactCopyEditor: React.FC<ContactCopyEditorProps> = ({
   return (
     <div className="bg-white rounded-lg border border-slate-200 p-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Live Preview */}
+        {/* Header spanning both columns on large screens */}
+        <div className="lg:col-span-3">
+          <div className="flex items-center gap-3 pb-4 border-b border-slate-200">
+            {contact.headshot && contact.headshot.length > 0 ? (
+              <img src={contact.headshot[0].url} alt={contact.name} className="w-10 h-10 rounded-full object-cover" />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                <User className="h-5 w-5 text-blue-600" />
+              </div>
+            )}
+            <div className="flex-1">
+              <h4 className="font-semibold text-slate-900">{contact.name}</h4>
+              {contact.company && <p className="text-sm text-slate-600">{contact.company}</p>}
+              {contact.linkedinUrl && (
+                <div className="flex items-center mt-1">
+                  <ExternalLink className="h-3 w-3 mr-1 text-slate-500" />
+                  <a href={contact.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:text-blue-700 transition-colors">
+                    LinkedIn Profile
+                  </a>
+                </div>
+              )}
+              {contact.additionalContactContext && (
+                <div className="mt-2 pt-2 border-t border-slate-200">
+                  <p className="text-xs text-slate-600 italic">{contact.additionalContactContext}</p>
+                </div>
+              )}
+            </div>
+            <div className="text-xs text-slate-600">{contact.phone && <div>{contact.phone}</div>}</div>
+          </div>
+        </div>
+
+        {/* Live Preview (aligned with Copy Title 1 row) */}
         <div className="order-2 lg:order-1 lg:col-span-1">
           <div className="border border-slate-300 rounded-lg p-4 bg-white">
             <h3 className="text-sm font-medium text-slate-700 mb-2">Live Preview</h3>
@@ -134,55 +165,6 @@ const ContactCopyEditor: React.FC<ContactCopyEditorProps> = ({
 
         {/* Right panel - inputs */}
         <div className="space-y-4 order-1 lg:order-2 lg:col-span-2">
-      {/* Contact Header */}
-          <div className="flex items-center space-x-3 pb-4 border-b border-slate-200">
-        {contact.headshot && contact.headshot.length > 0 ? (
-          <img
-            src={contact.headshot[0].url}
-            alt={contact.name}
-            className="w-10 h-10 rounded-full object-cover"
-          />
-        ) : (
-          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-            <User className="h-5 w-5 text-blue-600" />
-          </div>
-        )}
-        <div className="flex-1">
-          <h4 className="font-semibold text-slate-900">{contact.name}</h4>
-          {contact.company && (
-            <p className="text-sm text-slate-600">{contact.company}</p>
-          )}
-          
-          {/* LinkedIn URL */}
-          {contact.linkedinUrl && (
-            <div className="flex items-center mt-1">
-              <ExternalLink className="h-3 w-3 mr-1 text-slate-500" />
-              <a 
-                href={contact.linkedinUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-xs text-blue-600 hover:text-blue-700 transition-colors"
-              >
-                LinkedIn Profile
-              </a>
-            </div>
-          )}
-          
-          {/* Additional Contact Context */}
-          {contact.additionalContactContext && (
-            <div className="mt-2 pt-2 border-t border-slate-200">
-              <p className="text-xs text-slate-600 italic">
-                {contact.additionalContactContext}
-              </p>
-            </div>
-          )}
-            </div>
-            {/* Left-side quick facts */}
-            <div className="text-xs text-slate-600">
-              {contact.phone && <div>{contact.phone}</div>}
-            </div>
-      </div>
-
       {/* Copy Input Fields */}
       <div className="space-y-4">
         <div>
