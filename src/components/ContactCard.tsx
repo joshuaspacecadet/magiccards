@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit, Trash2, Mail, Phone, MapPin, ExternalLink, Copy, Check, X } from 'lucide-react';
+import { Edit, Mail, Phone, MapPin, ExternalLink, Copy, Check, X } from 'lucide-react';
 import { Contact } from '../types';
 import { normalizeUrl, openUrlSafely } from '../utils/urlHelpers';
 
@@ -14,7 +14,6 @@ interface ContactCardProps {
 const ContactCard: React.FC<ContactCardProps> = ({ 
   contact, 
   onEdit, 
-  onDelete, 
   onUpdate,
   isStageLocked = false 
 }) => {
@@ -25,6 +24,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
   const [flagFeedback, setFlagFeedback] = useState("");
   const [flagError, setFlagError] = useState("");
   const [isConfirmClearFeedbackOpen, setIsConfirmClearFeedbackOpen] = useState(false);
+  const [confirmClearNextStatus, setConfirmClearNextStatus] = useState<"Approve" | "Remove" | null>(null);
 
   console.log("Debug: ContactCard received contact:", contact);
 
@@ -97,7 +97,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
       )}
 
       <div className="bg-white rounded-lg border border-slate-200 p-4 hover:shadow-md transition-shadow flex flex-col h-full relative">
-      {/* Absolutized action buttons to avoid layout shift/overlap */}
+      {/* Absolutized action buttons to avoid layout shift/overlap (delete removed) */}
       {!isStageLocked && (
         <div className="absolute top-2 right-2 flex space-x-1 z-10">
           <button
@@ -106,13 +106,6 @@ const ContactCard: React.FC<ContactCardProps> = ({
             title="Edit contact"
           >
             <Edit className="h-4 w-4" />
-          </button>
-          <button
-            onClick={() => onDelete(contact.id)}
-            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-            title="Delete contact"
-          >
-            <Trash2 className="h-4 w-4" />
           </button>
         </div>
       )}
@@ -296,7 +289,16 @@ const ContactCard: React.FC<ContactCardProps> = ({
       <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-center gap-2">
         <button
           className={`px-2.5 py-1 text-xs rounded border transition-colors ${contact.contactReview === 'Approve' ? 'bg-green-600 text-white border-green-600' : 'bg-white text-green-700 border-green-300 hover:bg-green-50'}`}
-          onClick={() => onUpdate(contact.id, { contactReview: 'Approve', contactReviewFeedback: '' })}
+          onClick={() => {
+            if (isStageLocked) return;
+            const hasFeedback = !!(contact.contactReviewFeedback && contact.contactReviewFeedback.trim().length > 0);
+            if (hasFeedback) {
+              setConfirmClearNextStatus('Approve');
+              setIsConfirmClearFeedbackOpen(true);
+            } else {
+              onUpdate(contact.id, { contactReview: 'Approve', contactReviewFeedback: '' });
+            }
+          }}
           disabled={isStageLocked}
         >
           Approve
@@ -314,21 +316,28 @@ const ContactCard: React.FC<ContactCardProps> = ({
           Flag
         </button>
         <button
-          className={`px-2.5 py-1 text-xs rounded border transition-colors ${contact.contactReview === 'Do Not Send' ? 'bg-red-600 text-white border-red-600' : 'bg-white text-red-700 border-red-300 hover:bg-red-50'}`}
+          className={`px-2.5 py-1 text-xs rounded border transition-colors ${contact.contactReview === 'Remove' ? 'bg-red-600 text-white border-red-600' : 'bg-white text-red-700 border-red-300 hover:bg-red-50'}`}
           onClick={() => {
             if (isStageLocked) return;
             const hasFeedback = !!(contact.contactReviewFeedback && contact.contactReviewFeedback.trim().length > 0);
             if (hasFeedback) {
+              setConfirmClearNextStatus('Remove');
               setIsConfirmClearFeedbackOpen(true);
             } else {
-              onUpdate(contact.id, { contactReview: 'Do Not Send', contactReviewFeedback: '' });
+              onUpdate(contact.id, { contactReview: 'Remove', contactReviewFeedback: '' });
             }
           }}
           disabled={isStageLocked}
         >
-          Do Not Send
+          Remove
         </button>
       </div>
+
+      {contact.contactReviewFeedback && contact.contactReviewFeedback.trim().length > 0 && (
+        <div className="mt-2 text-xs text-slate-600 italic whitespace-pre-line text-center">
+          {contact.contactReviewFeedback}
+        </div>
+      )}
 
       {/* Flag Feedback Modal */}
       {isFlagModalOpen && (
@@ -384,7 +393,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
         </div>
       )}
 
-      {/* Confirm clear feedback for Do Not Send */}
+      {/* Confirm clear feedback for Remove/Approve */}
       {isConfirmClearFeedbackOpen && (
         <div
           className="fixed inset-0 bg-black/60 z-[1000] flex items-center justify-center p-4"
@@ -404,7 +413,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <p className="text-xs text-slate-600 mb-4">Switching to “Do Not Send” will remove the saved feedback on this contact. Are you sure?</p>
+            <p className="text-xs text-slate-600 mb-4">Switching to “{confirmClearNextStatus ?? 'this status'}” will remove the saved feedback on this contact. Are you sure?</p>
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setIsConfirmClearFeedbackOpen(false)}
@@ -414,8 +423,10 @@ const ContactCard: React.FC<ContactCardProps> = ({
               </button>
               <button
                 onClick={() => {
-                  onUpdate(contact.id, { contactReview: 'Do Not Send', contactReviewFeedback: '' });
+                  const next = confirmClearNextStatus || 'Remove';
+                  onUpdate(contact.id, { contactReview: next, contactReviewFeedback: '' });
                   setIsConfirmClearFeedbackOpen(false);
+                  setConfirmClearNextStatus(null);
                 }}
                 className="px-3 py-1.5 text-xs rounded bg-red-600 text-white hover:bg-red-700"
               >
