@@ -137,7 +137,18 @@ const ContactCard: React.FC<ContactCardProps> = ({
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <h4 className="font-semibold text-slate-900 truncate">{contact.name}</h4>
+            <div className="flex items-center min-w-0">
+              <h4 className="font-semibold text-slate-900 truncate">{contact.name}</h4>
+              {contact.linkedinUrl && (
+                <button
+                  onClick={handleLinkedInClick}
+                  className="ml-2 text-slate-400 hover:text-blue-600"
+                  title="Open LinkedIn profile"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </button>
+              )}
+            </div>
             {contact.company && (
               <div className="flex items-center text-sm text-slate-600 mt-1">
                 {contact.companyLogo && contact.companyLogo.length > 0 ? (
@@ -235,17 +246,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 </div>
               )}
 
-              {contact.linkedinUrl && (
-                <div className="flex items-center text-slate-600">
-                  <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
-                  <button 
-                    onClick={handleLinkedInClick}
-                    className="hover:text-blue-600 transition-colors text-xs truncate text-left"
-                  >
-                    LinkedIn Profile
-                  </button>
-                </div>
-              )}
+              {/* Removed LinkedIn Profile row; link icon near name handles this */}
 
           {contact.confirmAddressUrl && contact.streetLine1 && (
             <div className="flex items-center text-slate-600">
