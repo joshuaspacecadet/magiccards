@@ -236,12 +236,12 @@ const ContactCard: React.FC<ContactCardProps> = ({
                   </div>
                 </div>
               ) : (
-                <div className="border border-red-500 bg-red-50 rounded-md px-2 py-1 flex items-center justify-between">
-                  <span className="text-[11px] font-semibold text-red-600">Missing Address</span>
+                <div className="border border-red-500 bg-red-50 rounded-md px-2 py-1">
+                  <div className="text-[11px] font-semibold text-red-600">Missing Address</div>
                   {contact.confirmAddressUrl && (
                     <button
                       onClick={handleCopyConfirmUrl}
-                      className="text-[11px] underline text-red-600 hover:text-red-700 ml-2"
+                      className="mt-1 text-[11px] underline text-red-600 hover:text-red-700"
                       title={contact.confirmAddressUrl}
                     >
                       {copiedConfirmUrl ? 'Link copied' : 'Copy Confirm Link'}
