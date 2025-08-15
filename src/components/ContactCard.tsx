@@ -250,28 +250,16 @@ const ContactCard: React.FC<ContactCardProps> = ({
               {/* Removed LinkedIn Profile row; link icon near name handles this */}
 
           {contact.confirmAddressUrl && contact.streetLine1 && (
-                <div className="flex items-center text-slate-600">
-                  <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
-                  <button 
-                onClick={() => openUrlSafely(contact.confirmAddressUrl!)}
-                className="hover:text-blue-600 transition-colors text-xs truncate text-left mr-1.5"
-                title={contact.confirmAddressUrl}
-              >
-                Confirm Address URL
-              </button>
+            <div className="flex items-center text-slate-600">
               <button
                 onClick={handleCopyConfirmUrl}
-                className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded transition-colors"
-                title={copiedConfirmUrl ? 'Copied!' : 'Copy URL'}
+                className="text-[11px] underline hover:text-blue-600 transition-colors"
+                title={contact.confirmAddressUrl}
               >
-                {copiedConfirmUrl ? (
-                  <Check className="h-3 w-3 text-green-600" />
-                ) : (
-                  <Copy className="h-3 w-3" />
-                )}
-                  </button>
-                </div>
-              )}
+                {copiedConfirmUrl ? 'Link copied' : 'Copy Confirm Link'}
+              </button>
+            </div>
+          )}
           </div>
         </div>
 
