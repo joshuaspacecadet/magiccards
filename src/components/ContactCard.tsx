@@ -273,7 +273,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 </div>
               ) : (
                 <div className="pt-3">
-                  <div className="flex items-center justify-center gap-2 text-slate-600">
+                  <div className="flex items-center justify-center gap-2 text-slate-600 mb-2">
                     <Edit className="h-3 w-3 flex-shrink-0" />
                     <button
                       onClick={() => { if (!isStageLocked) { setNotesInput(""); setIsNotesModalOpen(true); } }}
