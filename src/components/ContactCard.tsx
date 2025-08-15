@@ -285,11 +285,20 @@ const ContactCard: React.FC<ContactCardProps> = ({
             </div>
           )}
 
-              {contact.additionalContactContext && (
+              {contact.additionalContactContext ? (
                 <div className="pt-2 border-t border-slate-200">
                   <p className="text-xs text-slate-600 italic">
                     {contact.additionalContactContext}
                   </p>
+                </div>
+              ) : (
+                <div className="pt-2 border-t border-slate-200">
+                  <button
+                    onClick={() => onEdit(contact)}
+                    className="text-[11px] text-slate-500 hover:text-slate-700 underline"
+                  >
+                    Help us make the Magic Card copy extra special by adding details (e.g. loves to surf, lives bi-coastal, training for a marathin, amazing growth marketer)
+                  </button>
                 </div>
               )}
             </div>
