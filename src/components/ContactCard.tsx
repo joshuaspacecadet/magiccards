@@ -243,23 +243,22 @@ const ContactCard: React.FC<ContactCardProps> = ({
                   <MapPin className="h-3 w-3 mr-2 mt-0.5 flex-shrink-0" />
                   <div className="text-xs whitespace-pre-line">
                     {formatAddress(contact)}
+                    {contact.confirmAddressUrl && contact.streetLine1 && (
+                      <button
+                        onClick={handleCopyConfirmUrl}
+                        className="ml-2 text-[11px] underline text-slate-500 hover:text-blue-600 transition-colors"
+                        title={contact.confirmAddressUrl}
+                      >
+                        {copiedConfirmUrl ? 'Link copied' : 'Copy Confirm Link'}
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
 
               {/* Removed LinkedIn Profile row; link icon near name handles this */}
 
-          {contact.confirmAddressUrl && contact.streetLine1 && (
-            <div className="flex items-center text-slate-600">
-              <button
-                onClick={handleCopyConfirmUrl}
-                className="text-[11px] underline hover:text-blue-600 transition-colors"
-                title={contact.confirmAddressUrl}
-              >
-                {copiedConfirmUrl ? 'Link copied' : 'Copy Confirm Link'}
-              </button>
-            </div>
-          )}
+          {/* Confirm link is rendered inline with the address above for compact layout */}
           </div>
         </div>
 
