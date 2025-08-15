@@ -47,6 +47,8 @@ export interface Contact {
   round2DraftFeedback?: string;
   rejectRound2?: boolean;
   round3Draft?: AirtableAttachment[];
+  contactReview?: 'Approve' | 'Flag' | 'Do Not Send';
+  contactReviewFeedback?: string;
   createdAt?: string;
   updatedAt?: string;
 }

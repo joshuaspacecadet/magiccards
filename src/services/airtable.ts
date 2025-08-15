@@ -72,6 +72,8 @@ const transformAirtableContact = (record: any): Contact => {
     round2DraftFeedback: fields["Round 2 Draft Feedback"] || "",
     rejectRound2: fields["Reject Round 2"] || false,
     round3Draft: fields["Round 3 Draft"] || [],
+    contactReview: fields["Contact Review"] || undefined,
+    contactReviewFeedback: fields["Contact Review Feedback"] || "",
     createdAt: fields["Created At"],
     updatedAt: fields["Updated At"],
   };
@@ -330,6 +332,10 @@ export class AirtableService {
       if (contactData.headshot) createFields["Headshot"] = contactData.headshot;
       if (contactData.companyLogo)
         createFields["Company Logo"] = contactData.companyLogo;
+      if (contactData.contactReview)
+        createFields["Contact Review"] = contactData.contactReview;
+      if (contactData.contactReviewFeedback)
+        createFields["Contact Review Feedback"] = contactData.contactReviewFeedback;
       if (contactData.rejectRound1 !== undefined)
         createFields["Reject Round 1"] = contactData.rejectRound1;
       if (contactData.rejectRound2 !== undefined)
@@ -414,6 +420,10 @@ export class AirtableService {
         updateFields["Headshot"] = updates.headshot;
       if (updates.companyLogo !== undefined)
         updateFields["Company Logo"] = updates.companyLogo;
+      if (updates.contactReview !== undefined)
+        updateFields["Contact Review"] = updates.contactReview;
+      if (updates.contactReviewFeedback !== undefined)
+        updateFields["Contact Review Feedback"] = updates.contactReviewFeedback;
 
       const record = await base(airtableConfig.tables.contacts).update(
         id,

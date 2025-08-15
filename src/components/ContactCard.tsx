@@ -288,6 +288,36 @@ const ContactCard: React.FC<ContactCardProps> = ({
         </div>
       </div>
 
+      {/* Contact Review Actions */}
+      <div className="mt-3 pt-3 border-t border-slate-200 flex items-center gap-2">
+        <button
+          className={`px-2.5 py-1 text-xs rounded border transition-colors ${contact.contactReview === 'Approve' ? 'bg-green-600 text-white border-green-600' : 'bg-white text-green-700 border-green-300 hover:bg-green-50'}`}
+          onClick={() => onUpdate(contact.id, { contactReview: 'Approve', contactReviewFeedback: '' })}
+          disabled={isStageLocked}
+        >
+          Approve
+        </button>
+        <button
+          className={`px-2.5 py-1 text-xs rounded border transition-colors ${contact.contactReview === 'Flag' ? 'bg-yellow-500 text-white border-yellow-500' : 'bg-white text-yellow-700 border-yellow-300 hover:bg-yellow-50'}`}
+          onClick={() => {
+            const feedback = window.prompt('Provide feedback for flagging this contact (optional):', contact.contactReview === 'Flag' ? (contact.contactReviewFeedback || '') : '');
+            if (feedback !== null) {
+              onUpdate(contact.id, { contactReview: 'Flag', contactReviewFeedback: feedback });
+            }
+          }}
+          disabled={isStageLocked}
+        >
+          Flag
+        </button>
+        <button
+          className={`px-2.5 py-1 text-xs rounded border transition-colors ${contact.contactReview === 'Do Not Send' ? 'bg-red-600 text-white border-red-600' : 'bg-white text-red-700 border-red-300 hover:bg-red-50'}`}
+          onClick={() => onUpdate(contact.id, { contactReview: 'Do Not Send', contactReviewFeedback: '' })}
+          disabled={isStageLocked}
+        >
+          Do Not Send
+        </button>
+      </div>
+
       {/* No toggle; details are always shown */}
       </div>
     </>
