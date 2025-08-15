@@ -15,7 +15,7 @@ const Layout: React.FC = () => {
 
   const getProjectTitle = () => {
     if (isProjectPage && project) {
-      return `${project.name} Magic Cards`;
+      return `${project.name} Print & Fulfill Order`;
     }
     return 'Magic Cards Project Dashboard';
   };

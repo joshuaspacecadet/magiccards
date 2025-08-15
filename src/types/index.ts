@@ -86,12 +86,12 @@ export const PROJECT_STAGE_LABELS: Record<ProjectStage, string> = {
 // Updated labels for the project cards - showing the full stage descriptions
 export const PROJECT_STAGE_CARD_LABELS: Record<ProjectStage, string> = {
   'Contacts': 'Stage 1 — Add & Review Contacts',
-  'Copy': 'Stage 2 — Add & Review Copy',
-  'Design Brief': 'Stage 3 — Project Design Brief',
-  'Design Round 1': 'Stage 4 — Review & Approve Designs (Round I)',
-  'Design Round 2': 'Stage 5 — Review & Approve Designs (Round II)',
-  'Handoff': 'Stage 6 — Upload Final Design File(s)',
-  'Ready for Print': 'Stage 7 — Track Production & Fulfillment',
+  'Copy': 'Stage 2 — Manage Magic Card Copy',
+  'Design Brief': 'Stage 3 — Magic Card Design Brief',
+  'Design Round 1': 'Stage 4 — Review & Approve Magic Card Designs (Round I)',
+  'Design Round 2': 'Stage 5 — Review & Approve Magic Card Designs (Round II)',
+  'Handoff': 'Stage 6 — Upload Final Magic Card Design File(s)',
+  'Ready for Print': 'Stage 7 — Ready for Print & Fulfillment',
   'Project Complete': 'Stage 8 — Completed'
 };
 

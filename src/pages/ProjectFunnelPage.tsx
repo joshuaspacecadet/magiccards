@@ -678,7 +678,7 @@ const ProjectFunnelPage: React.FC = () => {
         <FunnelStage
           ref={contactsStageRef}
           title="Stage 1 — Add & Review Contacts"
-          description="Add and manage the contacts who will receive a custom Magic Card."
+          description="Add and manage the gift recipients."
           isActive={isStageActive("Contacts")}
           isCompleted={isStageCompleted("Contacts")}
           topActions={getRevertTopActions("Contacts")}
@@ -803,7 +803,7 @@ const ProjectFunnelPage: React.FC = () => {
       {shouldRenderStage("Copy") && (
         <FunnelStage
           ref={copyStageRef}
-          title="Stage 2 — Add & Review Copy"
+          title="Stage 2 — Manage Magic Card Copy"
           description="Create and review the copy content for each contact's Magic Card."
           isActive={isStageActive("Copy")}
           isCompleted={isStageCompleted("Copy")}
@@ -853,7 +853,7 @@ const ProjectFunnelPage: React.FC = () => {
       {shouldRenderStage("Design Brief") && (
         <FunnelStage
           ref={designBriefStageRef}
-          title="Stage 3 — Project Design Brief"
+          title="Stage 3 — Magic Card Design Brief"
           description="Review the design brief that will guide the creation of each contact's Magic Card."
           isActive={isStageActive("Design Brief")}
           isCompleted={isStageCompleted("Design Brief")}
@@ -895,7 +895,7 @@ const ProjectFunnelPage: React.FC = () => {
       {shouldRenderStage("Design Round 1") && (
         <FunnelStage
           ref={designRound1StageRef}
-          title="Stage 4 — Review & Approve Designs (Round I)"
+          title="Stage 4 — Review & Approve Magic Card Designs (Round I)"
           description="Upload and review the first round of design concepts for each contact."
           isActive={isStageActive("Design Round 1")}
           isCompleted={isStageCompleted("Design Round 1")}
@@ -989,7 +989,7 @@ const ProjectFunnelPage: React.FC = () => {
       {shouldRenderStage("Design Round 2") && (
         <FunnelStage
           ref={designRound2StageRef}
-          title="Stage 5 — Review & Approve Designs (Round II)"
+          title="Stage 5 — Review & Approve Magic Card Designs (Round II)"
           description="Upload and review the second round of design revisions for each contact."
           isActive={isStageActive("Design Round 2")}
           isCompleted={isStageCompleted("Design Round 2")}
@@ -1085,7 +1085,7 @@ const ProjectFunnelPage: React.FC = () => {
       {shouldRenderStage("Handoff") && (
         <FunnelStage
           ref={handoffStageRef}
-          title="Stage 6 — Upload Final Design File(s)"
+          title="Stage 6 — Upload Final Magic Card Design File(s)"
           description="Upload the final design files that are ready for production."
           isActive={isStageActive("Handoff")}
           isCompleted={isStageCompleted("Handoff")}
