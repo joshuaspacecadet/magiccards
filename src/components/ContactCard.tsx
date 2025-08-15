@@ -152,18 +152,20 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 </button>
               )}
             </div>
-            {isMagicCards && contact.company && (
+            {contact.company && (isMagicCards || contact.sfsBook || contact.goldenRecord) && (
               <div className="flex items-center text-sm text-slate-600 mt-1">
-                {contact.companyLogo && contact.companyLogo.length > 0 ? (
-                  <img
-                    src={contact.companyLogo[0].url}
-                    alt="Company logo"
-                    className="h-4 w-4 mr-1 object-contain cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
-                    onClick={() => handleImageClick(contact.companyLogo![0].url)}
-                  />
-                ) : (
-                  <div className="h-4 w-4 mr-1 flex items-center justify-center border border-red-600 rounded bg-red-50 text-red-600 text-[10px] leading-none flex-shrink-0">?</div>
-                )}
+                {isMagicCards ? (
+                  contact.companyLogo && contact.companyLogo.length > 0 ? (
+                    <img
+                      src={contact.companyLogo[0].url}
+                      alt="Company logo"
+                      className="h-4 w-4 mr-1 object-contain cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
+                      onClick={() => handleImageClick(contact.companyLogo![0].url)}
+                    />
+                  ) : (
+                    <div className="h-4 w-4 mr-1 flex items-center justify-center border border-red-600 rounded bg-red-50 text-red-600 text-[10px] leading-none flex-shrink-0">?</div>
+                  )
+                ) : null}
                 <span className="truncate">{contact.company}</span>
               </div>
             )}
