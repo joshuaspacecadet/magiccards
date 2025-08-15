@@ -37,6 +37,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
   const [approveError, setApproveError] = useState<string>("");
   const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
   const [notesInput, setNotesInput] = useState<string>("");
+  const isMagicCards = !!contact.magicCards;
 
   console.log("Debug: ContactCard received contact:", contact);
 
@@ -124,22 +125,26 @@ const ContactCard: React.FC<ContactCardProps> = ({
 
       <div className="flex items-start mb-3 pr-10">
         <div className="flex items-start space-x-3 flex-1">
-          {contact.headshot && contact.headshot.length > 0 ? (
-            <img
-              src={contact.headshot[0].url}
-              alt={`${contact.name} headshot`}
-              className="w-12 h-12 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={() => setPreviewUrl(contact.headshot![0].url)}
-            />
+          {isMagicCards ? (
+            contact.headshot && contact.headshot.length > 0 ? (
+              <img
+                src={contact.headshot[0].url}
+                alt={`${contact.name} headshot`}
+                className="w-12 h-12 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => setPreviewUrl(contact.headshot![0].url)}
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                <Mail className="h-6 w-6 text-blue-600" />
+              </div>
+            )
           ) : (
-            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-              <Mail className="h-6 w-6 text-blue-600" />
-            </div>
+            <div className="w-12" />
           )}
           <div className="flex-1 min-w-0">
             <div className="flex items-center min-w-0">
             <h4 className="font-semibold text-slate-900 truncate">{contact.name}</h4>
-              {contact.linkedinUrl && (
+              {isMagicCards && contact.linkedinUrl && (
                 <button
                   onClick={handleLinkedInClick}
                   className="ml-2 text-slate-400 hover:text-blue-600"
@@ -149,7 +154,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 </button>
               )}
             </div>
-            {contact.company && (
+            {isMagicCards && contact.company && (
               <div className="flex items-center text-sm text-slate-600 mt-1">
                 {contact.companyLogo && contact.companyLogo.length > 0 ? (
                   <img
@@ -258,9 +263,10 @@ const ContactCard: React.FC<ContactCardProps> = ({
           </div>
         </div>
 
-        {/* Special notes section */}
-        <div className="mt-1">
-          {contact.additionalContactContext ? (
+        {/* Special notes section (Magic Cards only) */}
+        {isMagicCards && (
+          <div className="mt-1">
+            {contact.additionalContactContext ? (
                 <div className="pt-2 border-t border-slate-200">
                   <div className="text-[11px] font-medium text-slate-700 mb-1">Special notes</div>
                   <p className="text-xs text-slate-600 italic whitespace-pre-line">
@@ -280,8 +286,9 @@ const ContactCard: React.FC<ContactCardProps> = ({
                     </button>
                   </div>
                 </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Contact Review Actions */}
