@@ -35,6 +35,8 @@ const ContactCard: React.FC<ContactCardProps> = ({
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [dragOverTarget, setDragOverTarget] = useState<null | 'headshot' | 'logo'>(null);
   const [approveError, setApproveError] = useState<string>("");
+  const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
+  const [notesInput, setNotesInput] = useState<string>("");
 
   console.log("Debug: ContactCard received contact:", contact);
 
@@ -293,18 +295,16 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 </div>
               ) : (
                 <div className="pt-2 border-t border-slate-200">
-                  <button
-                    onClick={() => !isStageLocked && onEdit(contact)}
-                    disabled={isStageLocked}
-                    className={`inline-flex items-center px-2 py-1 rounded border text-[11px] transition-colors ${
-                      isStageLocked
-                        ? 'text-slate-400 border-slate-200 cursor-not-allowed'
-                        : 'text-blue-600 border-blue-200 hover:bg-blue-50'
-                    }`}
-                    title={isStageLocked ? 'Editing disabled for completed stage' : 'Add additional context'}
-                  >
-                    Add details
-                  </button>
+                  <div className="flex items-center text-slate-600">
+                    <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
+                    <button
+                      onClick={() => { if (!isStageLocked) { setNotesInput(""); setIsNotesModalOpen(true); } }}
+                      disabled={isStageLocked}
+                      className={`hover:text-blue-600 transition-colors text-xs truncate text-left ${isStageLocked ? 'text-slate-400 cursor-not-allowed' : ''}`}
+                    >
+                      Add special notes
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -647,6 +647,44 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 className="px-3 py-1.5 text-xs rounded bg-red-600 text-white hover:bg-red-700"
               >
                 Yes, continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add notes modal */}
+      {isNotesModalOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-[1000] flex items-center justify-center p-4"
+          onClick={() => setIsNotesModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl w-full max-w-md p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-semibold text-slate-900">Add special notes</h4>
+              <button onClick={() => setIsNotesModalOpen(false)} className="text-slate-400 hover:text-slate-600"><X className="h-4 w-4" /></button>
+            </div>
+            <p className="text-xs text-slate-600 mb-3">Help us make the Magic Card copy extra special by adding details (e.g. loves to surf, lives bi-coastal, training for a marathon, amazing growth marketer).</p>
+            <textarea
+              value={notesInput}
+              onChange={(e) => setNotesInput(e.target.value)}
+              rows={5}
+              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-3"
+              placeholder="Enter special notes..."
+            />
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setIsNotesModalOpen(false)} className="px-3 py-1.5 text-xs rounded border border-slate-300 text-slate-700 hover:bg-slate-50">Cancel</button>
+              <button
+                onClick={async () => {
+                  await onUpdate(contact.id, { additionalContactContext: notesInput.trim() });
+                  setIsNotesModalOpen(false);
+                }}
+                className="px-3 py-1.5 text-xs rounded bg-blue-600 text-white hover:bg-blue-700"
+              >
+                Save Notes
               </button>
             </div>
           </div>
