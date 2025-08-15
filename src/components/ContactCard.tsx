@@ -236,7 +236,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
               {contact.phone && (
                 <div className="flex items-center text-slate-600">
                   <Phone className="h-3 w-3 mr-2 flex-shrink-0" />
-                  <a href={`tel:${contact.phone}`} className="hover:text-blue-600 transition-colors">
+                  <a href={`tel:${contact.phone}`} className="hover:text-blue-600 transition-colors text-xs">
                     {contact.phone}
                   </a>
                 </div>
