@@ -138,7 +138,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
           )}
           <div className="flex-1 min-w-0">
             <div className="flex items-center min-w-0">
-              <h4 className="font-semibold text-slate-900 truncate">{contact.name}</h4>
+            <h4 className="font-semibold text-slate-900 truncate">{contact.name}</h4>
               {contact.linkedinUrl && (
                 <button
                   onClick={handleLinkedInClick}
@@ -193,48 +193,49 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 )}
               </button>
             )}
+                </div>
+              )}
+              
+        {/* Two-column layout: left items, right address */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="text-[11px] space-y-1">
+            <label className="inline-flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={!!contact.magicCards}
+                onChange={async () => {
+                  await onUpdate(contact.id, { magicCards: !contact.magicCards });
+                }}
+                disabled={isStageLocked}
+              />
+              <span>Magic Cards</span>
+            </label>
+            <label className="inline-flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={!!contact.sfsBook}
+                onChange={async () => {
+                  await onUpdate(contact.id, { sfsBook: !contact.sfsBook });
+                }}
+                disabled={isStageLocked}
+              />
+              <span>SFS Book</span>
+            </label>
+            <label className="inline-flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={!!contact.goldenRecord}
+                onChange={async () => {
+                  await onUpdate(contact.id, { goldenRecord: !contact.goldenRecord });
+                }}
+                disabled={isStageLocked}
+              />
+              <span>Golden Record</span>
+            </label>
           </div>
-        )}
 
-        {/* Items toggles */}
-        <div className="mb-2 text-[11px] flex flex-wrap items-center gap-x-4 gap-y-1">
-          <label className="inline-flex items-center gap-1">
-            <input
-              type="checkbox"
-              checked={!!contact.magicCards}
-              onChange={async () => {
-                await onUpdate(contact.id, { magicCards: !contact.magicCards });
-              }}
-              disabled={isStageLocked}
-            />
-            <span>Magic Cards</span>
-          </label>
-          <label className="inline-flex items-center gap-1">
-            <input
-              type="checkbox"
-              checked={!!contact.sfsBook}
-              onChange={async () => {
-                await onUpdate(contact.id, { sfsBook: !contact.sfsBook });
-              }}
-              disabled={isStageLocked}
-            />
-            <span>SFS Book</span>
-          </label>
-          <label className="inline-flex items-center gap-1">
-            <input
-              type="checkbox"
-              checked={!!contact.goldenRecord}
-              onChange={async () => {
-                await onUpdate(contact.id, { goldenRecord: !contact.goldenRecord });
-              }}
-              disabled={isStageLocked}
-            />
-            <span>Golden Record</span>
-          </label>
-      </div>
-
-        {/* Always-visible contact details */}
-        <div className="mt-1 space-y-1.5 text-sm">
+          {/* Always-visible contact details (address + confirm URL) */}
+          <div className="space-y-1.5 text-sm">
               {/* Email and phone intentionally hidden */}
 
               {formatAddress(contact) && (
@@ -249,9 +250,9 @@ const ContactCard: React.FC<ContactCardProps> = ({
               {/* Removed LinkedIn Profile row; link icon near name handles this */}
 
           {contact.confirmAddressUrl && contact.streetLine1 && (
-            <div className="flex items-center text-slate-600">
-              <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
-              <button
+                <div className="flex items-center text-slate-600">
+                  <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
+                  <button 
                 onClick={() => openUrlSafely(contact.confirmAddressUrl!)}
                 className="hover:text-blue-600 transition-colors text-xs truncate text-left mr-1.5"
                 title={contact.confirmAddressUrl}
@@ -268,11 +269,15 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 ) : (
                   <Copy className="h-3 w-3" />
                 )}
-              </button>
-            </div>
-          )}
+                  </button>
+                </div>
+              )}
+          </div>
+        </div>
 
-              {contact.additionalContactContext ? (
+        {/* Special notes section */}
+        <div className="mt-1">
+          {contact.additionalContactContext ? (
                 <div className="pt-2 border-t border-slate-200">
                   <div className="text-[11px] font-medium text-slate-700 mb-1">Special notes</div>
                   <p className="text-xs text-slate-600 italic whitespace-pre-line">
@@ -292,8 +297,8 @@ const ContactCard: React.FC<ContactCardProps> = ({
                     </button>
                   </div>
                 </div>
-              )}
-            </div>
+          )}
+        </div>
       </div>
 
       {/* Contact Review Actions */}
@@ -636,8 +641,8 @@ const ContactCard: React.FC<ContactCardProps> = ({
               </button>
             </div>
           </div>
-        </div>
-      )}
+            </div>
+          )}
 
       {/* Add notes modal */}
       {isNotesModalOpen && (
