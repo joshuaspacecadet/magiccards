@@ -134,8 +134,8 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 onClick={() => setPreviewUrl(contact.headshot![0].url)}
               />
             ) : (
-              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                <Mail className="h-6 w-6 text-blue-600" />
+              <div className="w-12 h-12 rounded-full bg-red-100 border border-red-200 flex items-center justify-center">
+                <Mail className="h-6 w-6 text-red-600" />
               </div>
             )
           ) : null}
