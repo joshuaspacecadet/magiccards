@@ -108,7 +108,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
         </div>
       )}
 
-      <div className="bg-white rounded-lg border border-slate-200 p-4 hover:shadow-md transition-shadow flex flex-col h-full relative">
+      <div className="bg-white rounded-lg border border-slate-200 p-3 md:p-4 hover:shadow-md transition-shadow flex flex-col h-full relative">
       {/* Absolutized action buttons to avoid layout shift/overlap (delete removed) */}
       {!isStageLocked && (
         <div className="absolute top-2 right-2 flex space-x-1 z-10">
@@ -122,7 +122,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
         </div>
       )}
 
-      <div className="flex items-start mb-4 pr-10">
+      <div className="flex items-start mb-3 pr-10">
         <div className="flex items-start space-x-3 flex-1">
           {contact.headshot && contact.headshot.length > 0 ? (
             <img
@@ -156,7 +156,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
             
             {/* Display "Added by [Name]" if contactAddedBy has a value */}
             {contact.contactAddedBy && (
-              <div className="flex items-center text-xs text-slate-500 mt-1">
+              <div className="flex items-center text-[11px] text-slate-500 mt-1">
                 <span>Added by {contact.contactAddedBy}</span>
               </div>
             )}
@@ -186,7 +186,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
         )}
 
         {/* Items toggles */}
-        <div className="mb-2 text-xs flex items-center gap-4">
+        <div className="mb-2 text-[11px] flex flex-wrap items-center gap-x-4 gap-y-1">
           <label className="inline-flex items-center gap-1">
             <input
               type="checkbox"
@@ -223,7 +223,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
       </div>
 
         {/* Always-visible contact details */}
-        <div className="mt-1 space-y-2 text-sm">
+        <div className="mt-1 space-y-1.5 text-sm">
               {contact.email && (
                 <div className="flex items-center text-slate-600">
                   <Mail className="h-3 w-3 mr-2 flex-shrink-0" />
@@ -268,7 +268,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
               <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
               <button
                 onClick={() => openUrlSafely(contact.confirmAddressUrl!)}
-                className="hover:text-blue-600 transition-colors text-xs truncate text-left mr-2"
+                className="hover:text-blue-600 transition-colors text-xs truncate text-left mr-1.5"
                 title={contact.confirmAddressUrl}
               >
                 Confirm Address URL
@@ -312,7 +312,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
       </div>
 
       {/* Contact Review Actions */}
-      <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-center gap-2">
+      <div className="mt-2 pt-2 border-t border-slate-200 flex items-center justify-center gap-2">
         <button
           className={`px-2.5 py-1 text-xs rounded border transition-colors ${contact.contactReview === 'Approve' ? 'bg-green-600 text-white border-green-600' : 'bg-white text-green-700 border-green-300 hover:bg-green-50'}`}
           onClick={() => {
