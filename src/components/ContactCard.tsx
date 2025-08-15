@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit, Mail, MapPin, ExternalLink, Copy, Check, X } from 'lucide-react';
+import { Edit, Mail, ExternalLink, Copy, Check, X } from 'lucide-react';
 import { Contact } from '../types';
 import { normalizeUrl, openUrlSafely } from '../utils/urlHelpers';
 import { uploadToCloudinary } from '../utils/cloudinaryUpload';
@@ -176,25 +176,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
         </div>
         
       <div className="flex-1">
-        {/* Missing Address Callout (visible in main view) */}
-        {!contact.streetLine1 && (
-          <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded flex items-center justify-between">
-            <span className="text-xs font-medium text-red-700">Missing Address</span>
-            {contact.confirmAddressUrl && (
-              <button
-                onClick={handleCopyConfirmUrl}
-                className="p-1 text-red-600 hover:text-red-700 hover:bg-red-100 rounded transition-colors flex items-center"
-                title={copiedConfirmUrl ? 'Copied!' : 'Copy Confirm Address URL'}
-              >
-                {copiedConfirmUrl ? (
-                  <Check className="h-3 w-3" />
-                ) : (
-                  <Copy className="h-3 w-3" />
-                )}
-              </button>
-            )}
-                </div>
-              )}
+        {/* Missing Address now shown inline in address area below */}
               
         {/* Two-column layout: left items, right address */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -238,9 +220,8 @@ const ContactCard: React.FC<ContactCardProps> = ({
           <div className="space-y-1.5 text-sm md:col-span-2">
               {/* Email and phone intentionally hidden */}
 
-              {formatAddress(contact) && (
+              {contact.streetLine1 ? (
                 <div className="flex items-start text-slate-600">
-                  <MapPin className="h-3 w-3 mr-2 mt-0.5 flex-shrink-0" />
                   <div className="text-xs whitespace-pre-line">
                     {formatAddress(contact)}
                     {contact.confirmAddressUrl && contact.streetLine1 && (
@@ -253,6 +234,19 @@ const ContactCard: React.FC<ContactCardProps> = ({
                       </button>
                     )}
                   </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between text-slate-600">
+                  <span className="text-xs font-medium text-red-700">Missing Address</span>
+                  {contact.confirmAddressUrl && (
+                    <button
+                      onClick={handleCopyConfirmUrl}
+                      className="text-[11px] underline text-red-600 hover:text-red-700"
+                      title={contact.confirmAddressUrl}
+                    >
+                      {copiedConfirmUrl ? 'Link copied' : 'Copy Confirm Link'}
+                    </button>
+                  )}
                 </div>
               )}
 
