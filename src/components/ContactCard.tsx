@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit, User, ExternalLink, Copy, Check, X } from 'lucide-react';
+import { Edit, User, ExternalLink, Copy, Check, X, Info } from 'lucide-react';
 import { Contact } from '../types';
 import { normalizeUrl, openUrlSafely } from '../utils/urlHelpers';
 import { uploadToCloudinary } from '../utils/cloudinaryUpload';
@@ -284,6 +284,16 @@ const ContactCard: React.FC<ContactCardProps> = ({
                     >
                       Add special notes
                     </button>
+                    <span className="relative inline-flex items-center group">
+                      <Info
+                        className="h-3.5 w-3.5 text-slate-400 cursor-help"
+                        tabIndex={0}
+                        aria-label="Help us make the Magic Card copy extra special by adding details."
+                      />
+                      <span className="absolute top-full mt-1 left-0 z-20 hidden group-hover:block group-focus-within:block w-64 whitespace-normal break-words text-left rounded bg-slate-900 text-white text-[10px] px-2 py-1 shadow-lg">
+                        Help us make the Magic Card copy extra special by adding details.
+                      </span>
+                    </span>
                   </div>
                 </div>
               )}
