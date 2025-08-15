@@ -513,7 +513,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-semibold text-slate-900">Provide feedback</h4>
+              <h4 className="text-sm font-semibold text-slate-900">Provide feedback (optional)</h4>
               <button
                 onClick={() => setIsFlagModalOpen(false)}
                 className="text-slate-400 hover:text-slate-600"
@@ -522,7 +522,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <p className="text-xs text-slate-600 mb-3">Please share why this recipient is being flagged.</p>
+            <p className="text-xs text-slate-600 mb-3">Why are you holding on sending to this contact? For example: Is this the wrong person and you want to share the right LinkedIn? Are they not responding to address requests? Or do you just want to hold off for now?</p>
             <textarea
               value={flagFeedback}
               onChange={(e) => setFlagFeedback(e.target.value)}
@@ -530,7 +530,6 @@ const ContactCard: React.FC<ContactCardProps> = ({
               className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
               placeholder="Write feedback..."
             />
-            {flagError && <div className="text-xs text-red-600 mb-2">{flagError}</div>}
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setIsFlagModalOpen(false)}
@@ -540,10 +539,6 @@ const ContactCard: React.FC<ContactCardProps> = ({
               </button>
               <button
                 onClick={() => {
-                  if (!flagFeedback.trim()) {
-                    setFlagError('Feedback is required to flag a recipient.');
-                    return;
-                  }
                   onUpdate(contact.id, { contactReview: 'Send Later', contactReviewFeedback: flagFeedback.trim() });
                   setIsFlagModalOpen(false);
                 }}
