@@ -236,7 +236,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
                   </div>
                 </div>
               ) : (
-                <div className="w-full rounded-lg border border-red-300 bg-red-50 px-3 py-2 leading-tight" role="alert">
+                <div className="inline-block max-w-[260px] rounded-lg border border-red-300 bg-red-50 px-3 py-2 leading-tight text-center mx-auto" role="alert">
                   <div className="text-[12px] font-semibold text-red-700">Missing Address</div>
                   {contact.confirmAddressUrl && (
                     <button
