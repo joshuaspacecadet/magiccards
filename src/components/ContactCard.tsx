@@ -27,6 +27,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
   const [isConfirmClearFeedbackOpen, setIsConfirmClearFeedbackOpen] = useState(false);
   const [confirmClearNextStatus, setConfirmClearNextStatus] = useState<"Approve" | "Remove" | null>(null);
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+  const [isAddressRequiredModalOpen, setIsAddressRequiredModalOpen] = useState(false);
   const [companyInput, setCompanyInput] = useState(contact.company || "");
   const [headshotNew, setHeadshotNew] = useState<{ url: string; filename: string }[]>([]);
   const [logoNew, setLogoNew] = useState<{ url: string; filename: string }[]>([]);
@@ -34,7 +35,6 @@ const ContactCard: React.FC<ContactCardProps> = ({
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [dragOverTarget, setDragOverTarget] = useState<null | 'headshot' | 'logo'>(null);
   const [approveError, setApproveError] = useState<string>("");
-  const [isAddressRequiredModalOpen, setIsAddressRequiredModalOpen] = useState(false);
 
   console.log("Debug: ContactCard received contact:", contact);
 
@@ -201,12 +201,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
               type="checkbox"
               checked={!!contact.sfsBook}
               onChange={async () => {
-                const next = !contact.sfsBook;
-                if (next && !contact.streetLine1) {
-                  setIsAddressRequiredModalOpen(true);
-                  return;
-                }
-                await onUpdate(contact.id, { sfsBook: next });
+                await onUpdate(contact.id, { sfsBook: !contact.sfsBook });
               }}
               disabled={isStageLocked}
             />
@@ -217,12 +212,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
               type="checkbox"
               checked={!!contact.goldenRecord}
               onChange={async () => {
-                const next = !contact.goldenRecord;
-                if (next && !contact.streetLine1) {
-                  setIsAddressRequiredModalOpen(true);
-                  return;
-                }
-                await onUpdate(contact.id, { goldenRecord: next });
+                await onUpdate(contact.id, { goldenRecord: !contact.goldenRecord });
               }}
               disabled={isStageLocked}
             />
@@ -325,6 +315,11 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 setIsApproveModalOpen(true);
                 return;
               }
+            }
+            // If SFS Book and/or Golden Record are selected but no address, prompt for confirm address
+            if (!contact.magicCards && (contact.sfsBook || contact.goldenRecord) && !contact.streetLine1) {
+              setIsAddressRequiredModalOpen(true);
+              return;
             }
             const hasFeedback = !!(contact.contactReviewFeedback && contact.contactReviewFeedback.trim().length > 0);
             if (hasFeedback) {
