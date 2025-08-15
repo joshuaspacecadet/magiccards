@@ -158,9 +158,9 @@ const ContactCard: React.FC<ContactCardProps> = ({
               </div>
             )}
           </div>
+          </div>
         </div>
-      </div>
-
+        
       <div className="flex-1">
         {/* Missing Address Callout (visible in main view) */}
         {!contact.streetLine1 && (
@@ -217,48 +217,48 @@ const ContactCard: React.FC<ContactCardProps> = ({
             />
             <span>Golden Record</span>
           </label>
-        </div>
+      </div>
 
         {/* Always-visible contact details */}
         <div className="mt-1 space-y-2 text-sm">
-          {contact.email && (
-            <div className="flex items-center text-slate-600">
-              <Mail className="h-3 w-3 mr-2 flex-shrink-0" />
+              {contact.email && (
+                <div className="flex items-center text-slate-600">
+                  <Mail className="h-3 w-3 mr-2 flex-shrink-0" />
               <a href={`mailto:${contact.email}`} className="hover:text-blue-600 transition-colors truncate text-xs">
-                {contact.email}
-              </a>
-            </div>
-          )}
-          
-          {contact.phone && (
-            <div className="flex items-center text-slate-600">
-              <Phone className="h-3 w-3 mr-2 flex-shrink-0" />
-              <a href={`tel:${contact.phone}`} className="hover:text-blue-600 transition-colors">
-                {contact.phone}
-              </a>
-            </div>
-          )}
+                    {contact.email}
+                  </a>
+                </div>
+              )}
+              
+              {contact.phone && (
+                <div className="flex items-center text-slate-600">
+                  <Phone className="h-3 w-3 mr-2 flex-shrink-0" />
+                  <a href={`tel:${contact.phone}`} className="hover:text-blue-600 transition-colors">
+                    {contact.phone}
+                  </a>
+                </div>
+              )}
 
-          {formatAddress(contact) && (
-            <div className="flex items-start text-slate-600">
-              <MapPin className="h-3 w-3 mr-2 mt-0.5 flex-shrink-0" />
-              <div className="text-xs whitespace-pre-line">
-                {formatAddress(contact)}
-              </div>
-            </div>
-          )}
+              {formatAddress(contact) && (
+                <div className="flex items-start text-slate-600">
+                  <MapPin className="h-3 w-3 mr-2 mt-0.5 flex-shrink-0" />
+                  <div className="text-xs whitespace-pre-line">
+                    {formatAddress(contact)}
+                  </div>
+                </div>
+              )}
 
-          {contact.linkedinUrl && (
-            <div className="flex items-center text-slate-600">
-              <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
-              <button 
-                onClick={handleLinkedInClick}
-                className="hover:text-blue-600 transition-colors text-xs truncate text-left"
-              >
-                LinkedIn Profile
-              </button>
-            </div>
-          )}
+              {contact.linkedinUrl && (
+                <div className="flex items-center text-slate-600">
+                  <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
+                  <button 
+                    onClick={handleLinkedInClick}
+                    className="hover:text-blue-600 transition-colors text-xs truncate text-left"
+                  >
+                    LinkedIn Profile
+                  </button>
+                </div>
+              )}
 
           {contact.confirmAddressUrl && contact.streetLine1 && (
             <div className="flex items-center text-slate-600">
@@ -284,14 +284,14 @@ const ContactCard: React.FC<ContactCardProps> = ({
             </div>
           )}
 
-          {contact.additionalContactContext && (
-            <div className="pt-2 border-t border-slate-200">
-              <p className="text-xs text-slate-600 italic">
-                {contact.additionalContactContext}
-              </p>
+              {contact.additionalContactContext && (
+                <div className="pt-2 border-t border-slate-200">
+                  <p className="text-xs text-slate-600 italic">
+                    {contact.additionalContactContext}
+                  </p>
+                </div>
+              )}
             </div>
-          )}
-        </div>
       </div>
 
       {/* Contact Review Actions */}
@@ -302,10 +302,18 @@ const ContactCard: React.FC<ContactCardProps> = ({
             if (isStageLocked) return;
             // If Magic Cards is selected, enforce required assets
             if (contact.magicCards) {
-              setCompanyInput(contact.company || "");
-              setApproveError("");
-              setIsApproveModalOpen(true);
-              return;
+              const hasAddress = !!contact.streetLine1;
+              const hasCompany = !!(contact.company && contact.company.trim().length > 0);
+              const hasHeadshot = !!(contact.headshot && contact.headshot.length > 0);
+              const hasLogo = !!(contact.companyLogo && contact.companyLogo.length > 0);
+              if (!hasAddress || !hasCompany || !hasHeadshot || !hasLogo) {
+                setCompanyInput(contact.company || "");
+                setApproveError("");
+                setHeadshotNew([]);
+                setLogoNew([]);
+                setIsApproveModalOpen(true);
+                return;
+              }
             }
             const hasFeedback = !!(contact.contactReviewFeedback && contact.contactReviewFeedback.trim().length > 0);
             if (hasFeedback) {
@@ -371,8 +379,9 @@ const ContactCard: React.FC<ContactCardProps> = ({
             </div>
             <p className="text-xs text-slate-600 mb-4">To print a Magic Card, we need the recipient’s address, company, headshot, and company logo.</p>
 
-            {/* Address section */}
-            <div className="mb-4 p-3 rounded border ${contact.streetLine1 ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}">
+            {/* Address section (only when missing) */}
+            {!contact.streetLine1 && (
+            <div className={`mb-4 p-3 rounded border ${!contact.streetLine1 ? 'border-red-200 bg-red-50' : 'border-green-200 bg-green-50'}`}>
               <div className="flex items-center justify-between">
                 <div className="text-sm font-medium text-slate-900">Address</div>
                 {!contact.streetLine1 && contact.confirmAddressUrl && (
@@ -387,28 +396,13 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 )}
               </div>
               <div className="mt-2 text-xs text-slate-700 whitespace-pre-line">
-                {contact.streetLine1 ? (
-                  <>
-                    {(() => {
-                      const parts: string[] = [];
-                      if (contact.streetLine1) parts.push(contact.streetLine1);
-                      if (contact.streetLine2) parts.push(contact.streetLine2);
-                      const cityParts: string[] = [];
-                      if (contact.city) cityParts.push(contact.city);
-                      if (contact.state) cityParts.push(contact.state);
-                      if (contact.postCode) cityParts.push(contact.postCode);
-                      if (cityParts.length) parts.push(cityParts.join(', '));
-                      if (contact.countryCode) parts.push(contact.countryCode);
-                      return parts.join('\n');
-                    })()}
-                  </>
-                ) : (
-                  <span className="text-red-700">Missing address — copy the link above and send it to the recipient to confirm their mailing address.</span>
-                )}
+                <span className="text-red-700">Missing address — copy the link above and send it to the recipient to confirm their mailing address.</span>
               </div>
             </div>
+            )}
 
-            {/* Company section */}
+            {/* Company section (only when missing) */}
+            {!(contact.company && contact.company.trim().length>0) && (
             <div className={`mb-4 p-3 rounded border ${companyInput.trim() ? 'border-green-200 bg-green-50' : 'border-yellow-200 bg-yellow-50'}`}>
               <div className="text-sm font-medium text-slate-900 mb-2">Company</div>
               <input
@@ -419,8 +413,10 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 placeholder="Enter company name"
               />
             </div>
+            )}
 
-            {/* Headshot section */}
+            {/* Headshot section (only when missing) */}
+            {!(contact.headshot && contact.headshot.length>0) && (
             <div className={`mb-4 p-3 rounded border ${(contact.headshot && contact.headshot.length > 0) || headshotNew.length > 0 ? 'border-green-200 bg-green-50' : 'border-yellow-200 bg-yellow-50'}`}>
               <div className="text-sm font-medium text-slate-900 mb-2">Headshot</div>
               <p className="text-xs text-slate-600 mb-2">Please add one or more photos. Adding a few gives the designer more options to generate a strong image for the card.</p>
@@ -440,8 +436,10 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 </div>
               ) : null}
             </div>
+            )}
 
-            {/* Company logo section */}
+            {/* Company logo section (only when missing) */}
+            {!(contact.companyLogo && contact.companyLogo.length>0) && (
             <div className={`mb-4 p-3 rounded border ${(contact.companyLogo && contact.companyLogo.length > 0) || logoNew.length > 0 ? 'border-green-200 bg-green-50' : 'border-yellow-200 bg-yellow-50'}`}>
               <div className="text-sm font-medium text-slate-900 mb-2">Company Logo</div>
               <p className="text-xs text-slate-600 mb-2">Please add one or more logo images. Make sure the logo matches the company name. You can also update the company name above.</p>
@@ -461,6 +459,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 </div>
               ) : null}
             </div>
+            )}
 
             {approveError && <div className="text-xs text-red-600 mb-2">{approveError}</div>}
             <div className="flex justify-end gap-2">
@@ -602,7 +601,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
       )}
 
       {/* No toggle; details are always shown */}
-      </div>
+    </div>
     </>
   );
 };
