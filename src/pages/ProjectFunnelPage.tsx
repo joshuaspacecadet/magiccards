@@ -625,7 +625,9 @@ const ProjectFunnelPage: React.FC = () => {
       "Golden Record",
     ];
     const headerLine = headers.map((h) => escapeCsv(h)).join(",");
-    const rows = contacts.map((c) => [
+    // Only include approved contacts in the CSV
+    const approved = contacts.filter((c) => c.contactReview === 'Approve');
+    const rows = approved.map((c) => [
       escapeCsv(c.name),
       escapeCsv(c.company),
       escapeCsv(c.streetLine1),
