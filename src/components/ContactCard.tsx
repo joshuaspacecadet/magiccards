@@ -179,7 +179,14 @@ const ContactCard: React.FC<ContactCardProps> = ({
         {/* Items toggles */}
         <div className="mb-2 text-xs flex items-center gap-4">
           <label className="inline-flex items-center gap-1">
-            <input type="checkbox" checked={true} disabled />
+            <input
+              type="checkbox"
+              checked={!!contact.magicCards}
+              onChange={async () => {
+                await onUpdate(contact.id, { magicCards: !contact.magicCards });
+              }}
+              disabled={isStageLocked}
+            />
             <span>Magic Cards</span>
           </label>
           <label className="inline-flex items-center gap-1">

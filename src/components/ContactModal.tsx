@@ -46,7 +46,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
     linkedinUrl: "",
     additionalContactContext: "",
     contactAddedBy: "",
-    magicCards: true,
+    magicCards: false,
     sfsBook: false,
     goldenRecord: false,
   });
@@ -89,7 +89,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
         linkedinUrl: contact.linkedinUrl || "",
         additionalContactContext: contact.additionalContactContext || "",
         contactAddedBy: contact.contactAddedBy || "",
-        magicCards: contact.magicCards ?? true,
+        magicCards: contact.magicCards ?? false,
         sfsBook: !!contact.sfsBook,
         goldenRecord: !!contact.goldenRecord,
       });
@@ -557,7 +557,11 @@ const ContactModal: React.FC<ContactModalProps> = ({
               <h4 className="text-sm font-medium text-slate-900">Items</h4>
               <div className="flex items-center gap-4 text-sm">
                 <label className="inline-flex items-center gap-2">
-                  <input type="checkbox" checked={true} disabled />
+                  <input
+                    type="checkbox"
+                    checked={formData.magicCards}
+                    onChange={(e) => setFormData({ ...formData, magicCards: e.target.checked })}
+                  />
                   <span>Magic Cards</span>
                 </label>
                 <label className="inline-flex items-center gap-2">

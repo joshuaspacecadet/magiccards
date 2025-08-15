@@ -57,7 +57,7 @@ const transformAirtableContact = (record: any): Contact => {
     confirmAddressUrl: fields["Confirm Address URL"] || "",
     additionalContactContext: fields["Additional Contact Context"] || "",
     contactAddedBy: fields["Contact Added By"] || "", // ADD THIS LINE
-    magicCards: fields["Magic Cards"] ?? true,
+    magicCards: fields["Magic Cards"] ?? false,
     sfsBook: fields["SFS Book"] || false,
     goldenRecord: fields["Golden Record"] || false,
     copyTitle1: fields["Copy Title 1"] || "",
