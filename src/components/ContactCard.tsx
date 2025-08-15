@@ -124,7 +124,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
       )}
 
       <div className="flex items-start mb-3 pr-10">
-        <div className="flex items-start space-x-3 flex-1">
+        <div className={`flex items-start ${isMagicCards ? 'space-x-3' : ''} flex-1`}>
           {isMagicCards ? (
             contact.headshot && contact.headshot.length > 0 ? (
               <img
@@ -138,9 +138,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 <Mail className="h-6 w-6 text-blue-600" />
               </div>
             )
-          ) : (
-            <div className="w-12" />
-          )}
+          ) : null}
           <div className="flex-1 min-w-0">
             <div className="flex items-center min-w-0">
             <h4 className="font-semibold text-slate-900 truncate">{contact.name}</h4>
