@@ -21,6 +21,10 @@ const ContactCard: React.FC<ContactCardProps> = ({
   const [showDetails] = useState(true);
   const [copiedConfirmUrl, setCopiedConfirmUrl] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isFlagModalOpen, setIsFlagModalOpen] = useState(false);
+  const [flagFeedback, setFlagFeedback] = useState("");
+  const [flagError, setFlagError] = useState("");
+  const [isConfirmClearFeedbackOpen, setIsConfirmClearFeedbackOpen] = useState(false);
 
   console.log("Debug: ContactCard received contact:", contact);
 
@@ -289,7 +293,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
       </div>
 
       {/* Contact Review Actions */}
-      <div className="mt-3 pt-3 border-t border-slate-200 flex items-center gap-2">
+      <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-center gap-2">
         <button
           className={`px-2.5 py-1 text-xs rounded border transition-colors ${contact.contactReview === 'Approve' ? 'bg-green-600 text-white border-green-600' : 'bg-white text-green-700 border-green-300 hover:bg-green-50'}`}
           onClick={() => onUpdate(contact.id, { contactReview: 'Approve', contactReviewFeedback: '' })}
@@ -300,10 +304,10 @@ const ContactCard: React.FC<ContactCardProps> = ({
         <button
           className={`px-2.5 py-1 text-xs rounded border transition-colors ${contact.contactReview === 'Flag' ? 'bg-yellow-500 text-white border-yellow-500' : 'bg-white text-yellow-700 border-yellow-300 hover:bg-yellow-50'}`}
           onClick={() => {
-            const feedback = window.prompt('Provide feedback for flagging this contact (optional):', contact.contactReview === 'Flag' ? (contact.contactReviewFeedback || '') : '');
-            if (feedback !== null) {
-              onUpdate(contact.id, { contactReview: 'Flag', contactReviewFeedback: feedback });
-            }
+            if (isStageLocked) return;
+            setFlagFeedback(contact.contactReview === 'Flag' ? (contact.contactReviewFeedback || '') : '');
+            setFlagError("");
+            setIsFlagModalOpen(true);
           }}
           disabled={isStageLocked}
         >
@@ -311,12 +315,116 @@ const ContactCard: React.FC<ContactCardProps> = ({
         </button>
         <button
           className={`px-2.5 py-1 text-xs rounded border transition-colors ${contact.contactReview === 'Do Not Send' ? 'bg-red-600 text-white border-red-600' : 'bg-white text-red-700 border-red-300 hover:bg-red-50'}`}
-          onClick={() => onUpdate(contact.id, { contactReview: 'Do Not Send', contactReviewFeedback: '' })}
+          onClick={() => {
+            if (isStageLocked) return;
+            const hasFeedback = !!(contact.contactReviewFeedback && contact.contactReviewFeedback.trim().length > 0);
+            if (hasFeedback) {
+              setIsConfirmClearFeedbackOpen(true);
+            } else {
+              onUpdate(contact.id, { contactReview: 'Do Not Send', contactReviewFeedback: '' });
+            }
+          }}
           disabled={isStageLocked}
         >
           Do Not Send
         </button>
       </div>
+
+      {/* Flag Feedback Modal */}
+      {isFlagModalOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-[1000] flex items-center justify-center p-4"
+          onClick={() => setIsFlagModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl w-full max-w-md p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-semibold text-slate-900">Provide feedback</h4>
+              <button
+                onClick={() => setIsFlagModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600"
+                aria-label="Close"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <p className="text-xs text-slate-600 mb-3">Please share why this recipient is being flagged.</p>
+            <textarea
+              value={flagFeedback}
+              onChange={(e) => setFlagFeedback(e.target.value)}
+              rows={6}
+              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
+              placeholder="Write feedback..."
+            />
+            {flagError && <div className="text-xs text-red-600 mb-2">{flagError}</div>}
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setIsFlagModalOpen(false)}
+                className="px-3 py-1.5 text-xs rounded border border-slate-300 text-slate-700 hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (!flagFeedback.trim()) {
+                    setFlagError('Feedback is required to flag a recipient.');
+                    return;
+                  }
+                  onUpdate(contact.id, { contactReview: 'Flag', contactReviewFeedback: flagFeedback.trim() });
+                  setIsFlagModalOpen(false);
+                }}
+                className="px-3 py-1.5 text-xs rounded bg-yellow-600 text-white hover:bg-yellow-700"
+              >
+                Save Flag
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirm clear feedback for Do Not Send */}
+      {isConfirmClearFeedbackOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-[1000] flex items-center justify-center p-4"
+          onClick={() => setIsConfirmClearFeedbackOpen(false)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl w-full max-w-md p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-semibold text-slate-900">Delete saved feedback?</h4>
+              <button
+                onClick={() => setIsConfirmClearFeedbackOpen(false)}
+                className="text-slate-400 hover:text-slate-600"
+                aria-label="Close"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <p className="text-xs text-slate-600 mb-4">Switching to “Do Not Send” will remove the saved feedback on this contact. Are you sure?</p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setIsConfirmClearFeedbackOpen(false)}
+                className="px-3 py-1.5 text-xs rounded border border-slate-300 text-slate-700 hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  onUpdate(contact.id, { contactReview: 'Do Not Send', contactReviewFeedback: '' });
+                  setIsConfirmClearFeedbackOpen(false);
+                }}
+                className="px-3 py-1.5 text-xs rounded bg-red-600 text-white hover:bg-red-700"
+              >
+                Yes, continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* No toggle; details are always shown */}
       </div>
