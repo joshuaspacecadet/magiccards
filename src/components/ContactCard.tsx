@@ -328,16 +328,16 @@ const ContactCard: React.FC<ContactCardProps> = ({
           Approve
         </button>
         <button
-          className={`px-2.5 py-1 text-xs rounded border transition-colors ${contact.contactReview === 'Flag' ? 'bg-yellow-500 text-white border-yellow-500' : 'bg-white text-yellow-700 border-yellow-300 hover:bg-yellow-50'}`}
+          className={`px-2.5 py-1 text-xs rounded border transition-colors ${contact.contactReview === 'Send Later' ? 'bg-yellow-500 text-white border-yellow-500' : 'bg-white text-yellow-700 border-yellow-300 hover:bg-yellow-50'}`}
           onClick={() => {
             if (isStageLocked) return;
-            setFlagFeedback(contact.contactReview === 'Flag' ? (contact.contactReviewFeedback || '') : '');
+            setFlagFeedback(contact.contactReview === 'Send Later' ? (contact.contactReviewFeedback || '') : '');
             setFlagError("");
             setIsFlagModalOpen(true);
           }}
           disabled={isStageLocked}
         >
-          Flag
+          Send Later
         </button>
         <button
           className={`px-2.5 py-1 text-xs rounded border transition-colors ${contact.contactReview === 'Remove' ? 'bg-red-600 text-white border-red-600' : 'bg-white text-red-700 border-red-300 hover:bg-red-50'}`}
@@ -544,12 +544,12 @@ const ContactCard: React.FC<ContactCardProps> = ({
                     setFlagError('Feedback is required to flag a recipient.');
                     return;
                   }
-                  onUpdate(contact.id, { contactReview: 'Flag', contactReviewFeedback: flagFeedback.trim() });
+                  onUpdate(contact.id, { contactReview: 'Send Later', contactReviewFeedback: flagFeedback.trim() });
                   setIsFlagModalOpen(false);
                 }}
                 className="px-3 py-1.5 text-xs rounded bg-yellow-600 text-white hover:bg-yellow-700"
               >
-                Save Flag
+                Save
               </button>
             </div>
           </div>
