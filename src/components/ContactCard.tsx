@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit, Mail, ExternalLink, Copy, Check, X } from 'lucide-react';
+import { Edit, User, ExternalLink, Copy, Check, X } from 'lucide-react';
 import { Contact } from '../types';
 import { normalizeUrl, openUrlSafely } from '../utils/urlHelpers';
 import { uploadToCloudinary } from '../utils/cloudinaryUpload';
@@ -135,7 +135,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
               />
             ) : (
               <div className="w-12 h-12 rounded-full bg-red-100 border border-red-200 flex items-center justify-center">
-                <Mail className="h-6 w-6 text-red-600" />
+                <User className="h-6 w-6 text-red-600" />
               </div>
             )
           ) : null}
