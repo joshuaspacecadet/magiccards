@@ -294,9 +294,9 @@ const ContactCard: React.FC<ContactCardProps> = ({
                   </p>
                 </div>
               ) : (
-                <div className="pt-2 border-t border-slate-200">
+                <div className="pt-2">
                   <div className="flex items-center text-slate-600">
-                    <ExternalLink className="h-3 w-3 mr-2 flex-shrink-0" />
+                    <Edit className="h-3 w-3 mr-2 flex-shrink-0" />
                     <button
                       onClick={() => { if (!isStageLocked) { setNotesInput(""); setIsNotesModalOpen(true); } }}
                       disabled={isStageLocked}
