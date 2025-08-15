@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { X, Loader2, Upload, Trash2, AlertCircle } from "lucide-react";
+import { X, Loader2, Upload, Trash2, AlertCircle, Info } from "lucide-react";
 import { Contact } from "../types";
 import { normalizeUrl, isValidUrl } from "../utils/urlHelpers";
 import { uploadToCloudinary } from "../utils/cloudinaryUpload";
@@ -928,8 +928,12 @@ const ContactModal: React.FC<ContactModalProps> = ({
             </h3>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
-                Additional Contact Context
+              <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-1">
+                <span>Special Notes</span>
+                <Info
+                  className="h-4 w-4 text-slate-400"
+                  title="Help us make the Magic Card copy extra special by adding details."
+                />
               </label>
               <textarea
                 value={formData.additionalContactContext}
