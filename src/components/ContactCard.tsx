@@ -272,20 +272,20 @@ const ContactCard: React.FC<ContactCardProps> = ({
                   </p>
                 </div>
               ) : (
-                <div className="pt-2">
-                  <div className="flex items-center text-slate-600">
-                    <Edit className="h-3 w-3 mr-2 flex-shrink-0" />
+                <div className="pt-3">
+                  <div className="flex items-center justify-center gap-2 text-slate-600">
+                    <Edit className="h-3 w-3 flex-shrink-0" />
                     <button
                       onClick={() => { if (!isStageLocked) { setNotesInput(""); setIsNotesModalOpen(true); } }}
                       disabled={isStageLocked}
-                      className={`hover:text-blue-600 transition-colors text-xs truncate text-left ${isStageLocked ? 'text-slate-400 cursor-not-allowed' : ''}`}
+                      className={`hover:text-blue-600 transition-colors text-xs ${isStageLocked ? 'text-slate-400 cursor-not-allowed' : ''}`}
                     >
                       Add special notes
                     </button>
                   </div>
                 </div>
-            )}
-          </div>
+              )}
+            </div>
         )}
       </div>
 
