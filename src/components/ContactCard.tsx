@@ -374,7 +374,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-semibold text-slate-900">Complete requirements to approve</h4>
+              <h4 className="text-sm font-semibold text-slate-900">Complete requirements to approve {contact.name}</h4>
               <button onClick={() => setIsApproveModalOpen(false)} className="text-slate-400 hover:text-slate-600"><X className="h-4 w-4" /></button>
             </div>
             <p className="text-xs text-slate-600 mb-4">To print a Magic Card, we need the recipient’s address, company, headshot, and company logo.</p>
