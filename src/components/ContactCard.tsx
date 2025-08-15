@@ -197,8 +197,8 @@ const ContactCard: React.FC<ContactCardProps> = ({
               )}
               
         {/* Two-column layout: left items, right address */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="text-[11px] space-y-1">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="text-[11px] space-y-1 md:col-span-1">
             <label className="inline-flex items-center gap-2">
               <input
                 type="checkbox"
@@ -235,7 +235,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
           </div>
 
           {/* Always-visible contact details (address + confirm URL) */}
-          <div className="space-y-1.5 text-sm">
+          <div className="space-y-1.5 text-sm md:col-span-2">
               {/* Email and phone intentionally hidden */}
 
               {formatAddress(contact) && (
