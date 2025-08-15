@@ -936,7 +936,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
                     tabIndex={0}
                     aria-label="Help us make the Magic Card copy extra special by adding details."
                   />
-                  <span className="absolute top-full mt-1 left-0 z-20 hidden group-hover:block group-focus-within:block max-w-[240px] whitespace-normal break-words rounded bg-slate-900 text-white text-xs px-2 py-1 shadow-lg">
+                  <span className="absolute top-full mt-1 left-0 z-20 hidden group-hover:block group-focus-within:block w-64 whitespace-normal break-words text-left rounded bg-slate-900 text-white text-xs px-2 py-1 shadow-lg">
                     Help us make the Magic Card copy extra special by adding details.
                   </span>
                 </span>
