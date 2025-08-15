@@ -133,7 +133,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
         linkedinUrl: "",
         additionalContactContext: "",
         contactAddedBy: "",
-        magicCards: true,
+        magicCards: false,
         sfsBook: false,
         goldenRecord: false,
       });
