@@ -403,7 +403,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
 
             {/* Company section (only when missing) */}
             {!(contact.company && contact.company.trim().length>0) && (
-            <div className={`mb-4 p-3 rounded border ${companyInput.trim() ? 'border-green-200 bg-green-50' : 'border-yellow-200 bg-yellow-50'}`}>
+            <div className={`mb-4 p-3 rounded border border-red-200 bg-red-50`}>
               <div className="text-sm font-medium text-slate-900 mb-2">Company</div>
               <input
                 type="text"
@@ -417,7 +417,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
 
             {/* Headshot section (only when missing) */}
             {!(contact.headshot && contact.headshot.length>0) && (
-            <div className={`mb-4 p-3 rounded border ${(contact.headshot && contact.headshot.length > 0) || headshotNew.length > 0 ? 'border-green-200 bg-green-50' : 'border-yellow-200 bg-yellow-50'}`}>
+            <div className={`mb-4 p-3 rounded border border-red-200 bg-red-50`}>
               <div className="text-sm font-medium text-slate-900 mb-2">Headshot</div>
               <p className="text-xs text-slate-600 mb-2">Please add one or more photos. Adding a few gives the designer more options to generate a strong image for the card.</p>
               <div
@@ -440,9 +440,9 @@ const ContactCard: React.FC<ContactCardProps> = ({
 
             {/* Company logo section (only when missing) */}
             {!(contact.companyLogo && contact.companyLogo.length>0) && (
-            <div className={`mb-4 p-3 rounded border ${(contact.companyLogo && contact.companyLogo.length > 0) || logoNew.length > 0 ? 'border-green-200 bg-green-50' : 'border-yellow-200 bg-yellow-50'}`}>
+            <div className={`mb-4 p-3 rounded border border-red-200 bg-red-50`}>
               <div className="text-sm font-medium text-slate-900 mb-2">Company Logo</div>
-              <p className="text-xs text-slate-600 mb-2">Please add one or more logo images. Make sure the logo matches the company name. You can also update the company name above.</p>
+              <p className="text-xs text-slate-600 mb-2">Please add one or more logo images. Make sure the logo matches the company name.</p>
               <div
                 className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${dragOverTarget==='logo' ? 'border-blue-500 bg-blue-50' : 'border-slate-300 hover:border-slate-400'} ${isUploadingLogo ? 'opacity-50 pointer-events-none' : ''}`}
                 onDragOver={(e) => { e.preventDefault(); setDragOverTarget('logo'); }}
