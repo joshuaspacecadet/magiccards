@@ -34,6 +34,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [dragOverTarget, setDragOverTarget] = useState<null | 'headshot' | 'logo'>(null);
   const [approveError, setApproveError] = useState<string>("");
+  const [isAddressRequiredModalOpen, setIsAddressRequiredModalOpen] = useState(false);
 
   console.log("Debug: ContactCard received contact:", contact);
 
@@ -200,7 +201,12 @@ const ContactCard: React.FC<ContactCardProps> = ({
               type="checkbox"
               checked={!!contact.sfsBook}
               onChange={async () => {
-                await onUpdate(contact.id, { sfsBook: !contact.sfsBook });
+                const next = !contact.sfsBook;
+                if (next && !contact.streetLine1) {
+                  setIsAddressRequiredModalOpen(true);
+                  return;
+                }
+                await onUpdate(contact.id, { sfsBook: next });
               }}
               disabled={isStageLocked}
             />
@@ -211,7 +217,12 @@ const ContactCard: React.FC<ContactCardProps> = ({
               type="checkbox"
               checked={!!contact.goldenRecord}
               onChange={async () => {
-                await onUpdate(contact.id, { goldenRecord: !contact.goldenRecord });
+                const next = !contact.goldenRecord;
+                if (next && !contact.streetLine1) {
+                  setIsAddressRequiredModalOpen(true);
+                  return;
+                }
+                await onUpdate(contact.id, { goldenRecord: next });
               }}
               disabled={isStageLocked}
             />
@@ -497,6 +508,43 @@ const ContactCard: React.FC<ContactCardProps> = ({
               >
                 Save & Approve
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Address required modal for SFS Book / Golden Record */}
+      {isAddressRequiredModalOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-[1000] flex items-center justify-center p-4"
+          onClick={() => setIsAddressRequiredModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl w-full max-w-xl p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-semibold text-slate-900">We need an address to approve {contact.name}</h4>
+              <button onClick={() => setIsAddressRequiredModalOpen(false)} className="text-slate-400 hover:text-slate-600"><X className="h-4 w-4" /></button>
+            </div>
+            <div className={`mb-2 p-3 rounded border border-red-200 bg-red-50`}>
+              <div className="flex items-center justify-between">
+                <div className="text-sm font-medium text-slate-900">Address</div>
+                {contact.confirmAddressUrl && (
+                  <button
+                    onClick={handleCopyConfirmUrl}
+                    className="inline-flex items-center text-xs px-2 py-1 rounded border border-red-300 text-red-700 hover:bg-red-100"
+                    title={copiedConfirmUrl ? 'Copied!' : 'Copy Confirm Address URL'}
+                  >
+                    {copiedConfirmUrl ? <Check className="h-3 w-3 mr-1" /> : <Copy className="h-3 w-3 mr-1" />}
+                    Copy confirm link
+                  </button>
+                )}
+              </div>
+              <div className="mt-2 text-xs text-red-700">Missing address — copy the link above and send it to the recipient to confirm their mailing address.</div>
+            </div>
+            <div className="flex justify-end">
+              <button onClick={() => setIsAddressRequiredModalOpen(false)} className="px-3 py-1.5 text-xs rounded border border-slate-300 text-slate-700 hover:bg-slate-50">Close</button>
             </div>
           </div>
         </div>
