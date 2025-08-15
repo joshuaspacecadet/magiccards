@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Edit, Mail, Phone, MapPin, ExternalLink, Copy, Check, X } from 'lucide-react';
 import { Contact } from '../types';
 import { normalizeUrl, openUrlSafely } from '../utils/urlHelpers';
+import { uploadToCloudinary } from '../utils/cloudinaryUpload';
 
 interface ContactCardProps {
   contact: Contact;
@@ -25,6 +26,14 @@ const ContactCard: React.FC<ContactCardProps> = ({
   const [flagError, setFlagError] = useState("");
   const [isConfirmClearFeedbackOpen, setIsConfirmClearFeedbackOpen] = useState(false);
   const [confirmClearNextStatus, setConfirmClearNextStatus] = useState<"Approve" | "Remove" | null>(null);
+  const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+  const [companyInput, setCompanyInput] = useState(contact.company || "");
+  const [headshotNew, setHeadshotNew] = useState<{ url: string; filename: string }[]>([]);
+  const [logoNew, setLogoNew] = useState<{ url: string; filename: string }[]>([]);
+  const [isUploadingHeadshot, setIsUploadingHeadshot] = useState(false);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const [dragOverTarget, setDragOverTarget] = useState<null | 'headshot' | 'logo'>(null);
+  const [approveError, setApproveError] = useState<string>("");
 
   console.log("Debug: ContactCard received contact:", contact);
 
@@ -291,6 +300,13 @@ const ContactCard: React.FC<ContactCardProps> = ({
           className={`px-2.5 py-1 text-xs rounded border transition-colors ${contact.contactReview === 'Approve' ? 'bg-green-600 text-white border-green-600' : 'bg-white text-green-700 border-green-300 hover:bg-green-50'}`}
           onClick={() => {
             if (isStageLocked) return;
+            // If Magic Cards is selected, enforce required assets
+            if (contact.magicCards) {
+              setCompanyInput(contact.company || "");
+              setApproveError("");
+              setIsApproveModalOpen(true);
+              return;
+            }
             const hasFeedback = !!(contact.contactReviewFeedback && contact.contactReviewFeedback.trim().length > 0);
             if (hasFeedback) {
               setConfirmClearNextStatus('Approve');
@@ -336,6 +352,154 @@ const ContactCard: React.FC<ContactCardProps> = ({
       {contact.contactReviewFeedback && contact.contactReviewFeedback.trim().length > 0 && (
         <div className="mt-2 text-xs text-slate-600 italic whitespace-pre-line text-center">
           {contact.contactReviewFeedback}
+        </div>
+      )}
+
+      {/* Approve requirements modal (only when Magic Cards is selected) */}
+      {isApproveModalOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-[1000] flex items-center justify-center p-4"
+          onClick={() => setIsApproveModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-semibold text-slate-900">Complete requirements to approve</h4>
+              <button onClick={() => setIsApproveModalOpen(false)} className="text-slate-400 hover:text-slate-600"><X className="h-4 w-4" /></button>
+            </div>
+            <p className="text-xs text-slate-600 mb-4">To print a Magic Card, we need the recipient’s address, company, headshot, and company logo.</p>
+
+            {/* Address section */}
+            <div className="mb-4 p-3 rounded border ${contact.streetLine1 ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}">
+              <div className="flex items-center justify-between">
+                <div className="text-sm font-medium text-slate-900">Address</div>
+                {!contact.streetLine1 && contact.confirmAddressUrl && (
+                  <button
+                    onClick={handleCopyConfirmUrl}
+                    className="inline-flex items-center text-xs px-2 py-1 rounded border border-red-300 text-red-700 hover:bg-red-100"
+                    title={copiedConfirmUrl ? 'Copied!' : 'Copy Confirm Address URL'}
+                  >
+                    {copiedConfirmUrl ? <Check className="h-3 w-3 mr-1" /> : <Copy className="h-3 w-3 mr-1" />}
+                    Copy confirm link
+                  </button>
+                )}
+              </div>
+              <div className="mt-2 text-xs text-slate-700 whitespace-pre-line">
+                {contact.streetLine1 ? (
+                  <>
+                    {(() => {
+                      const parts: string[] = [];
+                      if (contact.streetLine1) parts.push(contact.streetLine1);
+                      if (contact.streetLine2) parts.push(contact.streetLine2);
+                      const cityParts: string[] = [];
+                      if (contact.city) cityParts.push(contact.city);
+                      if (contact.state) cityParts.push(contact.state);
+                      if (contact.postCode) cityParts.push(contact.postCode);
+                      if (cityParts.length) parts.push(cityParts.join(', '));
+                      if (contact.countryCode) parts.push(contact.countryCode);
+                      return parts.join('\n');
+                    })()}
+                  </>
+                ) : (
+                  <span className="text-red-700">Missing address — copy the link above and send it to the recipient to confirm their mailing address.</span>
+                )}
+              </div>
+            </div>
+
+            {/* Company section */}
+            <div className={`mb-4 p-3 rounded border ${companyInput.trim() ? 'border-green-200 bg-green-50' : 'border-yellow-200 bg-yellow-50'}`}>
+              <div className="text-sm font-medium text-slate-900 mb-2">Company</div>
+              <input
+                type="text"
+                value={companyInput}
+                onChange={(e) => setCompanyInput(e.target.value)}
+                className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter company name"
+              />
+            </div>
+
+            {/* Headshot section */}
+            <div className={`mb-4 p-3 rounded border ${(contact.headshot && contact.headshot.length > 0) || headshotNew.length > 0 ? 'border-green-200 bg-green-50' : 'border-yellow-200 bg-yellow-50'}`}>
+              <div className="text-sm font-medium text-slate-900 mb-2">Headshot</div>
+              <p className="text-xs text-slate-600 mb-2">Please add one or more photos. Adding a few gives the designer more options to generate a strong image for the card.</p>
+              <div
+                className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${dragOverTarget==='headshot' ? 'border-blue-500 bg-blue-50' : 'border-slate-300 hover:border-slate-400'} ${isUploadingHeadshot ? 'opacity-50 pointer-events-none' : ''}`}
+                onDragOver={(e) => { e.preventDefault(); setDragOverTarget('headshot'); }}
+                onDragLeave={(e) => { e.preventDefault(); setDragOverTarget(null); }}
+                onDrop={async (e) => { e.preventDefault(); setDragOverTarget(null); const files = Array.from(e.dataTransfer.files || []); if (!files.length) return; setIsUploadingHeadshot(true); const uploaded = []; for (const f of files) { const url = await uploadToCloudinary(f); uploaded.push({ url, filename: f.name }); } setHeadshotNew((prev) => [...prev, ...uploaded]); setIsUploadingHeadshot(false); }}
+              >
+                <input id="approve-headshot" className="hidden" type="file" multiple accept="image/*" onChange={async (e) => { if (!e.target.files) return; setIsUploadingHeadshot(true); const files = Array.from(e.target.files); const uploaded=[] as {url:string; filename:string}[]; for (const f of files){ const url = await uploadToCloudinary(f); uploaded.push({url, filename: f.name}); } setHeadshotNew((p)=>[...p,...uploaded]); setIsUploadingHeadshot(false); e.target.value=''; }} />
+                <label htmlFor="approve-headshot" className="inline-flex items-center px-3 py-2 rounded bg-blue-600 text-white text-xs cursor-pointer hover:bg-blue-700">{isUploadingHeadshot ? 'Uploading...' : 'Choose File(s)'}</label>
+              </div>
+              {(contact.headshot && contact.headshot.length>0) || headshotNew.length>0 ? (
+                <div className="mt-2 grid grid-cols-3 gap-2">
+                  {(contact.headshot||[]).map((h,idx)=>(<img key={`eh${idx}`} src={h.url} alt={h.filename} className="w-full h-20 object-cover rounded border" />))}
+                  {headshotNew.map((h,idx)=>(<img key={`nh${idx}`} src={h.url} alt={h.filename} className="w-full h-20 object-cover rounded border" />))}
+                </div>
+              ) : null}
+            </div>
+
+            {/* Company logo section */}
+            <div className={`mb-4 p-3 rounded border ${(contact.companyLogo && contact.companyLogo.length > 0) || logoNew.length > 0 ? 'border-green-200 bg-green-50' : 'border-yellow-200 bg-yellow-50'}`}>
+              <div className="text-sm font-medium text-slate-900 mb-2">Company Logo</div>
+              <p className="text-xs text-slate-600 mb-2">Please add one or more logo images. Make sure the logo matches the company name. You can also update the company name above.</p>
+              <div
+                className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${dragOverTarget==='logo' ? 'border-blue-500 bg-blue-50' : 'border-slate-300 hover:border-slate-400'} ${isUploadingLogo ? 'opacity-50 pointer-events-none' : ''}`}
+                onDragOver={(e) => { e.preventDefault(); setDragOverTarget('logo'); }}
+                onDragLeave={(e) => { e.preventDefault(); setDragOverTarget(null); }}
+                onDrop={async (e) => { e.preventDefault(); setDragOverTarget(null); const files = Array.from(e.dataTransfer.files || []); if (!files.length) return; setIsUploadingLogo(true); const uploaded = []; for (const f of files) { const url = await uploadToCloudinary(f); uploaded.push({ url, filename: f.name }); } setLogoNew((prev) => [...prev, ...uploaded]); setIsUploadingLogo(false); }}
+              >
+                <input id="approve-logo" className="hidden" type="file" multiple accept="image/*" onChange={async (e) => { if (!e.target.files) return; setIsUploadingLogo(true); const files = Array.from(e.target.files); const uploaded=[] as {url:string; filename:string}[]; for (const f of files){ const url = await uploadToCloudinary(f); uploaded.push({url, filename: f.name}); } setLogoNew((p)=>[...p,...uploaded]); setIsUploadingLogo(false); e.target.value=''; }} />
+                <label htmlFor="approve-logo" className="inline-flex items-center px-3 py-2 rounded bg-blue-600 text-white text-xs cursor-pointer hover:bg-blue-700">{isUploadingLogo ? 'Uploading...' : 'Choose File(s)'}</label>
+              </div>
+              {(contact.companyLogo && contact.companyLogo.length>0) || logoNew.length>0 ? (
+                <div className="mt-2 grid grid-cols-3 gap-2">
+                  {(contact.companyLogo||[]).map((h,idx)=>(<img key={`el${idx}`} src={h.url} alt={h.filename} className="w-full h-20 object-cover rounded border" />))}
+                  {logoNew.map((h,idx)=>(<img key={`nl${idx}`} src={h.url} alt={h.filename} className="w-full h-20 object-cover rounded border" />))}
+                </div>
+              ) : null}
+            </div>
+
+            {approveError && <div className="text-xs text-red-600 mb-2">{approveError}</div>}
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setIsApproveModalOpen(false)} className="px-3 py-1.5 text-xs rounded border border-slate-300 text-slate-700 hover:bg-slate-50">Close</button>
+              <button
+                onClick={async () => {
+                  // Validate
+                  const hasAddress = !!contact.streetLine1;
+                  const hasCompany = !!companyInput.trim();
+                  const hasHeadshot = (contact.headshot && contact.headshot.length>0) || headshotNew.length>0;
+                  const hasLogo = (contact.companyLogo && contact.companyLogo.length>0) || logoNew.length>0;
+                  if (!hasAddress || !hasCompany || !hasHeadshot || !hasLogo) {
+                    setApproveError('All items are required to approve for Magic Cards.');
+                    return;
+                  }
+                  // Save uploads/changes then approve
+                  const updates: Partial<Contact> = { company: companyInput } as Partial<Contact>;
+                  if (headshotNew.length>0) {
+                    (updates as any).headshot = [...(contact.headshot||[]), ...headshotNew] as any;
+                  }
+                  if (logoNew.length>0) {
+                    (updates as any).companyLogo = [...(contact.companyLogo||[]), ...logoNew] as any;
+                  }
+                  await onUpdate(contact.id, updates);
+                  const hasFeedback = !!(contact.contactReviewFeedback && contact.contactReviewFeedback.trim().length > 0);
+                  if (hasFeedback) {
+                    setConfirmClearNextStatus('Approve');
+                    setIsConfirmClearFeedbackOpen(true);
+                  } else {
+                    await onUpdate(contact.id, { contactReview: 'Approve', contactReviewFeedback: '' });
+                  }
+                  setIsApproveModalOpen(false);
+                }}
+                className="px-3 py-1.5 text-xs rounded bg-green-600 text-white hover:bg-green-700"
+              >
+                Save & Approve
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
