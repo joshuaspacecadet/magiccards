@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit, Mail, Phone, MapPin, ExternalLink, Copy, Check, X } from 'lucide-react';
+import { Edit, Mail, MapPin, ExternalLink, Copy, Check, X } from 'lucide-react';
 import { Contact } from '../types';
 import { normalizeUrl, openUrlSafely } from '../utils/urlHelpers';
 import { uploadToCloudinary } from '../utils/cloudinaryUpload';
@@ -224,23 +224,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
 
         {/* Always-visible contact details */}
         <div className="mt-1 space-y-1.5 text-sm">
-              {contact.email && (
-                <div className="flex items-center text-slate-600">
-                  <Mail className="h-3 w-3 mr-2 flex-shrink-0" />
-              <a href={`mailto:${contact.email}`} className="hover:text-blue-600 transition-colors truncate text-xs">
-                    {contact.email}
-                  </a>
-                </div>
-              )}
-              
-              {contact.phone && (
-                <div className="flex items-center text-slate-600">
-                  <Phone className="h-3 w-3 mr-2 flex-shrink-0" />
-                  <a href={`tel:${contact.phone}`} className="hover:text-blue-600 transition-colors text-xs">
-                    {contact.phone}
-                  </a>
-                </div>
-              )}
+              {/* Email and phone intentionally hidden */}
 
               {formatAddress(contact) && (
                 <div className="flex items-start text-slate-600">
