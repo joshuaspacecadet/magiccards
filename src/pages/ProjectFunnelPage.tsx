@@ -588,11 +588,18 @@ const ProjectFunnelPage: React.FC = () => {
   const getFilteredDesignContacts = (
     filterCreator: string = selectedDesignCreatorFilter
   ) => {
-    if (!filterCreator) return contacts;
-    return contacts.filter(
-      (contact) => contact.contactAddedBy === filterCreator
+    const byCreator = !filterCreator
+      ? contacts
+      : contacts.filter((contact) => contact.contactAddedBy === filterCreator);
+    // Only include contacts that are approved and have Magic Cards selected
+    return byCreator.filter(
+      (c) => c.contactReview === 'Approve' && !!c.magicCards
     );
   };
+
+  // Helper: contacts eligible for copy/design brief (approved + Magic Cards)
+  const getApprovedMagicContacts = () =>
+    contacts.filter((c) => c.contactReview === 'Approve' && !!c.magicCards);
 
   // CSV generation for Stage 7
   const contactsCsvDataUri = useMemo(() => {
@@ -810,19 +817,19 @@ const ProjectFunnelPage: React.FC = () => {
           topActions={getRevertTopActions("Copy")}
         >
           <div className="space-y-6">
-            {contacts.length === 0 ? (
+            {getApprovedMagicContacts().length === 0 ? (
               <div className="text-center py-12 bg-slate-50 rounded-lg border-2 border-dashed border-slate-300">
                 <FileText className="h-12 w-12 text-slate-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-slate-900 mb-2">
                   No contacts available
                 </h3>
                 <p className="text-slate-600">
-                  Add contacts in Stage 1 before proceeding with copy creation.
+                  Add and approve recipients with Magic Cards selected before proceeding with copy creation.
                 </p>
               </div>
             ) : (
               <div className="space-y-6">
-                {contacts.map((contact) => (
+                {getApprovedMagicContacts().map((contact) => (
                   <ContactCopyEditor
                     key={contact.id}
                     contact={contact}
@@ -834,7 +841,7 @@ const ProjectFunnelPage: React.FC = () => {
             )}
 
             {/* Stage Completion */}
-            {isStageActive("Copy") && contacts.length > 0 && (
+            {isStageActive("Copy") && getApprovedMagicContacts().length > 0 && (
               <div className="flex justify-center pt-6">
                 <button
                   onClick={handleAdvanceStage}
@@ -860,23 +867,22 @@ const ProjectFunnelPage: React.FC = () => {
           topActions={getRevertTopActions("Design Brief")}
         >
           <div className="space-y-6">
-            {contacts.length === 0 ? (
+            {getApprovedMagicContacts().length === 0 ? (
               <div className="text-center py-12 bg-slate-50 rounded-lg border-2 border-dashed border-slate-300">
                 <Palette className="h-12 w-12 text-slate-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-slate-900 mb-2">
                   No contacts available
                 </h3>
                 <p className="text-slate-600">
-                  Add contacts and copy content before generating the design
-                  brief.
+                  Add and approve recipients with Magic Cards selected before generating the design brief.
                 </p>
               </div>
             ) : (
-              <DesignBriefDisplay project={project} contacts={contacts} />
+              <DesignBriefDisplay project={project} contacts={getApprovedMagicContacts()} />
             )}
 
             {/* Stage Completion */}
-            {isStageActive("Design Brief") && contacts.length > 0 && (
+            {isStageActive("Design Brief") && getApprovedMagicContacts().length > 0 && (
               <div className="flex justify-center pt-6">
                 <button
                   onClick={handleAdvanceStage}
@@ -970,7 +976,7 @@ const ProjectFunnelPage: React.FC = () => {
             )}
 
             {/* Stage Completion */}
-            {isStageActive("Design Round 1") && contacts.length > 0 && (
+            {isStageActive("Design Round 1") && getFilteredDesignContacts().length > 0 && (
               <div className="flex justify-center pt-6">
                 <button
                   onClick={handleAdvanceStage}
@@ -1066,7 +1072,7 @@ const ProjectFunnelPage: React.FC = () => {
             )}
 
             {/* Stage Completion */}
-            {isStageActive("Design Round 2") && contacts.length > 0 && (
+            {isStageActive("Design Round 2") && getFilteredDesignContacts().filter((c) => c.rejectRound1).length > 0 && (
               <div className="flex justify-center pt-6">
                 <button
                   onClick={handleAdvanceStage}
