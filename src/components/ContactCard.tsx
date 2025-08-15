@@ -67,7 +67,6 @@ const ContactCard: React.FC<ContactCardProps> = ({
     const addressParts = [];
     
     if (contact.streetLine1) addressParts.push(contact.streetLine1);
-    if (contact.streetNumber) addressParts.push(contact.streetNumber);
     if (contact.streetLine2) addressParts.push(contact.streetLine2);
     
     const cityStateZip = [];

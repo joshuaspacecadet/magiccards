@@ -20,7 +20,6 @@ export interface Contact {
   email?: string;
   phone?: string;
   streetLine1?: string;
-  streetNumber?: string;
   streetLine2?: string;
   city?: string;
   state?: string;

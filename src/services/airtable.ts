@@ -45,7 +45,6 @@ const transformAirtableContact = (record: any): Contact => {
     email: fields["Email"] || "",
     phone: fields["Phone"] || "",
     streetLine1: fields["Street Line 1"] || "",
-    streetNumber: fields["Street Number (Leave Blank)"] || "",
     streetLine2: fields["Street Line 2 (Unit Number)"] || "",
     city: fields["City"] || "",
     state: fields["State"] || "",
@@ -290,8 +289,7 @@ export class AirtableService {
       if (contactData.phone) createFields["Phone"] = contactData.phone;
       if (contactData.streetLine1)
         createFields["Street Line 1"] = contactData.streetLine1;
-      if (contactData.streetNumber)
-        createFields["Street Number (Leave Blank)"] = contactData.streetNumber;
+      // removed Street Number mapping (column deleted)
       if (contactData.streetLine2)
         createFields["Street Line 2 (Unit Number)"] = contactData.streetLine2;
       if (contactData.city) createFields["City"] = contactData.city;
@@ -369,8 +367,7 @@ export class AirtableService {
       if (updates.phone !== undefined) updateFields["Phone"] = updates.phone;
       if (updates.streetLine1 !== undefined)
         updateFields["Street Line 1"] = updates.streetLine1;
-      if (updates.streetNumber !== undefined)
-        updateFields["Street Number (Leave Blank)"] = updates.streetNumber;
+      // removed Street Number mapping (column deleted)
       if (updates.streetLine2 !== undefined)
         updateFields["Street Line 2 (Unit Number)"] = updates.streetLine2;
       if (updates.city !== undefined) updateFields["City"] = updates.city;
