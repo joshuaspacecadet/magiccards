@@ -289,7 +289,8 @@ const ContactCard: React.FC<ContactCardProps> = ({
 
               {contact.additionalContactContext ? (
                 <div className="pt-2 border-t border-slate-200">
-                  <p className="text-xs text-slate-600 italic">
+                  <div className="text-[11px] font-medium text-slate-700 mb-1">Special notes</div>
+                  <p className="text-xs text-slate-600 italic whitespace-pre-line">
                     {contact.additionalContactContext}
                   </p>
                 </div>
