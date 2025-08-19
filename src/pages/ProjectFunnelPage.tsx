@@ -279,6 +279,21 @@ const ProjectFunnelPage: React.FC = () => {
     if (currentIndex <= 0) return null;
     const previousStage = stageOrder[currentIndex - 1];
     if (previousStage !== stage) return null;
+    // If the previous stage is Design Round 2 but it was skipped due to no Round I rejections,
+    // show an informational label instead of a revert button.
+    if (previousStage === "Design Round 2") {
+      const anyRejectedInRound1 = contacts.some(
+        (c) => c.contactReview === 'Approve' && !!c.magicCards && !!c.rejectRound1
+      );
+      if (!anyRejectedInRound1) {
+        return (
+          <span className="px-2 py-1 text-xs rounded border border-slate-200 bg-slate-100 text-slate-600">
+            Stage skipped: no need for second round of review
+          </span>
+        );
+      }
+    }
+
     const stageNumber = stageOrder.indexOf(stage) + 1;
     const label = `Revert to Stage ${stageNumber}`;
     return (
