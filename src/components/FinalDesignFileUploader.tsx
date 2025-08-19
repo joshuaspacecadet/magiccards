@@ -55,7 +55,7 @@ const FinalDesignFileUploader: React.FC<FinalDesignFileUploaderProps> = ({
   const [urlError, setUrlError] = useState<string>("");
 
   const currentFiles = project.illustratorFiles || [];
-  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit (reduced from 100MB)
+  const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB limit
 
   const handleDragOver = useCallback(
     (e: React.DragEvent) => {
@@ -99,9 +99,9 @@ const FinalDesignFileUploader: React.FC<FinalDesignFileUploaderProps> = ({
   );
 
   const validateFile = (file: File): string | null => {
-    // Check file size (reduced to 5MB)
+    // Check file size (100MB)
     if (file.size > MAX_FILE_SIZE) {
-      return `File "${file.name}" is too large. Maximum size is 5MB.`;
+      return `File "${file.name}" is too large. Maximum size is 100MB.`;
     }
 
     // Check file type
@@ -400,7 +400,7 @@ const FinalDesignFileUploader: React.FC<FinalDesignFileUploaderProps> = ({
                   Drop design files here or click to browse
                 </p>
                 <p className="text-sm text-slate-600 mb-4">
-                  Supports AI, PSD, PDF, and image files (max 5MB each)
+                  Supports AI, PSD, PDF, and image files (max 100MB each)
                 </p>
                 <input
                   type="file"
