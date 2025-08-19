@@ -213,7 +213,18 @@ const ProjectFunnelPage: React.FC = () => {
 
     const currentIndex = stageOrder.indexOf(project.stage);
     if (currentIndex < stageOrder.length - 1) {
-      const nextStage = stageOrder[currentIndex + 1];
+      let nextStage = stageOrder[currentIndex + 1];
+
+      // If completing Stage 4 (Design Round 1) and there are no rejected designs,
+      // skip Stage 5 and advance directly to Stage 6 (Handoff)
+      if (project.stage === "Design Round 1") {
+        const anyRejectedInRound1 = contacts.some(
+          (c) => c.contactReview === 'Approve' && !!c.magicCards && !!c.rejectRound1
+        );
+        if (!anyRejectedInRound1) {
+          nextStage = "Handoff";
+        }
+      }
 
       try {
         const updatedProject = await AirtableService.updateProject(project.id, {

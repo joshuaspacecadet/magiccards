@@ -126,16 +126,16 @@ const ContactCard: React.FC<ContactCardProps> = ({
         <div className={`flex items-start ${isMagicCards ? 'space-x-3' : ''} flex-1`}>
           {isMagicCards ? (
             contact.headshot && contact.headshot.length > 0 ? (
-              <img
-                src={contact.headshot[0].url}
-                alt={`${contact.name} headshot`}
-                className="w-12 h-12 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+            <img
+              src={contact.headshot[0].url}
+              alt={`${contact.name} headshot`}
+              className="w-12 h-12 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
                 onClick={() => setPreviewUrl(contact.headshot![0].url)}
-              />
-            ) : (
+            />
+          ) : (
               <div className="w-12 h-12 rounded-full bg-red-100 border border-red-200 flex items-center justify-center">
                 <User className="h-6 w-6 text-red-600" />
-              </div>
+            </div>
             )
           ) : null}
           <div className="flex-1 min-w-0">
@@ -155,12 +155,12 @@ const ContactCard: React.FC<ContactCardProps> = ({
               <div className="flex items-center text-sm text-slate-600 mt-1">
                 {isMagicCards ? (
                   contact.companyLogo && contact.companyLogo.length > 0 ? (
-                    <img
-                      src={contact.companyLogo[0].url}
-                      alt="Company logo"
+                  <img
+                    src={contact.companyLogo[0].url}
+                    alt="Company logo"
                       className="h-4 w-4 mr-1 object-contain cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
-                      onClick={() => handleImageClick(contact.companyLogo![0].url)}
-                    />
+                    onClick={() => handleImageClick(contact.companyLogo![0].url)}
+                  />
                   ) : (
                     <div className="h-4 w-4 mr-1 flex items-center justify-center border border-red-600 rounded bg-red-50 text-red-600 text-[10px] leading-none flex-shrink-0">?</div>
                   )
@@ -176,9 +176,9 @@ const ContactCard: React.FC<ContactCardProps> = ({
               </div>
             )}
           </div>
-          </div>
         </div>
-        
+      </div>
+
       <div className="flex-1">
         {/* Missing Address now shown inline in address area below */}
               
@@ -218,7 +218,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
               />
               <span>Golden Record</span>
             </label>
-          </div>
+                </div>
 
           {/* Always-visible contact details (address + confirm URL) */}
           <div className="space-y-1.5 text-sm md:col-span-2">
@@ -244,13 +244,13 @@ const ContactCard: React.FC<ContactCardProps> = ({
                   <div className="max-w-[260px] rounded-lg border border-red-300 bg-red-50 px-3 py-2 leading-tight text-center">
                     <div className="text-[12px] font-semibold text-red-700">Missing Address</div>
                     {contact.confirmAddressUrl && (
-                      <button
+                  <button 
                         onClick={handleCopyConfirmUrl}
                         className="mt-1 inline-block text-[11px] underline text-red-600 hover:text-red-700"
                         title={contact.confirmAddressUrl}
-                      >
+                  >
                         {copiedConfirmUrl ? 'Link copied' : 'Copy Confirm Link'}
-                      </button>
+                  </button>
                     )}
                   </div>
                 </div>
