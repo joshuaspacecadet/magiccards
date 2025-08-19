@@ -11,7 +11,8 @@ export async function uploadToCloudinary(file: File): Promise<string> {
   formData.append("upload_preset", "Magic Cards"); // Use your exact preset name
 
   console.log("Uploading to Cloudinary...");
-  const res = await fetch("https://api.cloudinary.com/v1_1/dnfikz63v/upload", {
+  // Use resource_type 'auto' to support images, PDFs, AI/PSD, etc.
+  const res = await fetch("https://api.cloudinary.com/v1_1/dnfikz63v/auto/upload", {
     method: "POST",
     body: formData,
   });
@@ -19,9 +20,16 @@ export async function uploadToCloudinary(file: File): Promise<string> {
   console.log("Cloudinary response status:", res.status);
 
   if (!res.ok) {
-    const errorText = await res.text();
-    console.error("Cloudinary upload failed:", errorText);
-    throw new Error("Failed to upload file to Cloudinary");
+    let message = "Failed to upload file to Cloudinary";
+    try {
+      const maybeJson = await res.json();
+      if (maybeJson?.error?.message) message = maybeJson.error.message;
+      console.error("Cloudinary upload failed:", maybeJson);
+    } catch (_) {
+      const errorText = await res.text();
+      console.error("Cloudinary upload failed (text):", errorText);
+    }
+    throw new Error(message);
   }
 
   const data = await res.json();
