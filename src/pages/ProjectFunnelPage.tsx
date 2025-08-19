@@ -286,33 +286,33 @@ const ProjectFunnelPage: React.FC = () => {
       !anyRejectedInRound1_global && currentIndex >= stageOrder.indexOf("Handoff");
 
     // Allow actions on:
-    // - The immediately previous stage (normal behavior), EXCEPT if it's Stage 5 and it was skipped
+    // - The immediately previous stage (normal behavior)
     // - Stage 4 header too, if Stage 5 was skipped (so user can revert to Stage 4)
     const allowForStage =
-      (previousStage === stage && !(stage5Skipped_global && stage === "Design Round 2")) ||
-      (stage5Skipped_global && stage === "Design Round 1");
+      previousStage === stage || (stage5Skipped_global && stage === "Design Round 1");
     if (!allowForStage) return null;
     // If the previous stage is Design Round 2 but it was skipped due to no Round I rejections,
     // show an informational label instead of a revert button.
-    // If Stage 5 was skipped, show an italic notice on Stage 4 header
-    const showSkippedNoticeOnStage4 = stage === "Design Round 1" && stage5Skipped_global;
-
     const stageNumber = stageOrder.indexOf(stage) + 1;
     const label = `Revert to Stage ${stageNumber}`;
-    // If Stage 5 was skipped and we're on Stage 4 header, render both notice and revert button
-    if (showSkippedNoticeOnStage4) {
+    // If Stage 5 was skipped: on Stage 5 header show italic notice only (no button)
+    if (stage === "Design Round 2" && stage5Skipped_global) {
       return (
-        <div className="flex items-center gap-2">
-          <span className="italic text-slate-600 text-xs">
-            Stage skipped: no need for second round of review
-          </span>
-          <button
-            onClick={() => handleRevertToStage(stage)}
-            className="px-2 py-1 text-xs rounded border bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
-          >
-            {label}
-          </button>
-        </div>
+        <span className="italic text-slate-600 text-xs">
+          Stage skipped: no need for second round of review
+        </span>
+      );
+    }
+
+    // If Stage 5 was skipped and we're on Stage 4 header, show only the revert button to Stage 4
+    if (stage === "Design Round 1" && stage5Skipped_global) {
+      return (
+        <button
+          onClick={() => handleRevertToStage(stage)}
+          className="px-2 py-1 text-xs rounded border bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+        >
+          {label}
+        </button>
       );
     }
 
