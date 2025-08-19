@@ -278,7 +278,12 @@ const ProjectFunnelPage: React.FC = () => {
     const currentIndex = stageOrder.indexOf(project.stage);
     if (currentIndex <= 0) return null;
     const previousStage = stageOrder[currentIndex - 1];
-    if (previousStage !== stage) return null;
+    // When Stage 5 was skipped, also allow revert button to show on Stage 4 header
+    const anyRejectedInRound1_global = contacts.some(
+      (c) => c.contactReview === 'Approve' && !!c.magicCards && !!c.rejectRound1
+    );
+    const stage5Skipped_global = !anyRejectedInRound1_global && currentIndex >= stageOrder.indexOf("Handoff");
+    if (!stage5Skipped_global && previousStage !== stage) return null;
     // If the previous stage is Design Round 2 but it was skipped due to no Round I rejections,
     // show an informational label instead of a revert button.
     if (previousStage === "Design Round 2") {
@@ -287,7 +292,7 @@ const ProjectFunnelPage: React.FC = () => {
       );
       if (!anyRejectedInRound1) {
         return (
-          <span className="px-2 py-1 text-xs rounded border border-slate-200 bg-slate-100 text-slate-600">
+          <span className="italic text-slate-600">
             Stage skipped: no need for second round of review
           </span>
         );
