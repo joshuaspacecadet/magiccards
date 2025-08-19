@@ -278,25 +278,27 @@ const ProjectFunnelPage: React.FC = () => {
     const currentIndex = stageOrder.indexOf(project.stage);
     if (currentIndex <= 0) return null;
     const previousStage = stageOrder[currentIndex - 1];
-    // When Stage 5 was skipped, also allow revert button to show on Stage 4 header
+    // Detect if Stage 5 (Design Round 2) was skipped due to no Round I rejections
     const anyRejectedInRound1_global = contacts.some(
       (c) => c.contactReview === 'Approve' && !!c.magicCards && !!c.rejectRound1
     );
-    const stage5Skipped_global = !anyRejectedInRound1_global && currentIndex >= stageOrder.indexOf("Handoff");
-    if (!stage5Skipped_global && previousStage !== stage) return null;
+    const stage5Skipped_global =
+      !anyRejectedInRound1_global && currentIndex >= stageOrder.indexOf("Handoff");
+
+    // Allow actions on:
+    // - The immediately previous stage (normal behavior)
+    // - Stage 4 header too, if Stage 5 was skipped (so user can revert to Stage 4)
+    const allowForStage = previousStage === stage || (stage5Skipped_global && stage === "Design Round 1");
+    if (!allowForStage) return null;
     // If the previous stage is Design Round 2 but it was skipped due to no Round I rejections,
     // show an informational label instead of a revert button.
-    if (previousStage === "Design Round 2") {
-      const anyRejectedInRound1 = contacts.some(
-        (c) => c.contactReview === 'Approve' && !!c.magicCards && !!c.rejectRound1
+    if (previousStage === "Design Round 2" && !anyRejectedInRound1_global) {
+      // Only on Stage 5 header; render simple italic notice (no border)
+      return (
+        <span className="italic text-slate-600 text-xs">
+          Stage skipped: no need for second round of review
+        </span>
       );
-      if (!anyRejectedInRound1) {
-        return (
-          <span className="italic text-slate-600">
-            Stage skipped: no need for second round of review
-          </span>
-        );
-      }
     }
 
     const stageNumber = stageOrder.indexOf(stage) + 1;
