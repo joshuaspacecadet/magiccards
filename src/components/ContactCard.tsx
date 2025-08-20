@@ -274,7 +274,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 </div>
               ) : (
                 <div className="pt-3">
-                  <div className="flex items-center justify-center gap-2 text-slate-600 mb-2">
+                  <div className={`flex items-center justify-center gap-2 text-slate-600 mb-2 ${isStageLocked ? 'opacity-60 pointer-events-none' : ''}`}>
                     <Edit className="h-3 w-3 flex-shrink-0" />
                     <button
                       onClick={() => { if (!isStageLocked) { setNotesInput(""); setIsNotesModalOpen(true); } }}
@@ -301,7 +301,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
       </div>
 
       {/* Contact Review Actions */}
-      <div className="mt-2 pt-2 border-t border-slate-200 flex items-center justify-center gap-2">
+      <div className={`mt-2 pt-2 border-t border-slate-200 flex items-center justify-center gap-2 ${isStageLocked ? 'opacity-60 pointer-events-none' : ''}` }>
         <button
           className={`px-2.5 py-1 text-xs rounded border transition-colors ${contact.contactReview === 'Approve' ? 'bg-green-600 text-white border-green-600' : 'bg-white text-green-700 border-green-300 hover:bg-green-50'}`}
           onClick={() => {
