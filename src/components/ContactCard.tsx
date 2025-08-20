@@ -435,7 +435,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${dragOverTarget==='headshot' ? 'border-blue-500 bg-blue-50' : 'border-slate-300 hover:border-slate-400'} ${isUploadingHeadshot ? 'opacity-50 pointer-events-none' : ''}`}
                 onDragOver={(e) => { e.preventDefault(); setDragOverTarget('headshot'); }}
                 onDragLeave={(e) => { e.preventDefault(); setDragOverTarget(null); }}
-                onDrop={async (e) => { e.preventDefault(); setDragOverTarget(null); const files = Array.from(e.dataTransfer.files || []); if (!files.length) return; setIsUploadingHeadshot(true); const uploaded = []; for (const f of files) { const url = await uploadToCloudinary(f); uploaded.push({ url, filename: f.name }); } setHeadshotNew((prev) => [...prev, ...uploaded]); setIsUploadingHeadshot(false); }}
+                onDrop={async (e) => { e.preventDefault(); setDragOverTarget(null); const files = Array.from(e.dataTransfer.files || []); if (!files.length) return; setIsUploadingHeadshot(true); const uploaded: { url: string; filename: string }[] = []; for (const f of files) { const url = await uploadToCloudinary(f); uploaded.push({ url, filename: f.name }); } setHeadshotNew((prev) => [...prev, ...uploaded]); setIsUploadingHeadshot(false); }}
               >
                 <input id="approve-headshot" className="hidden" type="file" multiple accept="image/*" onChange={async (e) => { if (!e.target.files) return; setIsUploadingHeadshot(true); const files = Array.from(e.target.files); const uploaded=[] as {url:string; filename:string}[]; for (const f of files){ const url = await uploadToCloudinary(f); uploaded.push({url, filename: f.name}); } setHeadshotNew((p)=>[...p,...uploaded]); setIsUploadingHeadshot(false); e.target.value=''; }} />
                 <label htmlFor="approve-headshot" className="inline-flex items-center px-3 py-2 rounded bg-blue-600 text-white text-xs cursor-pointer hover:bg-blue-700">{isUploadingHeadshot ? 'Uploading...' : 'Choose File(s)'}</label>
@@ -458,7 +458,7 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${dragOverTarget==='logo' ? 'border-blue-500 bg-blue-50' : 'border-slate-300 hover:border-slate-400'} ${isUploadingLogo ? 'opacity-50 pointer-events-none' : ''}`}
                 onDragOver={(e) => { e.preventDefault(); setDragOverTarget('logo'); }}
                 onDragLeave={(e) => { e.preventDefault(); setDragOverTarget(null); }}
-                onDrop={async (e) => { e.preventDefault(); setDragOverTarget(null); const files = Array.from(e.dataTransfer.files || []); if (!files.length) return; setIsUploadingLogo(true); const uploaded = []; for (const f of files) { const url = await uploadToCloudinary(f); uploaded.push({ url, filename: f.name }); } setLogoNew((prev) => [...prev, ...uploaded]); setIsUploadingLogo(false); }}
+                onDrop={async (e) => { e.preventDefault(); setDragOverTarget(null); const files = Array.from(e.dataTransfer.files || []); if (!files.length) return; setIsUploadingLogo(true); const uploaded: { url: string; filename: string }[] = []; for (const f of files) { const url = await uploadToCloudinary(f); uploaded.push({ url, filename: f.name }); } setLogoNew((prev) => [...prev, ...uploaded]); setIsUploadingLogo(false); }}
               >
                 <input id="approve-logo" className="hidden" type="file" multiple accept="image/*" onChange={async (e) => { if (!e.target.files) return; setIsUploadingLogo(true); const files = Array.from(e.target.files); const uploaded=[] as {url:string; filename:string}[]; for (const f of files){ const url = await uploadToCloudinary(f); uploaded.push({url, filename: f.name}); } setLogoNew((p)=>[...p,...uploaded]); setIsUploadingLogo(false); e.target.value=''; }} />
                 <label htmlFor="approve-logo" className="inline-flex items-center px-3 py-2 rounded bg-blue-600 text-white text-xs cursor-pointer hover:bg-blue-700">{isUploadingLogo ? 'Uploading...' : 'Choose File(s)'}</label>
@@ -475,6 +475,36 @@ const ContactCard: React.FC<ContactCardProps> = ({
             {approveError && <div className="text-xs text-red-600 mb-2">{approveError}</div>}
             <div className="flex justify-end gap-2">
               <button onClick={() => setIsApproveModalOpen(false)} className="px-3 py-1.5 text-xs rounded border border-slate-300 text-slate-700 hover:bg-slate-50">Close</button>
+              <button
+                onClick={async () => {
+                  // Save progress without approving
+                  const updates: Partial<Contact> = { company: companyInput } as Partial<Contact>;
+                  if (headshotNew.length > 0) {
+                    (updates as any).headshot = [
+                      ...(contact.headshot || []),
+                      ...headshotNew,
+                    ] as any;
+                  }
+                  if (logoNew.length > 0) {
+                    (updates as any).companyLogo = [
+                      ...(contact.companyLogo || []),
+                      ...logoNew,
+                    ] as any;
+                  }
+                  if (
+                    updates.company !== contact.company ||
+                    (updates as any).headshot ||
+                    (updates as any).companyLogo
+                  ) {
+                    await onUpdate(contact.id, updates);
+                    setHeadshotNew([]);
+                    setLogoNew([]);
+                  }
+                }}
+                className="px-3 py-1.5 text-xs rounded border border-slate-300 text-slate-700 hover:bg-slate-50"
+              >
+                Save
+              </button>
               <button
                 onClick={async () => {
                   // Validate
