@@ -658,6 +658,14 @@ const ProjectFunnelPage: React.FC = () => {
   const getApprovedMagicContacts = () =>
     contacts.filter((c) => c.contactReview === 'Approve' && !!c.magicCards);
 
+  // Stage 1: All contacts must be reviewed (Approve / Send Later / Remove)
+  const allContactsReviewed = useMemo(() => {
+    if (contacts.length === 0) return false;
+    return contacts.every(
+      (c) => c.contactReview === 'Approve' || c.contactReview === 'Send Later' || c.contactReview === 'Remove'
+    );
+  }, [contacts]);
+
   // CSV generation for Stage 7
   const contactsCsvDataUri = useMemo(() => {
     const escapeCsv = (value: string | undefined) => {
@@ -873,7 +881,8 @@ const ProjectFunnelPage: React.FC = () => {
               <div className="flex justify-center pt-6">
                 <button
                   onClick={handleAdvanceStage}
-                  className="flex items-center space-x-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                  disabled={!allContactsReviewed}
+                  className="flex items-center space-x-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <CheckCircle className="h-5 w-5" />
                   <span>Complete Contacts Stage</span>
