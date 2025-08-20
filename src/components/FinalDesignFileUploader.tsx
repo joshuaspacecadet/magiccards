@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import {
   Upload,
   X,
@@ -42,11 +42,14 @@ const FinalDesignFileUploader: React.FC<FinalDesignFileUploaderProps> = ({
     [key: string]: number;
   }>({});
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [showLinkHint, setShowLinkHint] = useState<boolean>(false);
 
   // URL field state
   const [designFileUrl, setDesignFileUrl] = useState(
     project.finalDesignFileLink || ""
   );
+  const urlInputRef = useRef<HTMLInputElement | null>(null);
+  const urlSectionRef = useRef<HTMLDivElement | null>(null);
   const [isUrlSaving, setIsUrlSaving] = useState(false);
   const [urlSaveStatus, setUrlSaveStatus] = useState<
     "idle" | "success" | "error"
@@ -213,12 +216,24 @@ const FinalDesignFileUploader: React.FC<FinalDesignFileUploaderProps> = ({
       const errorMsg =
         error instanceof Error ? error.message : "Failed to upload files";
       setErrorMessage(errorMsg);
+      const isMaxSize = /file size too large|maximum is/i.test(errorMsg);
+      setShowLinkHint(isMaxSize);
       setSaveStatus("error");
       setUploadProgress({});
     } finally {
       setIsUploading(false);
     }
   };
+
+  useEffect(() => {
+    if (showLinkHint) {
+      // Auto-scroll to URL section and focus the input to prompt using a link
+      urlSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => {
+        urlInputRef.current?.focus();
+      }, 400);
+    }
+  }, [showLinkHint]);
 
   const handleRemoveFile = async (fileIndex: number) => {
     if (isReadOnly) return;
@@ -530,13 +545,19 @@ const FinalDesignFileUploader: React.FC<FinalDesignFileUploaderProps> = ({
       </div>
 
       {/* URL Field Section */}
-      <div className="bg-white p-6 rounded-lg border border-slate-200 space-y-4">
+      <div ref={urlSectionRef} className="bg-white p-6 rounded-lg border border-slate-200 space-y-4">
         <div className="flex items-center space-x-2">
           <Link className="h-5 w-5 text-blue-600" />
           <h4 className="text-lg font-semibold text-slate-900">
             Final Design File Link
           </h4>
         </div>
+
+        {showLinkHint && (
+          <div className="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded px-3 py-2">
+            This file exceeds the current upload limit. Paste a link to the final design (Google Drive, Dropbox, etc.) instead.
+          </div>
+        )}
 
         <p className="text-sm text-slate-600">
           Add a link to the final design file(s) (Google Drive, Dropbox, etc.)
@@ -548,6 +569,7 @@ const FinalDesignFileUploader: React.FC<FinalDesignFileUploaderProps> = ({
             value={designFileUrl}
             onChange={(e) => handleUrlChange(e.target.value)}
             disabled={isReadOnly || isUrlSaving}
+            ref={urlInputRef}
             className={`flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent disabled:bg-slate-50 disabled:text-slate-500 ${
               urlError
                 ? "border-red-300 focus:ring-red-500"
