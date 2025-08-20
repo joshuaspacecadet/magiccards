@@ -145,6 +145,8 @@ const ProjectFunnelPage: React.FC = () => {
     useState<string>("");
   const [selectedDesignCreatorFilter, setSelectedDesignCreatorFilter] =
     useState<string>("");
+  // Stage 1: toggle to show/hide completed contacts (Approve / Send Later / Remove)
+  const [showCompletedContacts, setShowCompletedContacts] = useState<boolean>(false);
 
   // Refs for scrolling to stages
   const contactsStageRef = useRef<HTMLDivElement>(null);
@@ -626,12 +628,17 @@ const ProjectFunnelPage: React.FC = () => {
 
   // Filter contacts based on selected creator
   const getFilteredContacts = (
-    filterCreator: string = selectedFilterCreator
+    filterCreator: string = selectedFilterCreator,
+    includeCompleted: boolean = showCompletedContacts
   ) => {
-    if (!filterCreator) return contacts;
-    return contacts.filter(
-      (contact) => contact.contactAddedBy === filterCreator
-    );
+    const byCreator = !filterCreator
+      ? contacts
+      : contacts.filter((contact) => contact.contactAddedBy === filterCreator);
+    if (includeCompleted) return byCreator;
+    return byCreator.filter((c) => {
+      const status = c.contactReview;
+      return !(status === 'Approve' || status === 'Send Later' || status === 'Remove');
+    });
   };
 
   // Filter contacts for design rounds
@@ -783,6 +790,25 @@ const ProjectFunnelPage: React.FC = () => {
                     </div>
                   </>
                 )}
+                {/* Show/Hide completed toggle */}
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm font-medium text-slate-700">Show completed</span>
+                  <button
+                    type="button"
+                    aria-pressed={showCompletedContacts}
+                    onClick={() => setShowCompletedContacts((v) => !v)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      showCompletedContacts ? 'bg-blue-600' : 'bg-slate-300'
+                    }`}
+                    title={showCompletedContacts ? 'Showing approved/held/removed' : 'Hiding approved/held/removed'}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                        showCompletedContacts ? 'translate-x-5' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
               </div>
 
               <button
