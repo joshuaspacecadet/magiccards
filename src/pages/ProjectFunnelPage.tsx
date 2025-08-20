@@ -1193,26 +1193,6 @@ const ProjectFunnelPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  {project.illustratorFiles && project.illustratorFiles.length > 0 && (
-                    <div>
-                      <p className="text-sm text-slate-600 mb-2">Uploaded Final Design File(s)</p>
-                      <ul className="list-disc list-inside space-y-1">
-                        {project.illustratorFiles.map((file, index) => (
-                          <li key={file.id || `${file.url}-${index}`}> 
-                            <a
-                              href={file.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-700 underline"
-                            >
-                              {file.filename || `File ${index + 1}`}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
                   {project.finalDesignFileLink && (
                     <div>
                       <p className="text-sm text-slate-600 mb-1">External Final Design Link</p>
@@ -1227,8 +1207,8 @@ const ProjectFunnelPage: React.FC = () => {
                     </div>
                   )}
 
-                  {!((project.illustratorFiles && project.illustratorFiles.length > 0) || project.finalDesignFileLink) && (
-                    <p className="text-sm text-slate-500">No final designs linked yet. Add them in Stage 6.</p>
+                  {!project.finalDesignFileLink && (
+                    <p className="text-sm text-slate-500">No final designs linked yet. Add the link in Stage 6.</p>
                   )}
                 </div>
               </div>
