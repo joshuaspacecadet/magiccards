@@ -482,9 +482,18 @@ const ContactModal: React.FC<ContactModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Company
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-sm font-medium text-slate-700">
+                    Company
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, company: "Individual (No Company)" })}
+                    className="text-xs text-slate-500 underline hover:text-blue-600"
+                  >
+                    Use "Individual (No Company)"
+                  </button>
+                </div>
                 <input
                   type="text"
                   value={formData.company}

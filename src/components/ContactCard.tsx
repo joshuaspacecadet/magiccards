@@ -415,7 +415,16 @@ const ContactCard: React.FC<ContactCardProps> = ({
             {/* Company section (only when missing) */}
             {!(contact.company && contact.company.trim().length>0) && (
             <div className={`mb-4 p-3 rounded border border-red-200 bg-red-50`}>
-              <div className="text-sm font-medium text-slate-900 mb-2">Company</div>
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-sm font-medium text-slate-900">Company</div>
+                <button
+                  type="button"
+                  onClick={() => setCompanyInput("Individual (No Company)")}
+                  className="text-[11px] underline text-slate-600 hover:text-blue-700"
+                >
+                  Use "Individual (No Company)"
+                </button>
+              </div>
               <input
                 type="text"
                 value={companyInput}
