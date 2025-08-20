@@ -597,21 +597,25 @@ const ProjectFunnelPage: React.FC = () => {
     files: { url: string; filename: string }[]
   ): Promise<boolean> => {
     try {
-      // Convert the file format to match AirtableAttachment (url + filename only)
-      const airtableFiles: { url: string; filename: string }[] = files.map(
-        (file) => ({
-          url: file.url,
-          filename: file.filename,
-        })
-      );
+      // Preserve existing attachments by ID and append any new ones by URL
+      const existing = project?.illustratorFiles || [];
+      const preserveById = existing.map((att) => ({ id: att.id }));
+      const existingUrls = new Set(existing.map((a) => a.url));
+      const toAdd = files
+        .filter((f) => !existingUrls.has(f.url))
+        .map((f) => ({ url: f.url, filename: f.filename }));
+
+      const payload = [...preserveById, ...toAdd];
 
       const updatedProject = await AirtableService.updateProject(projectId, {
-        illustratorFiles:
-          airtableFiles as unknown as import("../types").AirtableAttachment[],
+        illustratorFiles: payload as unknown as import("../types").AirtableAttachment[],
       });
       if (updatedProject) {
         setProject(updatedProject);
-        return true;
+        // Validate Airtable persisted expected number of files
+        const expectedCount = existing.length + toAdd.length;
+        const actualCount = (updatedProject.illustratorFiles || []).length;
+        return actualCount >= expectedCount;
       }
       return false;
     } catch (error) {

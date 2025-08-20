@@ -198,7 +198,7 @@ const FinalDesignFileUploader: React.FC<FinalDesignFileUploaderProps> = ({
       const success = await onSave(project.id, updatedFiles);
       if (!success) {
         throw new Error(
-          "Failed to save files to database. Please check your file formats and try again."
+          "Failed to attach files to Airtable. Please paste a link instead for non-image files."
         );
       }
       // Complete progress
@@ -217,7 +217,8 @@ const FinalDesignFileUploader: React.FC<FinalDesignFileUploaderProps> = ({
         error instanceof Error ? error.message : "Failed to upload files";
       setErrorMessage(errorMsg);
       const isMaxSize = /file size too large|maximum is/i.test(errorMsg);
-      setShowLinkHint(isMaxSize);
+      const hasNonImage = files.some((f) => !(f.type || "").startsWith("image/"));
+      setShowLinkHint(isMaxSize || hasNonImage);
       setSaveStatus("error");
       setUploadProgress({});
     } finally {
