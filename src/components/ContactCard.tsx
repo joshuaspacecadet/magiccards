@@ -458,8 +458,14 @@ const ContactCard: React.FC<ContactCardProps> = ({
             </div>
             )}
 
-            {/* Company logo section (only when missing) */}
-            {!(contact.companyLogo && contact.companyLogo.length>0) && (
+            {/* Company logo section (only when missing and company is not Individual (No Company)) */}
+            {(() => {
+              const effectiveCompany = (contact.company && contact.company.trim().length>0)
+                ? contact.company
+                : companyInput;
+              const isIndividual = (effectiveCompany || "").trim().toLowerCase() === 'individual (no company)';
+              return !isIndividual && !(contact.companyLogo && contact.companyLogo.length>0);
+            })() && (
             <div className={`mb-4 p-3 rounded border border-red-200 bg-red-50`}>
               <div className="text-sm font-medium text-slate-900 mb-2">Company Logo</div>
               <p className="text-xs text-slate-600 mb-2">Please add one or more logo images. Make sure the logo matches the company name.</p>
@@ -518,10 +524,14 @@ const ContactCard: React.FC<ContactCardProps> = ({
                 onClick={async () => {
                   // Validate
                   const hasAddress = !!contact.streetLine1;
-                  const hasCompany = !!companyInput.trim();
+                  const effectiveCompany = (contact.company && contact.company.trim().length>0)
+                    ? contact.company
+                    : companyInput.trim();
+                  const isIndividual = (effectiveCompany || "").toLowerCase() === 'individual (no company)';
+                  const hasCompany = !!effectiveCompany;
                   const hasHeadshot = (contact.headshot && contact.headshot.length>0) || headshotNew.length>0;
                   const hasLogo = (contact.companyLogo && contact.companyLogo.length>0) || logoNew.length>0;
-                  if (!hasAddress || !hasCompany || !hasHeadshot || !hasLogo) {
+                  if (!hasAddress || !hasCompany || !hasHeadshot || (!isIndividual && !hasLogo)) {
                     setApproveError('All items are required to approve for Magic Cards.');
                     return;
                   }
