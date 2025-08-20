@@ -291,7 +291,8 @@ const ProjectFunnelPage: React.FC = () => {
     // - The immediately previous stage (normal behavior)
     // - Stage 4 header too, if Stage 5 was skipped (so user can revert to Stage 4)
     const allowForStage =
-      previousStage === stage || (stage5Skipped_global && stage === "Design Round 1");
+      previousStage === stage ||
+      (stage5Skipped_global && project.stage === "Handoff" && stage === "Design Round 1");
     if (!allowForStage) return null;
     // If the previous stage is Design Round 2 but it was skipped due to no Round I rejections,
     // show an informational label instead of a revert button.
