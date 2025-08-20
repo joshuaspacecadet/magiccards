@@ -18,7 +18,8 @@ export async function uploadToCloudinary(file: File): Promise<string> {
 
   async function doUpload(resource: "image" | "raw" | "auto") {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 120000);
+    // Increase timeout to 8 minutes for larger files / slower networks
+    const timeout = setTimeout(() => controller.abort(), 480000);
     try {
       const response = await fetch(
         `https://api.cloudinary.com/v1_1/${cloudName}/${resource}/upload`,
@@ -44,6 +45,15 @@ export async function uploadToCloudinary(file: File): Promise<string> {
       console.warn(`Primary ${primaryResource}/upload failed:`, text);
     } catch {}
     res = await doUpload("auto");
+  }
+
+  // Simple retry once for transient 5xx errors
+  if (!res.ok && res.status >= 500) {
+    console.warn("Cloudinary 5xx error, retrying once...");
+    res = await doUpload(primaryResource);
+    if (!res.ok) {
+      res = await doUpload("auto");
+    }
   }
 
   console.log("Cloudinary response status:", res.status);
